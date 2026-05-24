@@ -3,7 +3,7 @@ const LIFF_ID = "2010150440-sbW0urAy";
 
 
 const API_BASE_URL =
-    "https://1035-59-124-220-148.ngrok-free.app";
+    "https://9f4d-59-124-220-148.ngrok-free.app";
 
 
 
