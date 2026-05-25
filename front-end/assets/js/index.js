@@ -30,6 +30,8 @@ async function init() {
             `${API_BASE_URL}/api/activity/current/${lineUserId}`
         );
 
+    console.log(response);
+
     if (!response.ok) {
 
         window.location.href =
@@ -49,6 +51,14 @@ async function init() {
         COMPLETED
         REWARDED
     */
+    const page =
+        params.get("page");
+
+    if (page === "checkin") {
+
+        window.location.href =
+            `./pages/checkin.html${window.location.search}`;
+    }
 
     switch (data.status) {
 
