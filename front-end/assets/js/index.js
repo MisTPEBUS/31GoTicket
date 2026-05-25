@@ -38,6 +38,11 @@ async function init() {
 
     console.log(response);
 
+    const page =
+        params.get("page");
+
+    console.log(`page: ${page}`);
+
     if (!response.ok) {
 
         window.location.href =
@@ -57,14 +62,13 @@ async function init() {
         COMPLETED
         REWARDED
     */
-    const page =
-        params.get("page");
 
-    if (page === "checkin") {
 
-        window.location.href =
-            `./pages/checkin.html${window.location.search}`;
-    }
+    /*   if (page === "checkin") {
+  
+          window.location.href =
+              `./pages/checkin.html${window.location.search}`;
+      } */
 
     switch (data.status) {
 
