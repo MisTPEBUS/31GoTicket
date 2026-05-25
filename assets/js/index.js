@@ -85,15 +85,15 @@ async function init() {
 
             case "register":
 
-                /*  window.location.href =
-                     "./pages/register.html"; */
+                window.location.href =
+                    "./pages/register.html";
 
                 break;
 
             case "spot-check":
 
-                /*  window.location.href =
-                     `./pages/spot-check.html${window.location.search}`; */
+                window.location.href =
+                    `./pages/spot-check.html${window.location.search}`;
 
                 break;
         }
