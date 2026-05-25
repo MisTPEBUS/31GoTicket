@@ -25,10 +25,16 @@ async function init() {
     const lineUserId =
         profile.userId;
 
-    const response =
-        await fetch(
-            `${API_BASE_URL}/api/activity/current/${lineUserId}`
-        );
+    const response = await fetch(
+        `${API_BASE_URL}/api/activity/current/${lineUserId}`,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
+            }
+        }
+    );
 
     console.log(response);
 
