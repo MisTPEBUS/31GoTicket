@@ -64,58 +64,59 @@ async function init() {
   
           }
    */
-        const data =
-            await response.json();
-
-        /*
-            status:
-    
-            NONE
-            ACTIVE
-            COMPLETED
-            REWARDED
-        */
-
-
-        /*   if (page === "checkin") {
-      
-              window.location.href =
-                  `./pages/checkin.html${window.location.search}`;
-          } */
-
-        /*  switch (data.status) {
- 
-             case "ACTIVE":
- 
-                 window.location.href =
-                     "./pages/progress.html";
- 
-                 break;
- 
-             case "COMPLETED":
- 
-                 window.location.href =
-                     "./pages/reward.html";
- 
-                 break;
- 
-             case "REWARDED":
- 
-                 window.location.href =
-                     "./pages/progress.html";
- 
-                 break;
- 
-             default:
- 
-                 window.location.href =
-                     "./pages/register.html";
- 
-                 break;
-         }
-  */
-
     }, 1500);
+    const data =
+        await response.json();
+
+    /*
+        status:
+ 
+        NONE
+        ACTIVE
+        COMPLETED
+        REWARDED
+    */
+
+
+    /*   if (page === "checkin") {
+  
+          window.location.href =
+              `./pages/checkin.html${window.location.search}`;
+      } */
+
+    /*  switch (data.status) {
+ 
+         case "ACTIVE":
+ 
+             window.location.href =
+                 "./pages/progress.html";
+ 
+             break;
+ 
+         case "COMPLETED":
+ 
+             window.location.href =
+                 "./pages/reward.html";
+ 
+             break;
+ 
+         case "REWARDED":
+ 
+             window.location.href =
+                 "./pages/progress.html";
+ 
+             break;
+ 
+         default:
+ 
+             window.location.href =
+                 "./pages/register.html";
+ 
+             break;
+     }
+*/
+
+
 }
 
 init();
