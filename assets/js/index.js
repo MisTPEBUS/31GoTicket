@@ -38,67 +38,84 @@ async function init() {
 
     console.log(response);
 
-    const params = new URLSearchParams(window.location.search); const page = params.get("page");
+    const params = new URLSearchParams(window.location.search);
+    const page = params.get("page");
 
     console.log(`page: ${page}`);
-
-    if (!response.ok) {
-
-        window.location.href =
-            "./pages/register.html";
-
-        return;
-    }
-
-    const data =
-        await response.json();
-
-    /*
-        status:
-
-        NONE
-        ACTIVE
-        COMPLETED
-        REWARDED
-    */
+    setTimeout(() => {
 
 
-    /*   if (page === "checkin") {
-  
-          window.location.href =
-              `./pages/checkin.html${window.location.search}`;
-      } */
-
-    switch (data.status) {
-
-        case "ACTIVE":
-
-            window.location.href =
-                "./pages/progress.html";
-
-            break;
-
-        case "COMPLETED":
-
-            window.location.href =
-                "./pages/reward.html";
-
-            break;
-
-        case "REWARDED":
-
-            window.location.href =
-                "./pages/progress.html";
-
-            break;
-
-        default:
+        if (!response.ok) {
 
             window.location.href =
                 "./pages/register.html";
 
-            break;
-    }
+            return;
+        }
+        switch (page) {
+            case "register":
+                window.location.href =
+                    "./pages/register.html";
+                break;
+            case "spot-check":
+                window.location.href =
+                    "./pages/spot-check.html";
+                break;
+
+        }
+
+        const data =
+            await response.json();
+
+        /*
+            status:
+    
+            NONE
+            ACTIVE
+            COMPLETED
+            REWARDED
+        */
+
+
+        /*   if (page === "checkin") {
+      
+              window.location.href =
+                  `./pages/checkin.html${window.location.search}`;
+          } */
+
+        switch (data.status) {
+
+            case "ACTIVE":
+
+                window.location.href =
+                    "./pages/progress.html";
+
+                break;
+
+            case "COMPLETED":
+
+                window.location.href =
+                    "./pages/reward.html";
+
+                break;
+
+            case "REWARDED":
+
+                window.location.href =
+                    "./pages/progress.html";
+
+                break;
+
+            default:
+
+                window.location.href =
+                    "./pages/register.html";
+
+                break;
+        }
+
+
+    }, 1500);
 }
 
 init();
