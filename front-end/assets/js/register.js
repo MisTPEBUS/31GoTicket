@@ -29,13 +29,13 @@ async function init() {
     const data =
         await response.json();
 
-    if (data.hasActivity) {
+    /* if (data.hasActivity) {
 
         window.location.href =
             "/pages/progress.html";
 
         return;
-    }
+    } */
 
     document.getElementById(
         "name"
