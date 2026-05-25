@@ -47,23 +47,23 @@ async function init() {
 
         if (!response.ok) {
 
-            window.location.href =
-                "./pages/register.html";
-
+            /*  window.location.href =
+                 "./pages/register.html"; */
+            console.error("活動狀態讀取失敗");
             return;
         }
-        switch (page) {
-            case "register":
-                window.location.href =
-                    "./pages/register.html";
-                break;
-            case "spot-check":
-                window.location.href =
-                    "./pages/spot-check.html";
-                break;
-
-        }
-
+        /*   switch (page) {
+              case "register":
+                  window.location.href =
+                      "./pages/register.html";
+                  break;
+              case "spot-check":
+                  window.location.href =
+                      "./pages/spot-check.html";
+                  break;
+  
+          }
+   */
         const data =
             await response.json();
 
@@ -83,37 +83,37 @@ async function init() {
                   `./pages/checkin.html${window.location.search}`;
           } */
 
-        switch (data.status) {
-
-            case "ACTIVE":
-
-                window.location.href =
-                    "./pages/progress.html";
-
-                break;
-
-            case "COMPLETED":
-
-                window.location.href =
-                    "./pages/reward.html";
-
-                break;
-
-            case "REWARDED":
-
-                window.location.href =
-                    "./pages/progress.html";
-
-                break;
-
-            default:
-
-                window.location.href =
-                    "./pages/register.html";
-
-                break;
-        }
-
+        /*  switch (data.status) {
+ 
+             case "ACTIVE":
+ 
+                 window.location.href =
+                     "./pages/progress.html";
+ 
+                 break;
+ 
+             case "COMPLETED":
+ 
+                 window.location.href =
+                     "./pages/reward.html";
+ 
+                 break;
+ 
+             case "REWARDED":
+ 
+                 window.location.href =
+                     "./pages/progress.html";
+ 
+                 break;
+ 
+             default:
+ 
+                 window.location.href =
+                     "./pages/register.html";
+ 
+                 break;
+         }
+  */
 
     }, 1500);
 }
