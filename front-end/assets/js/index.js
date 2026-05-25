@@ -38,8 +38,7 @@ async function init() {
 
     console.log(response);
 
-    const page =
-        params.get("page");
+    const params = new URLSearchParams(window.location.search); const page = params.get("page");
 
     console.log(`page: ${page}`);
 
