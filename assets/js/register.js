@@ -27,7 +27,17 @@ async function init() {
     const response =
         await fetch(
             `${API_BASE_URL}/api/activity/current/${userId}`
+            ,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true'
+                }
+            }
         );
+
+
 
     if (!response.ok) {
 
