@@ -55,15 +55,15 @@ async function init() {
         已參加活動
     */
 
-    if (
-        data.status !== "NONE"
-    ) {
-
-        window.location.href =
-            "./progress.html";
-
-        return;
-    }
+    /*   if (
+          data.status !== "NONE"
+      ) {
+  
+          window.location.href =
+              "./progress.html";
+  
+          return;
+      } */
 
     /*
         顯示資料
@@ -120,18 +120,19 @@ async function init() {
 
                 const payload = {
 
-                    lineUserId:
+                    LineUserId:
                         profile.userId,
 
-                    name:
+                    Name:
                         document.getElementById(
                             "name"
                         ).value,
 
-                    orderNo:
+                    OrderNo:
                         document.getElementById(
                             "orderNo"
-                        ).value
+                        ).value,
+                    CampaignId: "2750ef49-8292-42fa-9660-273c46678aad"
                 };
 
                 console.log(payload);
@@ -159,16 +160,17 @@ async function init() {
                     const registerData =
                         await registerResponse.json();
 
-                    alert(
-                        registerData.message
-                    );
+
 
                     if (
                         registerData.success
                     ) {
+                        alert(
+                            registerData.message
+                        );
 
-                        window.location.href =
-                            "./progress.html";
+                        /* window.location.href =
+                            "./progress.html"; */
                     }
 
                 } catch (error) {
