@@ -173,7 +173,7 @@ async function handleScanQRCode(
         console.error(error);
 
         alert(
-            "QRCode 掃描失敗"
+            $`QRCode 掃描失敗:{error.message || error}`
         );
     }
 }
