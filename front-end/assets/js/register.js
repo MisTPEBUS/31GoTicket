@@ -292,10 +292,8 @@ async function init() {
                             registerData.message
                         );
 
-                        /*
-                        window.location.href =
-                            "./progress.html";
-                        */
+
+                        window.location.href = `./progress.html?campaignId=${campaignId}`;
 
                         return;
                     }
@@ -306,10 +304,7 @@ async function init() {
                     |--------------------------------------------------------------------------
                     */
 
-                    alert(
-                        registerData.message ||
-                        "報名失敗"
-                    );
+                    /*  */
 
                 } catch (error) {
 
