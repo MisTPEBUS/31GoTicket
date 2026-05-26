@@ -67,6 +67,53 @@
 
     </div>
 
+    <!-- 使用者須知 Modal -->
+    <div id="noticeModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+        <div class="bg-white w-[90%] max-w-md rounded-2xl p-6 shadow-xl">
+
+            <h2 class="text-xl font-bold mb-4">
+                使用者須知
+            </h2>
+
+            <div class="text-sm text-gray-700 space-y-3 max-h-[300px] overflow-y-auto">
+
+                <p>
+                    歡迎參加「三鶯 GO」活動。
+                </p>
+
+                <p>
+                    參加活動即代表您同意主辦單位蒐集必要資料，
+                    作為活動驗證、通知與兌獎用途。
+                </p>
+
+                <p>
+                    請確認填寫之乘車號碼與資料正確，
+                    若資料錯誤可能影響活動資格。
+                </p>
+
+                <p>
+                    主辦單位保留活動內容調整與最終解釋權利。
+                </p>
+
+            </div>
+
+            <div class="flex gap-3 mt-6">
+
+                <button id="cancelNoticeBtn" type="button" class="flex-1 border border-gray-300 py-3 rounded-xl">
+                    取消
+                </button>
+
+                <button id="confirmNoticeBtn" type="button" class="flex-1 bg-black text-white py-3 rounded-xl">
+                    我已閱讀並同意
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
     <script type="module" src="../assets/js/register.js">
     </script>
 
