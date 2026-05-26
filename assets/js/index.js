@@ -83,6 +83,12 @@ async function init() {
 
         switch (page) {
 
+            case "progress":
+
+                window.location.href =
+                    "./pages/progress.html";
+
+                break;
             case "register":
 
                 window.location.href =
