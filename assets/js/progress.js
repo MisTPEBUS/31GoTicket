@@ -231,6 +231,21 @@ function renderHeroStatus(activity) {
         document.getElementById(
             "heroTitle"
         );
+    /*
+|--------------------------------------------------------------------------
+| Spot Count
+|--------------------------------------------------------------------------
+*/
+
+    const completedCount =
+        activity.spots.filter(
+            spot =>
+                spot.status ===
+                "COMPLETED"
+        ).length;
+
+    const totalCount =
+        activity.spots.length;
 
     /*
     |--------------------------------------------------------------------------
