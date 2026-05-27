@@ -260,6 +260,7 @@ function renderHeroStatus(activity) {
 
     progressBar.style.width =
         `${progressPercent}%`;
+
     /*
     |--------------------------------------------------------------------------
     | Progress Text
