@@ -440,38 +440,6 @@ function renderSpotList(activity) {
         activity.spots.map(
             spot => {
 
-                if (isExpired) {
-
-                    return `
-    <div
-        class="bg-white rounded-2xl shadow p-4 flex items-center justify-between border-2 border-dashed border-gray-300"
-    >
-
-        <div>
-
-            <h2
-                class="font-bold text-lg text-gray-400"
-            >
-                ${spot.name}
-            </h2>
-
-            <p
-                class="text-sm text-gray-400 mt-1"
-            >
-                活動逾時
-            </p>
-
-        </div>
-
-        <div
-            class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-red-400 text-xl"
-        >
-            ✕
-        </div>
-
-    </div>
-    `;
-                }
 
                 /*
                 |--------------------------------------------------------------------------
@@ -526,34 +494,99 @@ function renderSpotList(activity) {
                 | PENDING
                 |--------------------------------------------------------------------------
                 */
+                if (
+                    spot.status ===
+                    "PENDING"
+                ) {
 
-                return `
+                    return `
+                    <div
+                        class="bg-gradient-to-br from-[#183B5B] to-[#2C628F] rounded-[30px] shadow-2xl p-5 text-white"
+                    >
+    
+                        <p class="text-xs tracking-[0.2em] text-cyan-100">
+                            IN PROGRESS
+                        </p>
+    
+                        <h3 class="text-2xl font-black mt-3">
+                            ${spot.name}
+                        </h3>
+    
+                        <p class="text-cyan-100 text-sm leading-7 mt-3">
+                            前往現場掃描 QRCode，
+                            完成景點集章。
+                        </p>
+    
+                       <button
+                            id="scanButton"
+                            ${isExpired ? "disabled" : ""}
+                            class="
+                                mt-6
+                                rounded-2xl
+                                px-6
+                                py-3
+                                font-bold
+                                shadow-lg
+                                transition-all
+
+                                ${isExpired
+                            ? `
+                                        bg-slate-300
+                                        text-slate-500
+                                        cursor-not-allowed
+                                    `
+                            : `
+                                        bg-white
+                                        text-[#183B5B]
+                                    `
+                        }
+                            "
+                        >
+                            ${isExpired
+                            ? "活動已逾時"
+                            : "前往打卡"
+                        }
+                        </button>
+
+    
+                    </div>
+                    `;
+                }
+
+                if (isExpired) {
+
+                    return `
                 <div
-                    class="bg-gradient-to-br from-[#183B5B] to-[#2C628F] rounded-[30px] shadow-2xl p-5 text-white"
+                    class="bg-white rounded-2xl shadow p-4 flex items-center justify-between border-2 border-dashed border-gray-300"
                 >
 
-                    <p class="text-xs tracking-[0.2em] text-cyan-100">
-                        IN PROGRESS
-                    </p>
+                    <div>
+                        <p class="text-xs tracking-[0.2em] text-cyan-100">
+                                                    TIME EXPIRED
+                        </p>
+                        <h2
+                            class="font-bold text-lg text-gray-400"
+                        >
+                            ${spot.name}
+                        </h2>
 
-                    <h3 class="text-2xl font-black mt-3">
-                        ${spot.name}
-                    </h3>
+                        <p
+                            class="text-sm text-gray-400 mt-1"
+                        >
+                            活動逾時
+                        </p>
 
-                    <p class="text-cyan-100 text-sm leading-7 mt-3">
-                        前往現場掃描 QRCode，
-                        完成景點集章。
-                    </p>
+                    </div>
 
-                    <button
-                        id="scanButton"
-                        class="mt-6 rounded-2xl bg-white text-[#183B5B] px-6 py-3 font-bold shadow-lg"
+                    <div
+                        class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-red-400 text-xl"
                     >
-                        前往打卡
-                    </button>
+                        ✕
+                    </div>
 
                 </div>
                 `;
+                }
             }
         ).join("");
 }
