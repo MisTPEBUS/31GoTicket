@@ -217,10 +217,9 @@ async function handleScanQRCode(
 
 function renderHeroStatus(activity) {
 
-    const heroCard =
-        document.getElementById(
-            "heroCard"
-        );
+    const NextSPOT = document.getElementById(
+        "NextSPOT"
+    );
 
     const heroLabel =
         document.getElementById(
@@ -231,6 +230,90 @@ function renderHeroStatus(activity) {
         document.getElementById(
             "heroTitle"
         );
+    /*
+    |--------------------------------------------------------------------------
+    | Progress Bar
+    |--------------------------------------------------------------------------
+    */
+
+    const progressBar =
+        document.getElementById(
+            "progressBar"
+        );
+
+    const completedCount =
+        activity.spots.filter(
+            spot =>
+                spot.status ===
+                "COMPLETED"
+        ).length;
+
+    const totalCount =
+        activity.spots.length;
+
+    const progressPercent =
+        totalCount === 0
+            ? 0
+            : Math.round(
+                (completedCount / totalCount) * 100
+            );
+
+    progressBar.style.width =
+        `${progressPercent}%`;
+    /*
+    |--------------------------------------------------------------------------
+    | Progress Text
+    |--------------------------------------------------------------------------
+    */
+
+    const completedText =
+        document.getElementById(
+            "completedText"
+        );
+
+    const remainingText =
+        document.getElementById(
+            "remainingText"
+        );
+
+    const completedCount =
+        activity.spots.filter(
+            spot =>
+                spot.status ===
+                "COMPLETED"
+        ).length;
+
+    const totalCount =
+        activity.spots.length;
+
+    const remainingCount =
+        totalCount - completedCount;
+
+    completedText.innerText =
+        `已完成 ${completedCount} 個景點`;
+
+    remainingText.innerText =
+        remainingCount <= 0
+            ? "已完成全部景點"
+            : `尚差 ${remainingCount} 個景點`;
+    /*
+ |--------------------------------------------------------------------------
+ | Next Spot 
+ |--------------------------------------------------------------------------
+ */
+
+
+
+    const pendingSpot =
+        activity.spots.find(
+            spot =>
+                spot.status ===
+                "PENDING"
+        );
+
+    NextSPOT.innerText =
+        pendingSpot?.name || "";
+
     /*
 |--------------------------------------------------------------------------
 | Spot Count
@@ -276,17 +359,7 @@ function renderHeroStatus(activity) {
         heroTitle.innerText =
             "已逾時";
 
-        heroCard.className =
-            `
-            relative overflow-hidden
-            rounded-[32px]
-            bg-gradient-to-br
-            from-slate-700
-            via-slate-800
-            to-black
-            shadow-2xl
-            border border-white/10
-            `;
+
 
         return;
     }
@@ -309,17 +382,7 @@ function renderHeroStatus(activity) {
         heroTitle.innerText =
             "待核可";
 
-        heroCard.className =
-            `
-            relative overflow-hidden
-            rounded-[32px]
-            bg-gradient-to-br
-            from-amber-500
-            via-orange-500
-            to-red-500
-            shadow-2xl
-            border border-white/10
-            `;
+
 
         return;
     }
@@ -342,17 +405,7 @@ function renderHeroStatus(activity) {
         heroTitle.innerText =
             "活動進行中";
 
-        heroCard.className =
-            `
-            relative overflow-hidden
-            rounded-[32px]
-            bg-gradient-to-br
-            from-cyan-500
-            via-sky-600
-            to-indigo-700
-            shadow-2xl
-            border border-white/10
-            `;
+
 
         return;
     }
