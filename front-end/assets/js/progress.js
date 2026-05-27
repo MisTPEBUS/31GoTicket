@@ -267,12 +267,12 @@ function renderHeroStatus(activity) {
     |--------------------------------------------------------------------------
     */
 
-    const completedText =
+    let completedText =
         document.getElementById(
             "completedText"
         );
 
-    const remainingText =
+    let remainingText =
         document.getElementById(
             "remainingText"
         );
