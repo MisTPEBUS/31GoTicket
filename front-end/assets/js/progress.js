@@ -63,7 +63,7 @@ async function init() {
             await response.json();
 
         console.log(activity);
-
+        renderHeroStatus(activity);
         /*
         |--------------------------------------------------------------------------
         | 綁定 QRCode 掃描
@@ -212,5 +212,133 @@ async function handleScanQRCode(
         alert(
             $`QRCode 掃描失敗:{error.message || error}`
         );
+    }
+}
+
+function renderHeroStatus(activity) {
+
+    const heroCard =
+        document.getElementById(
+            "heroCard"
+        );
+
+    const heroLabel =
+        document.getElementById(
+            "heroLabel"
+        );
+
+    const heroTitle =
+        document.getElementById(
+            "heroTitle"
+        );
+
+    /*
+    |--------------------------------------------------------------------------
+    | 狀態判斷
+    |--------------------------------------------------------------------------
+    */
+
+    const now =
+        new Date();
+
+    const expiredAt =
+        new Date(
+            activity.expiredAt
+                .replace(" ", "T")
+        );
+
+    /*
+    |--------------------------------------------------------------------------
+    | 已逾時
+    |--------------------------------------------------------------------------
+    */
+
+    if (expiredAt < now) {
+
+        heroLabel.innerText =
+            "ACTIVITY EXPIRED";
+
+        heroTitle.innerText =
+            "已逾時";
+
+        heroCard.className =
+            `
+            relative overflow-hidden
+            rounded-[32px]
+            bg-gradient-to-br
+            from-slate-700
+            via-slate-800
+            to-black
+            shadow-2xl
+            border border-white/10
+            `;
+
+        return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 待核可
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        activity.status
+            .toLowerCase()
+        === "pending"
+    ) {
+
+        heroLabel.innerText =
+            "PENDING APPROVAL";
+
+        heroTitle.innerText =
+            "待核可";
+
+        heroCard.className =
+            `
+            relative overflow-hidden
+            rounded-[32px]
+            bg-gradient-to-br
+            from-amber-500
+            via-orange-500
+            to-red-500
+            shadow-2xl
+            border border-white/10
+            `;
+
+        return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 活動進行中
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        activity.status
+            .toLowerCase()
+        === "active"
+    ) {
+
+        heroLabel.innerText =
+            "ACTIVITY PROGRESS";
+
+        heroTitle.innerText =
+            "活動進行中";
+
+        heroCard.className =
+            `
+            relative overflow-hidden
+            rounded-[32px]
+            bg-gradient-to-br
+            from-cyan-500
+            via-sky-600
+            to-indigo-700
+            shadow-2xl
+            border border-white/10
+            `;
+
+        return;
     }
 }
