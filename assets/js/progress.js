@@ -30,6 +30,42 @@ async function init() {
 
         /*
         |--------------------------------------------------------------------------
+        | 讀取活動資料
+        |--------------------------------------------------------------------------
+        */
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/activity/user-activities/${userId}`,
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "ngrok-skip-browser-warning":
+                            "true"
+                    }
+                }
+            );
+
+        if (!response.ok) {
+
+            alert(
+                "活動資料讀取失敗"
+            );
+
+            return;
+        }
+
+        const activity =
+            await response.json();
+
+        console.log(activity);
+
+        /*
+        |--------------------------------------------------------------------------
         | 綁定 QRCode 掃描
         |--------------------------------------------------------------------------
         */
@@ -87,6 +123,7 @@ async function handleScanQRCode(
             await liff.scanCodeV2();
 
         console.log(result);
+        alert(result.value);
 
         /*
         |--------------------------------------------------------------------------
