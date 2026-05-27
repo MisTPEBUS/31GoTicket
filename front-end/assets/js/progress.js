@@ -64,6 +64,7 @@ async function init() {
 
         console.log(activity);
         renderHeroStatus(activity);
+        renderSpotList(activity);
         /*
         |--------------------------------------------------------------------------
         | 綁定 QRCode 掃描
@@ -410,4 +411,146 @@ function renderHeroStatus(activity) {
 
         return;
     }
+}
+
+function renderSpotList(activity) {
+
+    const spotList =
+        document.getElementById(
+            "spotList"
+        );
+
+    if (!spotList) {
+        return;
+    }
+
+    const now =
+        new Date();
+
+    const expiredAt =
+        new Date(
+            activity.expiredAt
+                .replace(" ", "T")
+        );
+
+    const isExpired =
+        expiredAt < now;
+
+    spotList.innerHTML =
+        activity.spots.map(
+            spot => {
+
+                /*
+                |--------------------------------------------------------------------------
+                | EXPIRED
+                |--------------------------------------------------------------------------
+                */
+
+                if (isExpired) {
+
+                    return `
+                    <div
+                        class="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[28px] shadow-xl p-5 text-white opacity-70"
+                    >
+
+                        <p class="text-xs tracking-[0.2em] text-slate-300">
+                            EXPIRED
+                        </p>
+
+                        <h3 class="text-xl font-black mt-3">
+                            ${spot.name}
+                        </h3>
+
+                        <p class="text-slate-300 text-sm mt-3 leading-7">
+                            活動已逾時，
+                            無法再進行景點集章。
+                        </p>
+
+                    </div>
+                    `;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | COMPLETED
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    spot.status ===
+                    "COMPLETED"
+                ) {
+
+                    return `
+                    <div
+                        class="bg-white rounded-[28px] border border-slate-100 shadow-lg p-5"
+                    >
+
+                        <div class="flex items-center justify-between">
+
+                            <div>
+
+                                <p class="text-xs tracking-[0.2em] text-slate-400">
+                                    COMPLETED
+                                </p>
+
+                                <h3 class="font-black text-lg mt-2">
+                                    ${spot.name}
+                                </h3>
+
+                                <p class="text-sm text-slate-500 mt-2">
+                                    已完成景點集章
+                                </p>
+
+                            </div>
+
+                            <div
+                                class="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"
+                            >
+
+                                ✓
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    `;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | PENDING
+                |--------------------------------------------------------------------------
+                */
+
+                return `
+                <div
+                    class="bg-gradient-to-br from-[#183B5B] to-[#2C628F] rounded-[30px] shadow-2xl p-5 text-white"
+                >
+
+                    <p class="text-xs tracking-[0.2em] text-cyan-100">
+                        IN PROGRESS
+                    </p>
+
+                    <h3 class="text-2xl font-black mt-3">
+                        ${spot.name}
+                    </h3>
+
+                    <p class="text-cyan-100 text-sm leading-7 mt-3">
+                        前往現場掃描 QRCode，
+                        完成景點集章。
+                    </p>
+
+                    <button
+                        id="scanButton"
+                        class="mt-6 rounded-2xl bg-white text-[#183B5B] px-6 py-3 font-bold shadow-lg"
+                    >
+                        前往打卡
+                    </button>
+
+                </div>
+                `;
+            }
+        ).join("");
 }
