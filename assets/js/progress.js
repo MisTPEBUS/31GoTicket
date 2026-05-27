@@ -287,7 +287,7 @@ function renderHeroStatus(activity) {
     totalCount =
         activity.spots.length;
 
-    const remainingCount =
+    let remainingCount =
         totalCount - completedCount;
 
     completedText.innerText =
