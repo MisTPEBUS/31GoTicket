@@ -241,17 +241,17 @@ function renderHeroStatus(activity) {
             "progressBar"
         );
 
-    const completedCount =
+    let completedCount =
         activity.spots.filter(
             spot =>
                 spot.status ===
                 "COMPLETED"
         ).length;
 
-    const totalCount =
+    let totalCount =
         activity.spots.length;
 
-    const progressPercent =
+    let progressPercent =
         totalCount === 0
             ? 0
             : Math.round(
