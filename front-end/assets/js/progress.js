@@ -312,7 +312,7 @@ function renderHeroStatus(activity) {
                 spot.status ===
                 "PENDING"
         );
-    alert(pendingSpot?.name)
+
     NextSPOT.innerText =
         pendingSpot?.name || "";
 
@@ -440,34 +440,37 @@ function renderSpotList(activity) {
         activity.spots.map(
             spot => {
 
-                /*
-                |--------------------------------------------------------------------------
-                | EXPIRED
-                |--------------------------------------------------------------------------
-                */
-
                 if (isExpired) {
 
                     return `
-                    <div
-                        class="bg-gradient-to-br from-slate-700 to-slate-900 rounded-[28px] shadow-xl p-5 text-white opacity-70"
-                    >
+    <div
+        class="bg-white rounded-2xl shadow p-4 flex items-center justify-between border-2 border-dashed border-gray-300"
+    >
 
-                        <p class="text-xs tracking-[0.2em] text-slate-300">
-                            EXPIRED
-                        </p>
+        <div>
 
-                        <h3 class="text-xl font-black mt-3">
-                            ${spot.name}
-                        </h3>
+            <h2
+                class="font-bold text-lg text-gray-400"
+            >
+                ${spot.name}
+            </h2>
 
-                        <p class="text-slate-300 text-sm mt-3 leading-7">
-                            活動已逾時，
-                            無法再進行景點集章。
-                        </p>
+            <p
+                class="text-sm text-gray-400 mt-1"
+            >
+                活動逾時
+            </p>
 
-                    </div>
-                    `;
+        </div>
+
+        <div
+            class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-red-400 text-xl"
+        >
+            ✕
+        </div>
+
+    </div>
+    `;
                 }
 
                 /*
