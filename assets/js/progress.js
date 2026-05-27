@@ -120,25 +120,24 @@ async function handleScanQRCode(
         |--------------------------------------------------------------------------
         */
 
+        if (!liff.isInClient()) {
+
+            alert(
+                "請使用 LINE 開啟活動頁面"
+            );
+
+            return;
+        }
+
         const result =
             await liff.scanCodeV2();
 
-        console.log(result);
-        alert(result.value);
+        console.log("scan result:", result);
 
-        /*
-        |--------------------------------------------------------------------------
-        | 掃描結果
-        |--------------------------------------------------------------------------
-        */
-
-        const qrValue =
-            result.value;
-
-        if (!qrValue) {
+        if (!result || !result.value) {
 
             alert(
-                "未掃描到 QRCode"
+                "未掃描到有效 QRCode"
             );
 
             return;
