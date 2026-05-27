@@ -88,7 +88,7 @@
             <div
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur text-cyan-50 text-xs tracking-[0.2em]">
 
-                SANXIA • YINGGE LIGHT RAIL
+                SANXIA • YINGGE GO TICKET
 
             </div>
 
@@ -112,6 +112,8 @@
             <div class="mt-8 bg-white/10 border border-white/10 backdrop-blur-xl rounded-[28px] p-5">
 
 
+
+
                 <div class="flex items-center justify-between">
 
                     <div>
@@ -123,50 +125,51 @@
                         <h2 id="heroTitle" class="text-white text-3xl font-black mt-2">
                             2 / 3
                         </h2>
-                        <div id="heroCard" class="relative overflow-hidden rounded-[32px]">
-                        </div>
-
-                        <div class="text-right">
-
-                            <p class="text-cyan-100 text-xs">
-                                NEXT SPOT
-                            </p>
-
-                            <p class="text-white font-bold mt-1">
-                                新北市美術館
-                            </p>
-
-                        </div>
 
                     </div>
 
-                    <!-- Progress Bar -->
+                    <div class="text-right">
 
-                    <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden mt-6">
+                        <p class="text-cyan-100 text-xs">
+                            NEXT SPOT
+                        </p>
 
-                        <div class="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-white"
-                            style="width: 66%">
-                        </div>
-
-                    </div>
-
-                    <!-- Status -->
-
-                    <div class="flex items-center justify-between mt-4 text-xs text-cyan-100">
-
-                        <span>
-                            已完成 2 個景點
-                        </span>
-
-                        <span>
-                            尚差 1 個景點
-                        </span>
+                        <p id="NextSPOT" class="text-white font-bold mt-1">
+                            新北市美術館
+                        </p>
 
                     </div>
 
                 </div>
 
+                <!-- Progress Bar -->
+
+                <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden mt-6">
+
+                    <div id="progressBar"
+                        class="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-white"
+                        style="width: 0%">
+                    </div>
+
+                </div>
+
+                <!-- Status -->
+
+                <div class="flex items-center justify-between mt-4 text-xs text-cyan-100">
+
+                    <span id="completedText">
+                        已完成 2 個景點
+                    </span>
+
+                    <span id="remainingText">
+                        尚差 1 個景點
+                    </span>
+
+                </div>
+
             </div>
+
+        </div>
 
     </section>
 
@@ -216,7 +219,8 @@
 
                 </div>
 
-                <button class="w-full mt-6 rounded-2xl bg-[#183B5B] text-white py-4 font-bold tracking-wide shadow-lg">
+                <button
+                    class="w-full mt-6 rounded-2xl bg-gradient-to-r from-[#183B5B] to-[#2F6998] text-white py-4 font-bold tracking-wide shadow-lg">
                     開始導航
                 </button>
 
@@ -318,35 +322,25 @@
                 <button id="scanButton" class="mt-6 rounded-2xl bg-white text-[#183B5B] px-6 py-3 font-bold shadow-lg">
                     前往打卡
                 </button>
-
             </div>
-
         </section>
-
         <!-- Reward -->
 
-        <section class="mt-6 bg-white rounded-[32px] border border-slate-100 shadow-xl p-6">
+        <div class="mt-6 bg-white rounded-3xl shadow p-6 text-center">
 
-            <p class="text-xs tracking-[0.2em] text-slate-400">
-                SPECIAL REWARD
-            </p>
-
-            <h2 class="text-3xl font-black mt-3">
-                活動限定紀念禮
+            <h2 class="text-xl font-bold mb-2">
+                活動獎勵
             </h2>
 
-            <p class="text-sm text-slate-500 leading-7 mt-4">
-                完成全部景點集章後，
-                可至指定服務櫃台兌換活動限定禮品。
+            <p class="text-gray-500 mb-4">
+                完成全部景點即可兌換限量紀念禮
             </p>
 
-            <button
-                class="w-full mt-6 rounded-2xl bg-gradient-to-r from-[#183B5B] to-[#2F6998] text-white py-4 font-bold tracking-wide shadow-lg">
-                查看領獎資訊
+            <button class="w-full bg-gray-300 text-gray-500 py-3 rounded-2xl cursor-not-allowed" disabled>
+                尚未達成領獎資格
             </button>
 
-        </section>
-
+        </div>
     </main>
     <script type="module" src="../assets/js/progress.js">
     </script>
