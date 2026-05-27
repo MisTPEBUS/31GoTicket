@@ -276,7 +276,7 @@ function renderHeroStatus(activity) {
             "remainingText"
         );
 
-    const completedCount =
+    completedCount =
         activity.spots.filter(
             spot =>
                 spot.status ===
@@ -310,7 +310,7 @@ function renderHeroStatus(activity) {
                 spot.status ===
                 "PENDING"
         );
-
+    alert(pendingSpot?.name)
     NextSPOT.innerText =
         pendingSpot?.name || "";
 
@@ -320,7 +320,7 @@ function renderHeroStatus(activity) {
 |--------------------------------------------------------------------------
 */
 
-    const completedCount =
+    completedCount =
         activity.spots.filter(
             spot =>
                 spot.status ===
