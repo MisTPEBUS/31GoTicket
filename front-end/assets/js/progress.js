@@ -283,10 +283,10 @@ function renderHeroStatus(activity) {
                 "COMPLETED"
         ).length;
 
-    const totalCount =
+    totalCount =
         activity.spots.length;
 
-    const remainingCount =
+    remainingCount =
         totalCount - completedCount;
 
     completedText.innerText =
@@ -327,7 +327,7 @@ function renderHeroStatus(activity) {
                 "COMPLETED"
         ).length;
 
-    const totalCount =
+    totalCount =
         activity.spots.length;
 
     /*
