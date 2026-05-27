@@ -116,114 +116,57 @@
 
                     <div>
 
-                        <p class="text-amber-100 text-xs tracking-[0.15em]">
-                            PENDING APPROVAL
-                        </p>
-
-                        <h2 class="text-white text-3xl font-black mt-2">
-                            待核可
-                        </h2>
-
-                    </div>
-
-                    <div class="text-right">
-
-                        <p class="text-amber-100 text-xs">
-                            STATUS
-                        </p>
-
-                        <p class="text-white font-bold mt-1">
-                            工作人員審核中
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-slate-300 text-xs tracking-[0.15em]">
-                            ACTIVITY EXPIRED
-                        </p>
-
-                        <h2 class="text-white text-3xl font-black mt-2">
-                            已逾時
-                        </h2>
-
-                    </div>
-
-                    <div class="text-right">
-
-                        <p class="text-slate-300 text-xs">
-                            EXPIRED AT
-                        </p>
-
-                        <p class="text-white font-bold mt-1">
-                            2026.12.31
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-cyan-100 text-xs tracking-[0.15em]">
+                        <p id="heroLabel" class="text-cyan-100 text-xs tracking-[0.15em]">
                             ACTIVITY PROGRESS
                         </p>
 
-                        <h2 class="text-white text-3xl font-black mt-2">
+                        <h2 id="heroTitle" class="text-white text-3xl font-black mt-2">
                             2 / 3
                         </h2>
+                        <div id="heroCard" class="relative overflow-hidden rounded-[32px]">
+                        </div>
+
+                        <div class="text-right">
+
+                            <p class="text-cyan-100 text-xs">
+                                NEXT SPOT
+                            </p>
+
+                            <p class="text-white font-bold mt-1">
+                                新北市美術館
+                            </p>
+
+                        </div>
 
                     </div>
 
-                    <div class="text-right">
+                    <!-- Progress Bar -->
 
-                        <p class="text-cyan-100 text-xs">
-                            NEXT SPOT
-                        </p>
+                    <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden mt-6">
 
-                        <p class="text-white font-bold mt-1">
-                            新北市美術館
-                        </p>
+                        <div class="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-white"
+                            style="width: 66%">
+                        </div>
 
                     </div>
 
-                </div>
+                    <!-- Status -->
 
-                <!-- Progress Bar -->
+                    <div class="flex items-center justify-between mt-4 text-xs text-cyan-100">
 
-                <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden mt-6">
+                        <span>
+                            已完成 2 個景點
+                        </span>
 
-                    <div class="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-white"
-                        style="width: 66%">
+                        <span>
+                            尚差 1 個景點
+                        </span>
+
                     </div>
-
-                </div>
-
-                <!-- Status -->
-
-                <div class="flex items-center justify-between mt-4 text-xs text-cyan-100">
-
-                    <span>
-                        已完成 2 個景點
-                    </span>
-
-                    <span>
-                        尚差 1 個景點
-                    </span>
 
                 </div>
 
             </div>
-
-        </div>
 
     </section>
 
