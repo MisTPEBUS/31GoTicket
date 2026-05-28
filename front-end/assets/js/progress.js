@@ -129,10 +129,9 @@ async function handleScanQRCode(
             return;
         }
 
-        const result =
-            await liff.scanCodeV2();
-
-        console.log("scan result:", result);
+        const result = await liff.scanCodeV2();
+        console.log("scan result:", JSON.stringify(result));
+        alert(JSON.stringify(result));
 
         if (!result || !result.value) {
 
