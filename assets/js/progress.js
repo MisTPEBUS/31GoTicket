@@ -67,7 +67,7 @@ async function init() {
         renderSpotList(activity);
         renderSpotCarousel(activity);
 
-        document
+        /* document
             .querySelectorAll(".navigateButton")
             .forEach(button => {
 
@@ -87,7 +87,7 @@ async function init() {
                         });
                     }
                 );
-            });
+            }); */
 
 
 
@@ -461,7 +461,7 @@ function renderSpotCarousel(activity) {
                 */
 
                 const googleMapUrl =
-                    `https://www.google.com/maps/search/?api=1&query=${spot.address}`;
+                    `https://www.google.com/maps/search/?api=1&query=${spot.name}`;
 
                 return `
                 <section
@@ -578,8 +578,9 @@ function renderSpotCarousel(activity) {
                         </div>
 
                         <button
-                           
-                            "data-address="${spot.name}"
+                            onclick="
+                                liff.openWindow({ url: '${googleMapUrl}', external: true })
+                           /*  "data-address="${spot.name}" */
                             class="
                                 navigateButton
                                 w-full
