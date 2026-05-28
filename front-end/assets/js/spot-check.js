@@ -107,12 +107,12 @@ function showSuccess(message) {
     |--------------------------------------------------------------------------
     */
 
-    setTimeout(() => {
+    /* setTimeout(() => {
 
         window.location.href =
             "./progress.html";
 
-    }, 2000);
+    }, 2000); */
 }
 
 /*
