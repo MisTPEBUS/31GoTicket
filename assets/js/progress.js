@@ -99,24 +99,35 @@ async function init() {
         |--------------------------------------------------------------------------
         */
 
-        const scanButton =
-            document.getElementById(
-                "scanButton"
-            );
 
-        if (scanButton) {
+        document
+            .querySelectorAll("[id^='scanButton-']")
+            .forEach(button => {
 
-            scanButton
-                .addEventListener(
+                button.addEventListener(
                     "click",
                     async () => {
 
+                        const spotId =
+                            button.id.replace(
+                                "scanButton-",
+                                ""
+                            );
+
+                        console.log(
+                            "spotId:",
+                            spotId
+                        );
+
                         await handleScanQRCode(
-                            userId
+                            userId,
+                            spotId
                         );
                     }
                 );
-        }
+            });
+
+
 
     } catch (error) {
 
@@ -137,7 +148,8 @@ init();
 */
 
 async function handleScanQRCode(
-    lineUserId
+    lineUserId,
+    spotId
 ) {
 
     try {
@@ -157,9 +169,18 @@ async function handleScanQRCode(
             return;
         }
 
-        const result = await liff.scanCodeV2();
-        console.log("scan result:", JSON.stringify(result));
-        alert(JSON.stringify(result));
+
+        const result =
+            await liff.scanCodeV2();
+
+        console.log(
+            "scan result:",
+            result
+        );
+
+        alert(
+            JSON.stringify(result)
+        );
 
         if (!result || !result.value) {
 
@@ -170,6 +191,15 @@ async function handleScanQRCode(
             return;
         }
 
+        const qrValue =
+            result.value;
+
+        alert(
+            `QRCode: ${qrValue} `
+        );
+
+
+
         /*
         |--------------------------------------------------------------------------
         | 送 API
@@ -178,7 +208,7 @@ async function handleScanQRCode(
 
         const response =
             await fetch(
-                `${API_BASE_URL}/api/spot-check`,
+                `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spotId}`,
                 {
                     method: "POST",
 
@@ -236,9 +266,13 @@ async function handleScanQRCode(
 
         console.error(error);
 
+
         alert(
-            $`QRCode 掃描失敗:{error.message || error}`
+            `QRCode 掃描失敗: ${error.message || error
+            }`
         );
+
+
     }
 }
 
