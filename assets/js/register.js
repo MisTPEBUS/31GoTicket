@@ -134,8 +134,8 @@ async function init() {
 
         if (data.status !== "NONE") {
 
-            window.location.href =
-                "./progress.html";
+            /*  window.location.href =
+                 "./progress.html"; */
 
             return;
         }
@@ -293,8 +293,8 @@ async function init() {
                         );
 
 
-                        window.location.href = `./progress.html?campaignId=${campaignId}`;
-
+                        /*   window.location.href = `./progress.html?campaignId=${campaignId}`;
+   */
                         return;
                     }
 
