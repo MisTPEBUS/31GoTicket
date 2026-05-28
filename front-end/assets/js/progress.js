@@ -413,6 +413,7 @@ function renderHeroStatus(activity) {
 }
 
 
+
 function renderSpotCarousel(activity) {
 
     const spotCarousel =
@@ -424,69 +425,22 @@ function renderSpotCarousel(activity) {
         return;
     }
 
-    const now =
-        new Date();
-
-    const expiredAt =
-        new Date(
-            activity.expiredAt
-                .replace(" ", "T")
-        );
-
-    const isExpired =
-        now > expiredAt;
-
     spotCarousel.innerHTML =
         activity.spots.map(
             spot => {
 
                 /*
                 |--------------------------------------------------------------------------
-                | Status
+                | Google Navigation URL
                 |--------------------------------------------------------------------------
                 */
 
-                let statusText =
-                    "CURRENT DESTINATION";
-
-                let buttonText =
-                    "開始導航";
-
-                let cardClass =
-                    "from-[#183B5B] to-[#2F6998]";
-
-                if (
-                    spot.status ===
-                    "COMPLETED"
-                ) {
-
-                    statusText =
-                        "COMPLETED";
-
-                    buttonText =
-                        "已完成景點";
-
-                    cardClass =
-                        "from-emerald-600 to-emerald-500";
-                }
-
-                if (isExpired) {
-
-                    statusText =
-                        "EXPIRED";
-
-                    buttonText =
-                        "活動已逾時";
-
-                    cardClass =
-                        "from-slate-500 to-slate-700";
-                }
+                const googleMapUrl =
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.address)}`;
 
                 return `
-                <div
+                <section
                     class="
-                        min-w-[320px]
-                        snap-center
                         relative
                         overflow-hidden
                         rounded-[32px]
@@ -495,6 +449,8 @@ function renderSpotCarousel(activity) {
                         border-slate-100
                         shadow-xl
                         p-6
+                        min-w-full
+                        snap-center
                         flex-shrink-0
                     "
                 >
@@ -532,7 +488,7 @@ function renderSpotCarousel(activity) {
                                         text-slate-400
                                     "
                                 >
-                                    ${statusText}
+                                    CURRENT DESTINATION
                                 </p>
 
                                 <h2
@@ -597,12 +553,19 @@ function renderSpotCarousel(activity) {
                         </div>
 
                         <button
+                            onclick="
+                                window.open(
+                                    '${googleMapUrl}',
+                                    '_blank'
+                                )
+                            "
                             class="
                                 w-full
                                 mt-6
                                 rounded-2xl
                                 bg-gradient-to-r
-                                ${cardClass}
+                                from-[#183B5B]
+                                to-[#2F6998]
                                 text-white
                                 py-4
                                 font-bold
@@ -610,16 +573,18 @@ function renderSpotCarousel(activity) {
                                 shadow-lg
                             "
                         >
-                            ${buttonText}
+                            開始導航
                         </button>
 
                     </div>
 
-                </div>
+                </section>
                 `;
             }
         ).join("");
 }
+
+
 
 
 function renderSpotList(activity) {
