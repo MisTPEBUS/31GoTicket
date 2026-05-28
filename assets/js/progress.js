@@ -463,8 +463,8 @@ function renderSpotCarousel(activity) {
                 */
 
                 const googleMapUrl =
-                    `https://www.google.com/maps/search/?api=1&query=${spot.address}`;
-                alert(googleMapUrl);
+                    `https://www.google.com/maps/search/?api=1&query=${spot.name}`;
+                alert(spot.name);
                 return `
                 <section
                     class="
