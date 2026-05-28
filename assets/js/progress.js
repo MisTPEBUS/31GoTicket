@@ -580,7 +580,7 @@ function renderSpotCarousel(activity) {
                         <button
                             onclick="
                                 liff.openWindow({ url: '${googleMapUrl}', external: true })
-                            "data-address="${spot.address}"
+                            "data-address="${spot.name}"
                             class="
                                 navigateButton
                                 w-full
