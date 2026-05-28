@@ -79,14 +79,15 @@ async function init() {
                     }
                 }
             );
-
-        if (response.success) {
+        const data =
+            await response.json();
+        alert(data.message);
+        if (data.success) {
 
             showSuccess(
                 `景點打卡成功`
             );
-            const data =
-                await response.json();
+
 
             console.log(data);
 
@@ -101,7 +102,7 @@ async function init() {
         }
         else {
             showError(
-                alert(response.message)
+
 
             );
             setTimeout(() => {
