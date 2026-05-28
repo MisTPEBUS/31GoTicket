@@ -66,7 +66,7 @@ async function init() {
 
         const response =
             await fetch(
-                `${API_BASE_URL}/api/spot-check/${profile.userId}/${spotToken}`,
+                `${API_BASE_URL}/api/activity/spot-check/${profile.userId}/${spotToken}`,
                 {
                     method: "POST",
 
