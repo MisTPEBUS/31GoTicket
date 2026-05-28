@@ -63,6 +63,98 @@
 
             </form>
 
+
+            <div id="activityBox" class="hidden space-y-4">
+
+                <div class="
+            rounded-2xl
+            border
+            border-sky-100
+            bg-sky-50
+            p-5
+        ">
+
+                    <p class="text-xs tracking-[0.2em] text-slate-500">
+                        CURRENT ACTIVITY
+                    </p>
+
+                    <h2 id="activityStatus" class="
+                mt-3
+                text-2xl
+                font-black
+                text-slate-900
+            ">
+                    </h2>
+
+                    <div class="mt-4 space-y-2 text-sm">
+
+                        <div class="flex justify-between">
+
+                            <span class="text-slate-500">
+                                訂單編號
+                            </span>
+
+                            <span id="activityOrderNo" class="font-bold text-slate-700">
+                            </span>
+
+                        </div>
+
+                        <div class="flex justify-between">
+
+                            <span class="text-slate-500">
+                                活動開始
+                            </span>
+
+                            <span id="activityStartedAt" class="text-slate-700">
+                            </span>
+
+                        </div>
+
+                        <div class="flex justify-between">
+
+                            <span class="text-slate-500">
+                                活動截止
+                            </span>
+
+                            <span id="activityExpiredAt" class="text-slate-700">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mt-6">
+
+                        <button id="goProgressBtn" class="
+                    rounded-2xl
+                    bg-gradient-to-r
+                    from-[#183B5B]
+                    to-[#2F6998]
+                    py-3
+                    font-bold
+                    text-white
+                ">
+                            查看進度
+                        </button>
+
+                        <button id="reRegisterBtn" class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    py-3
+                    font-bold
+                    text-slate-700
+                ">
+                            重新報名
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
@@ -71,7 +163,9 @@
     <!-- 使用者須知 Modal -->
 
     <div id="noticeModal" class="
+        hidden
         fixed
+        
         inset-0
         bg-black/60
         backdrop-blur-sm
