@@ -464,7 +464,7 @@ function renderSpotCarousel(activity) {
 
                 const googleMapUrl =
                     `https://www.google.com/maps/search/?api=1&query=${spot.name}`;
-                alert(spot.name);
+
                 return `
                 <section
                     class="
@@ -580,8 +580,7 @@ function renderSpotCarousel(activity) {
                         </div>
 
                         <button
-                           
-                            "data-address="${spot.name}"
+                           data-name="${spot.name}"
                             class="
                                 navigateButton
                                 w-full
