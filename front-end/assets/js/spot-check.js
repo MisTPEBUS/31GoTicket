@@ -101,7 +101,8 @@ async function init() {
         }
         else {
             showError(
-                response.message
+                alert(response.message)
+
             );
             setTimeout(() => {
 
@@ -187,12 +188,12 @@ function showError(message) {
     |--------------------------------------------------------------------------
     */
 
-    setTimeout(() => {
-
-        window.location.href =
-            "./register.html";
-
-    }, 2000);
+    /*  setTimeout(() => {
+ 
+         window.location.href =
+             "./register.html";
+ 
+     }, 2000); */
 }
 
 init();
