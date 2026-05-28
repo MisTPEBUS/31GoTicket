@@ -79,40 +79,34 @@ async function init() {
                     }
                 }
             );
+
         const data =
             await response.json();
-        alert(data.message);
-        if (data.success) {
+
+        console.log(data);
+
+        if (response.ok && data.success) {
 
             showSuccess(
-                `景點打卡成功`
+                data.message ||
+                "景點打卡成功，返回查詢頁面"
             );
 
 
-            console.log(data);
-
-
-            setTimeout(() => {
-
-
-
-            }, 1500);
-
             return;
         }
-        else {
-            showError(
 
+        showError(
+            data.message ||
+            "打卡失敗，返回查詢頁面"
+        );
 
-            );
-            setTimeout(() => {
+        setTimeout(() => {
 
+            window.location.href =
+                `./progress.html?spot=${spotToken}`;
 
-
-            }, 1500);
-
-            return;
-        }
+        }, 1500);
 
 
 
