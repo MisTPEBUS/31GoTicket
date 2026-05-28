@@ -75,16 +75,18 @@ async function init() {
                     "click",
                     () => {
 
-                        const address =
+                        const name =
                             button.dataset.name;
 
                         const googleMapUrl =
-                            `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
-                        alert(googleMapUrl);
+                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`;
+
                         liff.openWindow({
                             url: googleMapUrl,
                             external: true
                         });
+
+
                     }
                 );
             });
