@@ -178,9 +178,8 @@ async function handleScanQRCode(
             result
         );
 
-        alert(
-            JSON.stringify(result)
-        );
+
+
 
         if (!result || !result.value) {
 
@@ -191,12 +190,26 @@ async function handleScanQRCode(
             return;
         }
 
+
         const qrValue =
             result.value;
 
-        alert(
-            `QRCode: ${qrValue} `
-        );
+        console.log(qrValue);
+
+        /*
+        |--------------------------------------------------------------------------
+        | parse url
+        |--------------------------------------------------------------------------
+        */
+
+        const url =
+            new URL(qrValue);
+
+        const spot =
+            url.searchParams.get("spot");
+
+        alert(spot);
+
 
 
 
@@ -208,7 +221,7 @@ async function handleScanQRCode(
 
         const response =
             await fetch(
-                `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spotId}`,
+                `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
                 {
                     method: "POST",
 
@@ -223,7 +236,7 @@ async function handleScanQRCode(
                     body: JSON.stringify({
                         lineUserId,
                         spotToken:
-                            qrValue
+                            spot
                     })
                 }
             );
@@ -246,9 +259,34 @@ async function handleScanQRCode(
                 "打卡成功"
             );
 
-            window.location.reload();
+            document
+                .getElementById(
+                    "modalLoading"
+                )
+                .classList.add("hidden");
+
+            document
+                .getElementById(
+                    "modalSuccess"
+                )
+                .classList.remove("hidden");
+
+            document
+                .getElementById(
+                    "modalSuccessMessage"
+                )
+                .innerText =
+                data.message;
+
+            setTimeout(() => {
+
+                setTimeout(async () => { closeSpotCheckModal(); await fetchActivity(); }, 1000);
+            }, 1000);
+
+
 
             return;
+
         }
 
         /*
@@ -257,10 +295,32 @@ async function handleScanQRCode(
         |--------------------------------------------------------------------------
         */
 
+
+        document
+            .getElementById(
+                "modalLoading"
+            )
+            .classList.add("hidden");
+
+        document
+            .getElementById(
+                "modalError"
+            )
+            .classList.remove("hidden");
+
+        document
+            .getElementById(
+                "modalErrorMessage"
+            )
+            .innerText =
+            data.message;
+
         alert(
             data.message ||
             "打卡失敗"
         );
+
+
 
     } catch (error) {
 
@@ -821,3 +881,41 @@ function renderSpotList(activity) {
             }
         ).join("");
 }
+
+function openSpotCheckModal() {
+
+    document
+        .getElementById(
+            "spotCheckModal"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+    document
+        .getElementById(
+            "spotCheckModal"
+        )
+        .classList.add(
+            "flex"
+        );
+}
+
+function closeSpotCheckModal() {
+
+    document
+        .getElementById(
+            "spotCheckModal"
+        )
+        .classList.remove(
+            "flex"
+        );
+
+    document
+        .getElementById(
+            "spotCheckModal"
+        )
+        .classList.add(
+            "hidden"
+        );
+} 
