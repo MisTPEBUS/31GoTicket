@@ -66,31 +66,6 @@ async function init() {
         renderHeroStatus(activity);
         renderSpotList(activity);
         renderSpotCarousel(activity);
-
-        /* document
-            .querySelectorAll(".navigateButton")
-            .forEach(button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const address =
-                            button.dataset.address;
-
-                        const googleMapUrl =
-                            `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
-
-                        liff.openWindow({
-                            url: googleMapUrl,
-                            external: true
-                        });
-                    }
-                );
-            }); */
-
-
-
         /*
         |--------------------------------------------------------------------------
         | 綁定 QRCode 掃描
@@ -461,7 +436,7 @@ function renderSpotCarousel(activity) {
                 */
 
                 const googleMapUrl =
-                    `https://www.google.com/maps/search/?api=1&query=${spot.name}`;
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.name)}`;
 
                 return `
                 <section
@@ -474,7 +449,7 @@ function renderSpotCarousel(activity) {
                         border-slate-100
                         shadow-xl
                         p-6
-                         w-full
+                        min-w-full
                         snap-center
                         flex-shrink-0
                     "
@@ -579,10 +554,12 @@ function renderSpotCarousel(activity) {
 
                         <button
                             onclick="
-                                liff.openWindow({ url: '${googleMapUrl}', external: true })
-                           /*  "data-address="${spot.name}" */
+                                window.open(
+                                    '${googleMapUrl}',
+                                    '_blank'
+                                )
+                            "
                             class="
-                                navigateButton
                                 w-full
                                 mt-6
                                 rounded-2xl
