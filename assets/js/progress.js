@@ -65,6 +65,7 @@ async function init() {
         console.log(activity);
         renderHeroStatus(activity);
         renderSpotList(activity);
+        renderSpotCarousel(activity);
         /*
         |--------------------------------------------------------------------------
         | 綁定 QRCode 掃描
@@ -410,6 +411,216 @@ function renderHeroStatus(activity) {
         return;
     }
 }
+
+
+function renderSpotCarousel(activity) {
+
+    const spotCarousel =
+        document.getElementById(
+            "spotCarousel"
+        );
+
+    if (!spotCarousel) {
+        return;
+    }
+
+    const now =
+        new Date();
+
+    const expiredAt =
+        new Date(
+            activity.expiredAt
+                .replace(" ", "T")
+        );
+
+    const isExpired =
+        now > expiredAt;
+
+    spotCarousel.innerHTML =
+        activity.spots.map(
+            spot => {
+
+                /*
+                |--------------------------------------------------------------------------
+                | Status
+                |--------------------------------------------------------------------------
+                */
+
+                let statusText =
+                    "CURRENT DESTINATION";
+
+                let buttonText =
+                    "開始導航";
+
+                let cardClass =
+                    "from-[#183B5B] to-[#2F6998]";
+
+                if (
+                    spot.status ===
+                    "COMPLETED"
+                ) {
+
+                    statusText =
+                        "COMPLETED";
+
+                    buttonText =
+                        "已完成景點";
+
+                    cardClass =
+                        "from-emerald-600 to-emerald-500";
+                }
+
+                if (isExpired) {
+
+                    statusText =
+                        "EXPIRED";
+
+                    buttonText =
+                        "活動已逾時";
+
+                    cardClass =
+                        "from-slate-500 to-slate-700";
+                }
+
+                return `
+                <div
+                    class="
+                        min-w-[320px]
+                        snap-center
+                        relative
+                        overflow-hidden
+                        rounded-[32px]
+                        bg-white
+                        border
+                        border-slate-100
+                        shadow-xl
+                        p-6
+                        flex-shrink-0
+                    "
+                >
+
+                    <div
+                        class="
+                            absolute
+                            top-0
+                            right-0
+                            w-32
+                            h-32
+                            bg-sky-50
+                            rounded-full
+                            blur-3xl
+                        "
+                    >
+                    </div>
+
+                    <div class="relative z-10">
+
+                        <div
+                            class="
+                                flex
+                                items-start
+                                justify-between
+                            "
+                        >
+
+                            <div>
+
+                                <p
+                                    class="
+                                        text-xs
+                                        tracking-[0.2em]
+                                        text-slate-400
+                                    "
+                                >
+                                    ${statusText}
+                                </p>
+
+                                <h2
+                                    class="
+                                        text-2xl
+                                        font-black
+                                        mt-3
+                                    "
+                                >
+                                    ${spot.name}
+                                </h2>
+
+                                <p
+                                    class="
+                                        text-sm
+                                        text-slate-500
+                                        leading-7
+                                        mt-3
+                                    "
+                                >
+                                    ${spot.description}
+                                </p>
+
+                            </div>
+
+                            <div
+                                class="
+                                    w-14
+                                    h-14
+                                    rounded-2xl
+                                    bg-[#EDF5FB]
+                                    flex
+                                    items-center
+                                    justify-center
+                                "
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="w-7 h-7 text-[#295A86]"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="1.8"
+                                        d="M19 21H5a2 2 0 01-2-2V7h18v12a2 2 0 01-2 2z"
+                                    />
+
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="1.8"
+                                        d="M16 3v4M8 3v4M3 11h18"
+                                    />
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="
+                                w-full
+                                mt-6
+                                rounded-2xl
+                                bg-gradient-to-r
+                                ${cardClass}
+                                text-white
+                                py-4
+                                font-bold
+                                tracking-wide
+                                shadow-lg
+                            "
+                        >
+                            ${buttonText}
+                        </button>
+
+                    </div>
+
+                </div>
+                `;
+            }
+        ).join("");
+}
+
 
 function renderSpotList(activity) {
 
