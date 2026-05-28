@@ -66,6 +66,31 @@ async function init() {
         renderHeroStatus(activity);
         renderSpotList(activity);
         renderSpotCarousel(activity);
+
+        document
+            .querySelectorAll(".navigateButton")
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const address =
+                            button.dataset.address;
+
+                        const googleMapUrl =
+                            `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+
+                        liff.openWindow({
+                            url: googleMapUrl,
+                            external: true
+                        });
+                    }
+                );
+            });
+
+
+
         /*
         |--------------------------------------------------------------------------
         | 綁定 QRCode 掃描
@@ -554,12 +579,10 @@ function renderSpotCarousel(activity) {
 
                         <button
                             onclick="
-                                window.open(
-                                    '${googleMapUrl}',
-                                    '_blank'
-                                )
-                            "
+                                liff.openWindow({ url: '${googleMapUrl}', external: true })
+                            "data-address="${spot.address}"
                             class="
+                                navigateButton
                                 w-full
                                 mt-6
                                 rounded-2xl
