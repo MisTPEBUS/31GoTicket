@@ -76,7 +76,7 @@ async function init() {
                     () => {
 
                         const address =
-                            button.dataset.address;
+                            button.dataset.name;
 
                         const googleMapUrl =
                             `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
