@@ -80,26 +80,39 @@ async function init() {
                 }
             );
 
-        if (!response.ok) {
+        if (response.success) {
 
             showSuccess(
                 `景點打卡成功`
             );
+            const data =
+                await response.json();
+
+            console.log(data);
+
+
+            setTimeout(() => {
+
+
+
+            }, 1500);
+
+            return;
+        }
+        else {
+            showError(
+                response.message
+            );
+            setTimeout(() => {
+
+
+
+            }, 1500);
 
             return;
         }
 
-        const data =
-            await response.json();
 
-        console.log(data);
-
-
-        setTimeout(() => {
-
-
-
-        }, 1500);
 
     } catch (error) {
 
@@ -108,9 +121,7 @@ async function init() {
 
         //未註冊活動或是活動逾時
 
-        showError(
-            "系統發生錯誤"
-        );
+
     }
 }
 
