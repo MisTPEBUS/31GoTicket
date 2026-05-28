@@ -516,7 +516,7 @@ function renderSpotList(activity) {
                         </p>
     
                        <button
-                            id="scanButton"
+                           id="scanButton-${spot.spotId}"
                             ${isExpired ? "disabled" : ""}
                             class="
                                 mt-6
