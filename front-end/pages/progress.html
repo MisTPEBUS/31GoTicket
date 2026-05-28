@@ -18,6 +18,17 @@
     </script>
 
     <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+    <style>
         html,
         body {
             touch-action: manipulation;
@@ -111,9 +122,6 @@
 
             <div class="mt-8 bg-white/10 border border-white/10 backdrop-blur-xl rounded-[28px] p-5">
 
-
-
-
                 <div class="flex items-center justify-between">
 
                     <div>
@@ -178,6 +186,19 @@
     <main class="max-w-md mx-auto px-4 pb-10 -mt-6">
 
         <!-- Current Mission -->
+
+        <!-- Spot Carousel -->
+
+        <section class="mt-6 overflow-x-auto no-scrollbar">
+
+            <div id="spotCarousel" class="flex gap-4 snap-x snap-mandatory pb-2">
+            </div>
+
+        </section>
+
+
+
+
 
         <section class="relative overflow-hidden rounded-[32px] bg-white border border-slate-100 shadow-xl p-6">
 
