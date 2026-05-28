@@ -3,6 +3,8 @@ import {
     initLiff
 } from "../liff/liff-init.js";
 
+const API_BASE_URL =
+    "https://9f4d-59-124-220-148.ngrok-free.app";
 async function init() {
 
     try {
@@ -58,21 +60,53 @@ async function init() {
 
         /*
         |--------------------------------------------------------------------------
-        | mock api result
+        | api result
         |--------------------------------------------------------------------------
         */
 
-        setTimeout(() => {
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/spot-check/${profile.userId}/${spotToken}`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "ngrok-skip-browser-warning":
+                            "true"
+                    }
+                }
+            );
+
+        if (!response.ok) {
 
             showSuccess(
                 `景點打卡成功`
             );
+
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        console.log(data);
+
+
+        setTimeout(() => {
+
+
 
         }, 1500);
 
     } catch (error) {
 
         console.error(error);
+        //重複打卡
+
+        //未註冊活動或是活動逾時
 
         showError(
             "系統發生錯誤"
