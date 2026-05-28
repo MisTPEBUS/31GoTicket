@@ -436,7 +436,7 @@ function renderSpotCarousel(activity) {
                 */
 
                 const googleMapUrl =
-                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.address)}`;
+                    `https://www.google.com/maps/search/?api=1&query=${spot.address}`;
 
                 return `
                 <section
@@ -449,7 +449,7 @@ function renderSpotCarousel(activity) {
                         border-slate-100
                         shadow-xl
                         p-6
-                        min-w-full
+                         w-full
                         snap-center
                         flex-shrink-0
                     "
