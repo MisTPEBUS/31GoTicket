@@ -208,7 +208,7 @@ async function handleScanQRCode(
         const spot =
             url.searchParams.get("spot");
 
-        alert(spot);
+
 
 
 
