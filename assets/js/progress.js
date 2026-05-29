@@ -218,7 +218,7 @@ async function handleScanQRCode(
         | 送 API
         |--------------------------------------------------------------------------
         */
-
+        alert(`${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`)
         const response =
             await fetch(
                 `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
