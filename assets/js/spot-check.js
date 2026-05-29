@@ -92,21 +92,34 @@ async function init() {
                 "景點打卡成功，返回查詢頁面"
             );
 
+            setTimeout(() => {
+
+
+                window.location.href =
+                    `./progress.html?spot=${spotToken}`;
+
+            }, 1500);
+
 
             return;
         }
+        else {
 
-        showError(
-            data.message ||
-            "打卡失敗，返回查詢頁面"
-        );
+            showError(
+                data.message ||
+                "打卡失敗，返回查詢頁面"
+            );
 
-        setTimeout(() => {
+            setTimeout(() => {
+                window.location.href =
+                    "./register.html";
 
-            window.location.href =
-                `./progress.html?spot=${spotToken}`;
+                /*  window.location.href =
+                     `./progress.html?spot=${spotToken}`; */
 
-        }, 1500);
+            }, 1500);
+        }
+
 
 
 
