@@ -254,35 +254,16 @@ async function handleScanQRCode(
 
         if (data.success) {
 
+            alert("打卡成功");
 
-            document
-                .getElementById(
-                    "modalLoading"
-                )
-                .classList.add("hidden");
+            const activity =
+                await fetchActivity(
+                    lineUserId
+                );
 
-            document
-                .getElementById(
-                    "modalSuccess"
-                )
-                .classList.remove("hidden");
-
-            document
-                .getElementById(
-                    "modalSuccessMessage"
-                )
-                .innerText =
-                data.message;
-
-            setTimeout(() => {
-
-                setTimeout(async () => { closeSpotCheckModal(); await fetchActivity(); }, 1000);
-            }, 1000);
-
-
+            renderPage(activity);
 
             return;
-
         }
 
         /*
@@ -292,24 +273,7 @@ async function handleScanQRCode(
         */
         else {
 
-            document
-                .getElementById(
-                    "modalLoading"
-                )
-                .classList.add("hidden");
-
-            document
-                .getElementById(
-                    "modalError"
-                )
-                .classList.remove("hidden");
-
-            document
-                .getElementById(
-                    "modalErrorMessage"
-                )
-                .innerText =
-                data.message;
+            alert("打卡失敗")
         }
 
 
@@ -983,4 +947,35 @@ function showError(message) {
 
 
     }, 2000);
+}
+
+function renderPage(activity) {
+
+    renderHeroStatus(activity);
+
+    renderSpotList(activity);
+
+    renderSpotCarousel(activity);
+
+    bindEvents();
+}
+
+async function fetchActivity(userId) {
+
+    const response =
+        await fetch(
+            `${API_BASE_URL}/api/activity/user-activities/${userId}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning": "true"
+                }
+            }
+        );
+
+    if (!response.ok) {
+        throw new Error("活動資料讀取失敗");
+    }
+
+    return await response.json();
 }
