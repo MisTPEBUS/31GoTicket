@@ -148,12 +148,12 @@ function showSuccess(message) {
     |--------------------------------------------------------------------------
     */
 
-    /* setTimeout(() => {
+    setTimeout(() => {
 
         window.location.href =
             "./progress.html";
 
-    }, 2000); */
+    }, 2000);
 }
 
 /*
@@ -183,12 +183,12 @@ function showError(message) {
     |--------------------------------------------------------------------------
     */
 
-    /*  setTimeout(() => {
- 
-         window.location.href =
-             "./register.html";
- 
-     }, 2000); */
+    setTimeout(() => {
+
+        window.location.href =
+            "./register.html";
+
+    }, 2000);
 }
 
 init();
