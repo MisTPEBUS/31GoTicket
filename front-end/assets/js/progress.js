@@ -218,7 +218,7 @@ async function handleScanQRCode(
         | 送 API
         |--------------------------------------------------------------------------
         */
-        alert(`${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`)
+
         const response =
             await fetch(
                 `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
@@ -254,10 +254,6 @@ async function handleScanQRCode(
 
         if (data.success) {
 
-            alert(
-                data.message ||
-                "打卡成功"
-            );
 
             document
                 .getElementById(
@@ -294,31 +290,31 @@ async function handleScanQRCode(
         | 失敗
         |--------------------------------------------------------------------------
         */
+        else {
+
+            document
+                .getElementById(
+                    "modalLoading"
+                )
+                .classList.add("hidden");
+
+            document
+                .getElementById(
+                    "modalError"
+                )
+                .classList.remove("hidden");
+
+            document
+                .getElementById(
+                    "modalErrorMessage"
+                )
+                .innerText =
+                data.message;
+        }
 
 
-        document
-            .getElementById(
-                "modalLoading"
-            )
-            .classList.add("hidden");
 
-        document
-            .getElementById(
-                "modalError"
-            )
-            .classList.remove("hidden");
 
-        document
-            .getElementById(
-                "modalErrorMessage"
-            )
-            .innerText =
-            data.message;
-
-        alert(
-            data.message ||
-            "打卡失敗"
-        );
 
 
 
@@ -918,4 +914,73 @@ function closeSpotCheckModal() {
         .classList.add(
             "hidden"
         );
-} 
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| 成功
+|--------------------------------------------------------------------------
+*/
+
+function showSuccess(message) {
+
+    document
+        .getElementById("loading")
+        .classList.add("hidden");
+
+    document
+        .getElementById("successBox")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("successMessage")
+        .innerText =
+        message;
+
+    /*
+    |--------------------------------------------------------------------------
+    | redirect
+    |--------------------------------------------------------------------------
+    */
+
+    setTimeout(() => {
+
+
+
+    }, 2000);
+}
+
+/*
+|--------------------------------------------------------------------------
+| 失敗
+|--------------------------------------------------------------------------
+*/
+
+function showError(message) {
+
+    document
+        .getElementById("loading")
+        .classList.add("hidden");
+
+    document
+        .getElementById("errorBox")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("errorMessage")
+        .innerText =
+        message;
+
+    /*
+    |--------------------------------------------------------------------------
+    | redirect
+    |--------------------------------------------------------------------------
+    */
+
+    setTimeout(() => {
+
+
+
+    }, 2000);
+}
