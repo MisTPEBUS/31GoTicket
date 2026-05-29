@@ -66,7 +66,6 @@ async function init() {
         renderHeroStatus(activity);
         renderSpotList(activity);
         renderSpotCarousel(activity);
-        renderReward(activity, userId);
 
         document
             .querySelectorAll(".navigateButton")
@@ -255,10 +254,6 @@ async function handleScanQRCode(
 
         if (data.success) {
 
-            alert(
-                data.message ||
-                "打卡成功"
-            );
 
             document
                 .getElementById(
@@ -296,10 +291,6 @@ async function handleScanQRCode(
         |--------------------------------------------------------------------------
         */
         else {
-            alert(
-                data.message ||
-                "打卡失敗"
-            );
 
             document
                 .getElementById(
@@ -319,13 +310,14 @@ async function handleScanQRCode(
                 )
                 .innerText =
                 data.message;
-
-
         }
 
 
 
-        init();
+
+
+
+
     } catch (error) {
 
         console.error(error);
@@ -706,134 +698,7 @@ function renderSpotCarousel(activity) {
 }
 
 
-function renderReward(
-    activity,
-    userId
-) {
 
-    const rewardButton =
-        document.getElementById(
-            "rewardButton"
-        );
-
-    const completedCount =
-        activity.spots.filter(
-            spot => spot.status === "COMPLETED"
-        ).length;
-
-    const totalCount =
-        activity.spots.length;
-
-    const isCompleted =
-        completedCount === totalCount;
-
-    if (!isCompleted) {
-
-        rewardButton.disabled = true;
-
-        rewardButton.className =
-            "w-full bg-gray-300 text-gray-500 py-3 rounded-2xl cursor-not-allowed";
-
-        rewardButton.innerText =
-            "尚未達成領獎資格";
-
-        return;
-    }
-
-    rewardButton.disabled = false;
-
-    rewardButton.className =
-        "w-full bg-emerald-600 text-white py-3 rounded-2xl";
-
-    rewardButton.innerText =
-        "立即領獎";
-
-    rewardButton.onclick =
-        () => openRewardModal(userId);
-}
-
-async function openRewardModal(
-    userId
-) {
-
-    try {
-
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/reward/${userId}`,
-                {
-                    headers: {
-                        "ngrok-skip-browser-warning":
-                            "true"
-                    }
-                }
-            );
-
-        if (!response.ok) {
-
-            alert("QRCode 取得失敗");
-
-            return;
-        }
-
-        const result =
-            await response.json();
-
-        document
-            .getElementById(
-                "rewardQrImage"
-            )
-            .src =
-            result.qrCodeUrl;
-
-        document
-            .getElementById(
-                "rewardModal"
-            )
-            .classList.remove(
-                "hidden"
-            );
-
-        document
-            .getElementById(
-                "rewardModal"
-            )
-            .classList.add(
-                "flex"
-            );
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("QRCode 取得失敗");
-    }
-}
-document
-    .getElementById(
-        "closeRewardModal"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
-
-            document
-                .getElementById(
-                    "rewardModal"
-                )
-                .classList.remove(
-                    "flex"
-                );
-
-            document
-                .getElementById(
-                    "rewardModal"
-                )
-                .classList.add(
-                    "hidden"
-                );
-        }
-    );
 
 function renderSpotList(activity) {
 
@@ -1049,4 +914,73 @@ function closeSpotCheckModal() {
         .classList.add(
             "hidden"
         );
-} 
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| 成功
+|--------------------------------------------------------------------------
+*/
+
+function showSuccess(message) {
+
+    document
+        .getElementById("loading")
+        .classList.add("hidden");
+
+    document
+        .getElementById("successBox")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("successMessage")
+        .innerText =
+        message;
+
+    /*
+    |--------------------------------------------------------------------------
+    | redirect
+    |--------------------------------------------------------------------------
+    */
+
+    setTimeout(() => {
+
+
+
+    }, 2000);
+}
+
+/*
+|--------------------------------------------------------------------------
+| 失敗
+|--------------------------------------------------------------------------
+*/
+
+function showError(message) {
+
+    document
+        .getElementById("loading")
+        .classList.add("hidden");
+
+    document
+        .getElementById("errorBox")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("errorMessage")
+        .innerText =
+        message;
+
+    /*
+    |--------------------------------------------------------------------------
+    | redirect
+    |--------------------------------------------------------------------------
+    */
+
+    setTimeout(() => {
+
+
+
+    }, 2000);
+}
