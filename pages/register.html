@@ -10,6 +10,7 @@
         三鶯 GO - 活動報名
     </title>
 
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js">
     </script>
 
@@ -55,6 +56,40 @@
                     </label>
 
                     <input id="orderNo" class="w-full border rounded px-3 py-2" />
+                </div>
+                <div>
+
+                    <label class="block mb-1">
+                        Ticket No
+                    </label>
+
+                    <div class="flex gap-2">
+
+                        <input id="ticketNo" class="flex-1 border rounded px-3 py-2" placeholder="請掃描車票 QRCode" />
+
+                        <button id="scanTicketBtn" type="button" class="
+                            px-4
+                            bg-sky-600
+                            text-white
+                            rounded
+                            whitespace-nowrap
+                        ">
+                            掃描
+                        </button>
+
+                    </div>
+
+                </div>
+                <div id="scannerContainer" class="hidden">
+
+                    <div id="reader" class="
+            mt-4
+            rounded-xl
+            overflow-hidden
+            border
+        ">
+                    </div>
+
                 </div>
 
                 <button id="submitBtn" type="submit" class="w-full bg-black text-white py-3 rounded-xl">
