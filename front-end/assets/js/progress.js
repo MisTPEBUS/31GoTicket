@@ -137,16 +137,21 @@ async function init() {
 }
 
 init();
-
+document
+    .getElementById("closeScanner")
+    .addEventListener("click", closeScanner);
 async function closeScanner() {
 
-    document
+    const modal = document
         .getElementById(
             "scannerModal"
-        )
-        .classList.add(
-            "hidden"
         );
+    modal.classList.remove(
+        "flex"
+    );
+    modal.classList.add(
+        "hidden"
+    );
 
     if (html5QrCode) {
 
@@ -174,9 +179,29 @@ async function closeScanner() {
 async function openScanner(
     lineUserId
 ) {
+
+    const modal =
+        document.getElementById(
+            "scannerModal"
+        );
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    modal.classList.add(
+        "flex"
+    );
+
     if (html5QrCode) {
 
-        await html5QrCode.clear();
+        try {
+            await html5QrCode.stop();
+        } catch { }
+
+        try {
+            await html5QrCode.clear();
+        } catch { }
 
         html5QrCode = null;
     }
@@ -185,22 +210,10 @@ async function openScanner(
         new Html5Qrcode(
             "reader"
         );
-    document
-        .getElementById("closeScanner")
-        .addEventListener("click", closeScanner);
-
-    document
-        .getElementById(
-            "scannerModal"
-        )
-        .classList.remove(
-            "hidden"
-        );
-
 
     const qrSize =
         Math.min(
-            window.innerWidth * 0.75,
+            window.innerWidth * 0.8,
             320
         );
 
@@ -211,24 +224,14 @@ async function openScanner(
         },
         {
             fps: 10,
-
             qrbox: {
                 width: qrSize,
                 height: qrSize
             }
         },
-        onSuccess,
         async decodedText => {
 
-            console.log(
-                decodedText
-            );
-
-            await html5QrCode.stop();
-            await html5QrCode.clear();
-            html5QrCode = null;
-
-            closeScanner();
+            await closeScanner();
 
             await handleScanResult(
                 lineUserId,
@@ -287,7 +290,7 @@ async function handleScanResult(
 
         renderPage(
             activity,
-            userId
+            lineUserId
         );
 
         return;
@@ -951,7 +954,8 @@ function showError(message) {
     }, 2000);
 }
 
-function renderPage(activity) {
+function renderPage(activity,
+    userId) {
 
     renderHeroStatus(activity);
 
@@ -959,7 +963,7 @@ function renderPage(activity) {
 
     renderSpotCarousel(activity);
 
-    bindEvents();
+    bindEvents(userId);
 }
 function bindEvents(
     userId
