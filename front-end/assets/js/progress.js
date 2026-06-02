@@ -62,7 +62,6 @@ async function init() {
         const activity =
             await response.json();
 
-        console.log(activity);
         renderHeroStatus(activity);
         renderSpotList(activity);
         renderSpotCarousel(activity);
@@ -1111,10 +1110,70 @@ function bindEvents(
     if (rewardButton) {
 
         rewardButton.onclick =
-            () => {
+            async () => {
 
-                window.location.href =
-                    `./info.html?userActivityId=${activity.userActivityId}`;
+                try {
+
+                    rewardButton.disabled =
+                        true;
+
+                    rewardButton.innerText =
+                        "處理中...";
+
+                    const response =
+                        await fetch(
+                            `${API_BASE_URL}/api/activity/user-activities/complete/${activity.userActivityId}`,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "ngrok-skip-browser-warning":
+                                        "true"
+                                }
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+                    if (!response.ok) {
+
+                        alert(
+                            data.message ||
+                            "領獎失敗"
+                        );
+
+                        rewardButton.disabled =
+                            false;
+
+                        rewardButton.innerText =
+                            "前往領獎";
+
+                        return;
+                    }
+
+                    window.location.href =
+                        `./info.html?userActivityId=${activity.userActivityId}`;
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    );
+
+                    alert(
+                        "系統忙碌中"
+                    );
+
+                    rewardButton.disabled =
+                        false;
+
+                    rewardButton.innerText =
+                        "前往領獎";
+                }
             };
     }
 }
