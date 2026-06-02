@@ -95,6 +95,12 @@ async function init() {
                     "./pages/register.html";
 
                 break;
+            case "register":
+
+                window.location.href =
+                    "./pages/info.html";
+
+                break;
 
             case "spot-check":
 
