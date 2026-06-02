@@ -300,6 +300,89 @@ async function handleScanResult(
         data.message
     );
 }
+function renderReward(
+    activity
+) {
+
+    const rewardBox =
+        document.getElementById(
+            "rewardBox"
+        );
+
+    const completedCount =
+        activity.spots.filter(
+            spot =>
+                spot.status ===
+                "COMPLETED"
+        ).length;
+
+    const totalCount =
+        activity.spots.length;
+
+    const canClaim =
+        completedCount === totalCount &&
+        activity.status?.toLowerCase() ===
+        "active";
+
+    rewardBox.innerHTML =
+        canClaim
+            ? `
+            <div class="mt-6 bg-white rounded-3xl shadow p-6 text-center">
+
+                <h2 class="text-xl font-bold mb-2">
+                    活動獎勵
+                </h2>
+
+                <p class="text-emerald-600 mb-4 font-medium">
+                    恭喜完成所有景點集章
+                </p>
+
+                <button
+                    id="rewardButton"
+                    class="
+                        w-full
+                        bg-gradient-to-r
+                        from-emerald-500
+                        to-green-600
+                        text-white
+                        py-3
+                        rounded-2xl
+                        font-bold
+                    "
+                >
+                    前往領獎
+                </button>
+
+            </div>
+            `
+            : `
+            <div class="mt-6 bg-white rounded-3xl shadow p-6 text-center">
+
+                <h2 class="text-xl font-bold mb-2">
+                    活動獎勵
+                </h2>
+
+                <p class="text-gray-500 mb-4">
+                    完成全部景點即可兌換限量紀念禮
+                </p>
+
+                <button
+                    class="
+                        w-full
+                        bg-gray-300
+                        text-gray-500
+                        py-3
+                        rounded-2xl
+                        cursor-not-allowed
+                    "
+                    disabled
+                >
+                    尚未達成領獎資格
+                </button>
+
+            </div>
+            `;
+}
 
 function renderHeroStatus(activity) {
 
@@ -963,10 +1046,13 @@ function renderPage(activity,
 
     renderSpotCarousel(activity);
 
-    bindEvents(userId);
+    renderReward(activity);
+
+    bindEvents(userId, activity);
 }
 function bindEvents(
-    userId
+    userId,
+    activity
 ) {
     document
         .querySelectorAll(
@@ -1004,6 +1090,20 @@ function bindEvents(
                     });
                 };
         });
+    const rewardButton =
+        document.getElementById(
+            "rewardButton"
+        );
+
+    if (rewardButton) {
+
+        rewardButton.onclick =
+            () => {
+
+                window.location.href =
+                    `./info.html?userActivityId=${activity.userActivityId}`;
+            };
+    }
 }
 
 async function fetchActivity(userId) {
