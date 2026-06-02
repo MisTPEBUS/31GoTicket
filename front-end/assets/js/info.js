@@ -29,20 +29,9 @@ async function init() {
         .src =
         profile.pictureUrl;
 
-    document
-        .getElementById(
-            "memberName"
-        )
-        .innerText =
-        profile.displayName;
 
-    document
-        .getElementById(
-            "statusMessage"
-        )
-        .innerText =
-        profile.statusMessage ||
-        "三鶯 GO 數位會員";
+
+
     document
         .getElementById(
             "displayName"
