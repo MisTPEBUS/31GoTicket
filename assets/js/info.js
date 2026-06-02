@@ -77,6 +77,14 @@ async function init() {
         return;
     }
 
+    const profile =
+        await liff.getProfile();
+
+    console.log(profile);
+
+    const lineUserId =
+        profile.userId;
+
     /*
             activity api
         */
