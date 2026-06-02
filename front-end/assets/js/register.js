@@ -147,6 +147,7 @@ async function init() {
         |--------------------------------------------------------------------------
         */
 
+
         document.getElementById(
             "lineUserId"
         ).value =
@@ -163,6 +164,16 @@ async function init() {
             "hidden"
         );
 
+        document.getElementById(
+            "registerForm"
+        ).classList.remove(
+            "hidden"
+        );
+        document.getElementById(
+            "registerForm"
+        ).classList.remove(
+            "hidden"
+        );
         document.getElementById(
             "registerForm"
         ).classList.remove(
@@ -225,7 +236,11 @@ async function init() {
                     OrderNo:
                         document.getElementById(
                             "orderNo"
-                        ).value.trim(),
+                        ).value.trim() ?? "",
+                    TicketNo:
+                        document.getElementById(
+                            "ticketNo"
+                        ).value.trim() ?? "",
 
                     CampaignId:
                         "2750ef49-8292-42fa-9660-273c46678aad"
@@ -293,8 +308,8 @@ async function init() {
                         );
 
 
-                        /*   window.location.href = `./progress.html?campaignId=${campaignId}`;
-   */
+                        window.location.href = `./progress.html?campaignId=${campaignId}`;
+
                         return;
                     }
 
@@ -336,3 +351,71 @@ async function init() {
 }
 
 init();
+
+async function startTicketScanner() {
+
+    const container =
+        document.getElementById(
+            "scannerContainer"
+        );
+
+    container.classList.remove(
+        "hidden"
+    );
+
+    if (html5QrCode) {
+
+        try {
+
+            await html5QrCode.stop();
+
+        } catch { }
+
+        try {
+
+            await html5QrCode.clear();
+
+        } catch { }
+
+        html5QrCode = null;
+    }
+
+    html5QrCode =
+        new Html5Qrcode(
+            "reader"
+        );
+
+    await html5QrCode.start(
+        {
+            facingMode:
+                "environment"
+        },
+        {
+            fps: 10,
+            qrbox: 250
+        },
+        async decodedText => {
+
+            console.log(
+                decodedText
+            );
+
+            document
+                .getElementById(
+                    "ticketNo"
+                )
+                .value =
+                decodedText;
+
+            await html5QrCode.stop();
+
+            await html5QrCode.clear();
+
+            html5QrCode = null;
+
+            container.classList.add(
+                "hidden"
+            );
+        }
+    );
+}
