@@ -361,6 +361,10 @@ async function startTicketScanner() {
     container.classList.remove(
         "hidden"
     );
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 
     if (html5QrCode) {
 
