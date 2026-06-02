@@ -68,6 +68,19 @@ async function init() {
         renderSpotCarousel(activity);
 
         document
+            .getElementById(
+                "profileButton"
+            )
+            ?.addEventListener(
+                "click",
+                () => {
+
+                    window.location.href =
+                        "./info.html";
+                }
+            );
+
+        document
             .querySelectorAll(".navigateButton")
             .forEach(button => {
 
