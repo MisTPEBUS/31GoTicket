@@ -95,7 +95,7 @@ async function init() {
                     "./pages/register.html";
 
                 break;
-            case "register":
+            case "info":
 
                 window.location.href =
                     "./pages/info.html";
