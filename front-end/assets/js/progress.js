@@ -5,7 +5,7 @@ import {
 
 const API_BASE_URL =
     "https://9f4d-59-124-220-148.ngrok-free.app";
-
+let html5QrCode = null;
 /*
 |--------------------------------------------------------------------------
 | 初始化
@@ -98,8 +98,6 @@ async function init() {
         | 綁定 QRCode 掃描
         |--------------------------------------------------------------------------
         */
-
-
         document
             .querySelectorAll("[id^='scanButton-']")
             .forEach(button => {
@@ -119,9 +117,8 @@ async function init() {
                             spotId
                         );
 
-                        await handleScanQRCode(
-                            userId,
-                            spotId
+                        await openScanner(
+                            userId
                         );
                     }
                 );
@@ -141,159 +138,138 @@ async function init() {
 
 init();
 
+async function closeScanner() {
+
+    document
+        .getElementById(
+            "scannerModal"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+    if (html5QrCode) {
+
+        try {
+
+            await html5QrCode.stop();
+
+        } catch {
+
+        }
+
+        html5QrCode = null;
+    }
+}
+
 /*
 |--------------------------------------------------------------------------
 | 掃描 QRCode
 |--------------------------------------------------------------------------
 */
 
-async function handleScanQRCode(
-    lineUserId,
-    spotId
+
+async function openScanner(
+    lineUserId
 ) {
 
-    try {
-
-        /*
-        |--------------------------------------------------------------------------
-        | LINE QRCode Scan
-        |--------------------------------------------------------------------------
-        */
-
-        if (!liff.isInClient()) {
-
-            alert(
-                "請使用 LINE 開啟活動頁面"
-            );
-
-            return;
-        }
-
-
-        const result =
-            await liff.scanCodeV2();
-
-        console.log(
-            "scan result:",
-            result
+    document
+        .getElementById(
+            "scannerModal"
+        )
+        .classList.remove(
+            "hidden"
         );
 
+    html5QrCode =
+        new Html5Qrcode(
+            "reader"
+        );
 
+    await html5QrCode.start(
+        {
+            facingMode:
+                "environment"
+        },
+        {
+            fps: 10,
+            qrbox: 250
+        },
+        async decodedText => {
 
-
-        if (!result || !result.value) {
-
-            alert(
-                "未掃描到有效 QRCode"
+            console.log(
+                decodedText
             );
 
-            return;
+            await html5QrCode.stop();
+
+            closeScanner();
+
+            await handleScanResult(
+                lineUserId,
+                decodedText
+            );
         }
+    );
+}
 
+async function handleScanResult(
+    lineUserId,
+    qrValue
+) {
+    const url =
+        new URL(
+            qrValue
+        );
 
-        const qrValue =
-            result.value;
+    const spot =
+        url.searchParams.get(
+            "spot"
+        );
 
-        console.log(qrValue);
+    console.log(
+        "spot:",
+        spot
+    );
 
-        /*
-        |--------------------------------------------------------------------------
-        | parse url
-        |--------------------------------------------------------------------------
-        */
-
-        const url =
-            new URL(qrValue);
-
-        const spot =
-            url.searchParams.get("spot");
-
-
-
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | 送 API
-        |--------------------------------------------------------------------------
-        */
-
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-
-                        "ngrok-skip-browser-warning":
-                            "true"
-                    },
-
-                    body: JSON.stringify({
-                        lineUserId,
-                        spotToken:
-                            spot
-                    })
+    const response =
+        await fetch(
+            `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json",
+                    "ngrok-skip-browser-warning":
+                        "true"
                 }
-            );
+            }
+        );
 
-        const data =
-            await response.json();
+    const data =
+        await response.json();
 
-        console.log(data);
-
-        /*
-        |--------------------------------------------------------------------------
-        | 成功
-        |--------------------------------------------------------------------------
-        */
-
-        if (data.success) {
-
-            alert("打卡成功");
-
-            const activity =
-                await fetchActivity(
-                    lineUserId
-                );
-
-            renderPage(activity);
-
-            return;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | 失敗
-        |--------------------------------------------------------------------------
-        */
-        else {
-
-            alert("打卡失敗")
-        }
-
-
-
-
-
-
-
-    } catch (error) {
-
-        console.error(error);
-
+    if (data.success) {
 
         alert(
-            `QRCode 掃描失敗: ${error.message || error
-            }`
+            "打卡成功"
         );
 
+        const activity =
+            await fetchActivity(
+                lineUserId
+            );
 
+        renderPage(
+            activity
+        );
+
+        return;
     }
+
+    alert(
+        data.message
+    );
 }
 
 function renderHeroStatus(activity) {
