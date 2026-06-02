@@ -81,6 +81,8 @@ async function init() {
             page route
         */
 
+        console.log(`page: ${page}`);
+
         switch (page) {
 
             case "progress":
@@ -96,7 +98,6 @@ async function init() {
 
                 break;
             case "info":
-
                 window.location.href =
                     "./pages/info.html";
 
