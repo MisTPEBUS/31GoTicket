@@ -4,7 +4,7 @@ import {
 
 const API_BASE_URL =
     "https://9f4d-59-124-220-148.ngrok-free.app";
-
+let html5QrCode = null;
 /*
 |--------------------------------------------------------------------------
 | 使用者須知狀態
@@ -169,16 +169,15 @@ async function init() {
         ).classList.remove(
             "hidden"
         );
-        document.getElementById(
-            "registerForm"
-        ).classList.remove(
-            "hidden"
-        );
-        document.getElementById(
-            "registerForm"
-        ).classList.remove(
-            "hidden"
-        );
+        document
+            .getElementById(
+                "scanTicketBtn"
+            )
+            ?.addEventListener(
+                "click",
+                startTicketScanner
+            );
+
 
         /*
         |--------------------------------------------------------------------------
@@ -308,7 +307,7 @@ async function init() {
                         );
 
 
-                        window.location.href = `./progress.html?campaignId=${campaignId}`;
+                        window.location.href = `./progress.html?campaignId=2750ef49-8292-42fa-9660-273c46678aad`;
 
                         return;
                     }
