@@ -153,6 +153,8 @@ async function closeScanner() {
         try {
 
             await html5QrCode.stop();
+            await html5QrCode.clear();
+            html5QrCode = null;
 
         } catch {
 
@@ -172,6 +174,17 @@ async function closeScanner() {
 async function openScanner(
     lineUserId
 ) {
+    if (html5QrCode) {
+
+        await html5QrCode.clear();
+
+        html5QrCode = null;
+    }
+
+    html5QrCode =
+        new Html5Qrcode(
+            "reader"
+        );
 
     document
         .getElementById(
@@ -202,6 +215,8 @@ async function openScanner(
             );
 
             await html5QrCode.stop();
+            await html5QrCode.clear();
+            html5QrCode = null;
 
             closeScanner();
 
@@ -261,7 +276,8 @@ async function handleScanResult(
             );
 
         renderPage(
-            activity
+            activity,
+            userId
         );
 
         return;
@@ -934,6 +950,46 @@ function renderPage(activity) {
     renderSpotCarousel(activity);
 
     bindEvents();
+}
+function bindEvents(
+    userId
+) {
+    document
+        .querySelectorAll(
+            "[id^='scanButton-']"
+        )
+        .forEach(button => {
+
+            button.onclick =
+                async () => {
+
+                    await openScanner(
+                        userId
+                    );
+                };
+        });
+
+    document
+        .querySelectorAll(
+            ".navigateButton"
+        )
+        .forEach(button => {
+
+            button.onclick =
+                () => {
+
+                    const name =
+                        button.dataset.name;
+
+                    const url =
+                        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`;
+
+                    liff.openWindow({
+                        url,
+                        external: true
+                    });
+                };
+        });
 }
 
 async function fetchActivity(userId) {
