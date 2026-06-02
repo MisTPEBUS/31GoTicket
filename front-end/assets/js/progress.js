@@ -185,6 +185,9 @@ async function openScanner(
         new Html5Qrcode(
             "reader"
         );
+    document
+        .getElementById("closeScanner")
+        .addEventListener("click", closeScanner);
 
     document
         .getElementById(
@@ -194,9 +197,11 @@ async function openScanner(
             "hidden"
         );
 
-    html5QrCode =
-        new Html5Qrcode(
-            "reader"
+
+    const qrSize =
+        Math.min(
+            window.innerWidth * 0.75,
+            320
         );
 
     await html5QrCode.start(
@@ -207,20 +212,12 @@ async function openScanner(
         {
             fps: 10,
 
-            qrbox: (viewfinderWidth, viewfinderHeight) => {
-
-                const minEdge =
-                    Math.min(
-                        viewfinderWidth,
-                        viewfinderHeight
-                    );
-
-                return {
-                    width: minEdge * 0.8,
-                    height: minEdge * 0.8
-                };
+            qrbox: {
+                width: qrSize,
+                height: qrSize
             }
         },
+        onSuccess,
         async decodedText => {
 
             console.log(
