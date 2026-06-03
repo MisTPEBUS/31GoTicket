@@ -110,7 +110,12 @@ async function init() {
             resData.data.activityCode
                 ?.toString()
                 .padStart(8, "0");
-        console.log(activityCode);
+        console.log(
+            `activityCodeD: ${resData.data.activityCode}`
+        );
+        console.log(
+            `activityCode: ${resData.activityCode}`
+        );
         document
             .getElementById(
                 "coverImage"
