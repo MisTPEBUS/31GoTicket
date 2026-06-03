@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>核銷工作站</title>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="
+    min-h-screen
+    bg-gradient-to-br
+    from-slate-50
+    via-white
+    to-sky-50
+">
+
+    <div class="
+    max-w-md
+    mx-auto
+    min-h-screen
+    px-5
+    py-8
+">
+
+        <!-- Hero -->
+
+        <div class=" 
+		hidden
+        relative
+        overflow-hidden
+        rounded-[36px]
+        bg-gradient-to-br
+        from-[#183B5B]
+        via-[#295A86]
+        to-[#4A8BC7]
+        p-7
+        text-white
+        shadow-[0_25px_60px_rgba(24,59,91,0.25)]
+    ">
+
+            <div class="
+            absolute
+            top-0
+            right-0
+            text-[120px]
+            opacity-10
+            font-black
+        ">
+                QR
+            </div>
+
+            <div class="relative z-10">
+
+                <div class="
+                text-xs
+                tracking-[0.3em]
+                opacity-70
+            ">
+                    STAFF STATION
+                </div>
+
+                <h1 class="
+                mt-3
+                text-3xl
+                font-black
+            ">
+                    核銷工作站
+                </h1>
+
+                <p class="
+                mt-3
+                text-white/80
+                text-sm
+            ">
+                    掃描會員 QRCode 完成活動獎勵核銷
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Guide -->
+
+        <div class="
+        mt-6
+        rounded-[30px]
+        bg-white
+        p-6
+        shadow-sm
+        border
+        border-slate-100
+    ">
+
+            <div class="
+            flex
+            items-center
+            gap-3
+        ">
+
+                <div class="
+                w-12
+                h-12
+                rounded-2xl
+                bg-sky-50
+                flex
+                items-center
+                justify-center
+            ">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-sky-700" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 10l4.553-4.553a2 2 0 10-2.828-2.828L12.172 7.172M9 14l-4.553 4.553a2 2 0 102.828 2.828L11.828 16.828" />
+                    </svg>
+
+                </div>
+
+                <div>
+
+                    <h2 class="
+                    font-black
+                    text-slate-900
+                ">
+                        使用方式
+                    </h2>
+
+                    <p class="
+                    text-sm
+                    text-slate-500
+                ">
+                        三步驟完成核銷
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="
+            mt-6
+            space-y-4
+        ">
+
+                <div class="flex gap-4">
+                    <div class="font-black text-slate-400">
+                        01
+                    </div>
+                    <div>
+                        點擊開始掃描
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="font-black text-slate-400">
+                        02
+                    </div>
+                    <div>
+                        對準會員 QRCode
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="font-black text-slate-400">
+                        03
+                    </div>
+                    <div>
+                        系統自動完成核銷
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Scan Button -->
+
+        <button id="startScanBtn" class="
+            mt-6
+            w-full
+            py-5
+            rounded-[28px]
+            bg-slate-900
+            text-white
+            font-bold
+            text-lg
+            shadow-lg
+        ">
+            開始掃描
+        </button>
+
+        <!-- Result -->
+
+        <div class="
+        mt-6
+        rounded-[30px]
+        bg-white
+        p-6
+        shadow-sm
+        border
+        border-slate-100
+    ">
+
+            <div class="
+            text-xs
+            tracking-[0.2em]
+            text-slate-400
+        ">
+                SCAN RESULT
+            </div>
+
+            <div id="scanResult" class="
+                mt-4
+                text-lg
+                font-bold
+                text-slate-800
+            ">
+                尚未掃描
+            </div>
+
+        </div>
+
+        <!-- Scanner -->
+
+        <div id="scanner" class="
+            mt-6
+            overflow-hidden
+            rounded-[30px]
+            hidden
+            bg-black
+        ">
+        </div>
+
+    </div>
+
+    <script>
+
+        let html5QrCode = null;
+
+        document
+            .getElementById(
+                "startScanBtn"
+            )
+            .addEventListener(
+                "click",
+                startScanner
+            );
+
+        async function startScanner() {
+
+            document
+                .getElementById(
+                    "scanner"
+                )
+                .classList.remove(
+                    "hidden"
+                );
+
+            html5QrCode =
+                new Html5Qrcode(
+                    "scanner"
+                );
+
+            await html5QrCode.start(
+                {
+                    facingMode:
+                        "environment"
+                },
+                {
+                    fps: 10,
+                    qrbox: 240
+                },
+                onScanSuccess
+            );
+        }
+
+        async function onScanSuccess(
+            decodedText
+        ) {
+
+            document
+                .getElementById(
+                    "scanResult"
+                )
+                .innerText =
+                decodedText;
+
+            alert(
+                `QRCode內容：${decodedText}`
+            );
+
+            if (html5QrCode) {
+
+                await html5QrCode.stop();
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
