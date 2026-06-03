@@ -110,7 +110,7 @@ async function init() {
             resData.data.activityCode
                 ?.toString()
                 .padStart(8, "0");
-
+        console.log(activityCode);
         document
             .getElementById(
                 "coverImage"
@@ -181,7 +181,7 @@ async function init() {
             activityCode;
 
         renderRoleBadge(
-            data.result.role
+            resData.data.role
         );
     }
     catch (error) {
