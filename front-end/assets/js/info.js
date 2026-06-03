@@ -102,7 +102,7 @@ async function init() {
                 }
             );
 
-        console.log(response);
+        console.log(response.data);
 
         document
             .getElementById(
@@ -125,12 +125,63 @@ async function init() {
             .innerText =
             profile.displayName;
 
+        renderRoleBadge(
+            data.result.role
+        );
     }
     catch (error) {
-
+        alert(error.message || "發生錯誤，請稍後再試。");
         console.error(error);
     }
 }
 
 init();
 
+function renderRoleBadge(role) {
+
+    const container =
+        document.getElementById(
+            "roleBadgeContainer"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const roleConfig = {
+        "一般會員": {
+            bg: "bg-emerald-100",
+            text: "text-emerald-700"
+        },
+
+        "管理者": {
+            bg: "bg-red-100",
+            text: "text-red-700"
+        },
+
+        "核銷人員": {
+            bg: "bg-fuchsia-100",
+            text: "text-fuchsia-700"
+        }
+    };
+
+    const config =
+        roleConfig[role] ??
+        roleConfig["一般會員"];
+
+    container.innerHTML = `
+        <span
+            class="
+                px-4
+                py-2
+                rounded-full
+                ${config.bg}
+                ${config.text}
+                text-xs
+                font-bold
+            "
+        >
+            ${role}
+        </span>
+    `;
+}
