@@ -128,7 +128,18 @@ async function init() {
             )
             .innerText =
             profile.displayName;
+        document
+            .getElementById(
+                "registerCampaignBtn"
+            )
+            ?.addEventListener(
+                "click",
+                () => {
 
+                    window.location.href =
+                        "./register.html";
+                }
+            );
 
 
         document
