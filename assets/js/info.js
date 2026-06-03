@@ -101,10 +101,10 @@ async function init() {
                     }
                 }
             );
+        const resData = response.data;
 
-        console.log(response.data);
         const activityCode =
-            response.data.activityCode
+            resData.activityCode
                 ?.toString()
                 .padStart(8, "0");
 
