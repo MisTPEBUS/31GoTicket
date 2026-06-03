@@ -103,6 +103,10 @@ async function init() {
             );
 
         console.log(response.data);
+        const activityCode =
+            result.activityCode
+                ?.toString()
+                .padStart(8, "0");
 
         document
             .getElementById(
@@ -124,6 +128,15 @@ async function init() {
             )
             .innerText =
             profile.displayName;
+
+
+
+        document
+            .getElementById(
+                "activityCode"
+            )
+            .innerText =
+            activityCode;
 
         renderRoleBadge(
             data.result.role
