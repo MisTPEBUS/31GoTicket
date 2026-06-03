@@ -291,8 +291,34 @@ async function handleScanResult(
 
     if (data.success) {
 
-        alert(
-            "打卡成功"
+        showScanSuccess(
+            data.message ||
+            "景點打卡完成"
+        );
+
+        setTimeout(
+            async () => {
+
+                const activity =
+                    await fetchActivity(
+                        lineUserId
+                    );
+
+                renderPage(
+                    activity,
+                    lineUserId
+                );
+
+                document
+                    .getElementById(
+                        "scanResultModal"
+                    )
+                    .classList.add(
+                        "hidden"
+                    );
+
+            },
+            2000
         );
 
         const activity =
@@ -308,7 +334,7 @@ async function handleScanResult(
         return;
     }
 
-    alert(
+    showScanError(
         data.message
     );
 }
@@ -1196,4 +1222,123 @@ async function fetchActivity(userId) {
     }
 
     return await response.json();
+}
+
+function showScanSuccess(
+    message
+) {
+
+    const modal =
+        document.getElementById(
+            "scanResultModal"
+        );
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    modal.classList.add(
+        "flex"
+    );
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .innerHTML =
+        `
+        <div
+            class="
+                w-24
+                h-24
+                rounded-full
+                bg-emerald-50
+                flex
+                items-center
+                justify-center
+            "
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-12 h-12 text-emerald-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    d="M5 13l4 4L19 7"
+                />
+            </svg>
+        </div>
+        `;
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .innerText =
+        "打卡成功";
+
+    document
+        .getElementById(
+            "resultMessage"
+        )
+        .innerText =
+        message;
+}
+
+function showScanError(
+    message
+) {
+
+    const modal =
+        document.getElementById(
+            "scanResultModal"
+        );
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    modal.classList.add(
+        "flex"
+    );
+
+    document
+        .getElementById(
+            "resultIcon"
+        )
+        .innerHTML =
+        `
+        <div
+            class="
+                w-24
+                h-24
+                rounded-full
+                bg-red-50
+                flex
+                items-center
+                justify-center
+            "
+        >
+            ✕
+        </div>
+        `;
+
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .innerText =
+        "打卡失敗";
+
+    document
+        .getElementById(
+            "resultMessage"
+        )
+        .innerText =
+        message;
 }
