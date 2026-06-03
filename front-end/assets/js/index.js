@@ -91,6 +91,12 @@ async function init() {
                     "./pages/progress.html";
 
                 break;
+            case "faq":
+
+                window.location.href =
+                    "./pages/faq.html";
+
+                break;
             case "register":
 
                 window.location.href =
