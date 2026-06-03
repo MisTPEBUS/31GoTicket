@@ -73,7 +73,7 @@ async function init() {
             ?.addEventListener(
                 "click",
                 () => {
-
+                    console.log("Register button clicked");
                     window.location.href =
                         "./register.html";
                 }
