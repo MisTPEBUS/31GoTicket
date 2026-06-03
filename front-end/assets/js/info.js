@@ -104,7 +104,7 @@ async function init() {
 
         console.log(response.data);
         const activityCode =
-            result.activityCode
+            response.data.activityCode
                 ?.toString()
                 .padStart(8, "0");
 
