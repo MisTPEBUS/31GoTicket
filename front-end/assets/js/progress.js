@@ -1120,7 +1120,7 @@ function bindEvents(
                     rewardButton.innerText =
                         "處理中...";
 
-                    const response =
+                    /* const response =
                         await fetch(
                             `${API_BASE_URL}/api/activity/user-activities/complete/${activity.userActivityId}`,
                             {
@@ -1153,7 +1153,7 @@ function bindEvents(
                             "前往領獎";
 
                         return;
-                    }
+                    } */
 
                     window.location.href =
                         `./info.html?userActivityId=${activity.userActivityId}`;
