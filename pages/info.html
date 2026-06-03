@@ -112,46 +112,11 @@
 
             <!-- Status -->
 
-            <div class="
-                    absolute
-                    top-6
-                    right-6
-                ">
-
-                <span class="
-                        px-4
-                        py-2
-                        rounded-full
-                        bg-emerald-100
-                        text-emerald-700
-                        text-xs
-                        font-bold
-                    ">
-                    一般會員
-                </span>
-                <span class="
-                        px-4
-                        py-2
-                        rounded-full
-                        bg-red-100
-                        text-red-700
-                        text-xs
-                        font-bold
-                    ">
-                    管理者
-                </span>
-                <span class="
-                        px-4
-                        py-2
-                        rounded-full
-                        bg-fuchsia-100
-                        text-fuchsia-700
-                        text-xs
-                        font-bold
-                    ">
-                    核銷人員
-                </span>
-
+            <div id="roleBadgeContainer" class="
+                absolute
+                top-6
+                right-6
+            ">
             </div>
 
             <div class="
@@ -172,16 +137,121 @@
                         載入中...
                     </h2>
 
-                    <p class="
-                            mt-2
-                            text-slate-500
-                        ">
-                        三鶯打卡趣 GOTICKET
-                    </p>
+                    <div>
+
+                        <div class="
+							  
+								tracking-[0.2em]
+								text-slate-700
+							">
+                            活動碼
+
+                            <span class="
+								text-xs
+								tracking-[0.2em]
+								text-slate-400
+							">
+                                ACTIVE CODE
+
+                            </span>
+                            <div id="activeCode" class="
+                                mt-2
+                                font-bold
+                                text-lg
+                                text-slate-900
+                            ">
+                                載入中...
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+
 
                 </div>
 
                 <!-- Divider -->
+                <!-- Register Campaign -->
+
+                <div class="
+        mt-6
+        rounded-[28px]
+        overflow-hidden
+        bg-gradient-to-r
+        from-[#183B5B]
+        via-[#295A86]
+        to-[#3A7BB8]
+        text-white
+        shadow-[0_15px_40px_rgba(24,59,91,0.25)]
+    ">
+
+                    <button id="registerCampaignBtn" class="
+            w-full
+            px-6
+            py-5
+            text-left
+        ">
+
+                        <div class="
+            flex
+            items-center
+            justify-between
+        ">
+
+                            <div>
+
+                                <div class="
+                        text-xs
+                        tracking-[0.25em]
+                        opacity-70
+                    ">
+                                    JOIN EVENT
+                                </div>
+
+                                <h3 class="
+                        mt-2
+                        text-xl
+                        font-black
+                    ">
+                                    註冊活動
+                                </h3>
+
+                                <p class="
+                        mt-2
+                        text-sm
+                        text-white/80
+                    ">
+                                    開始新的打卡旅程
+                                </p>
+
+                            </div>
+
+                            <div class="
+                    w-12
+                    h-12
+                    rounded-2xl
+                    bg-white/15
+                    backdrop-blur
+                    flex
+                    items-center
+                    justify-center
+                ">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+                    </button>
+
+                </div>
 
                 <div class="
                         my-8
@@ -190,6 +260,35 @@
                     ">
                 </div>
 
+                <div class="mb-8">
+
+                    <p class="
+        text-[11px]
+        tracking-[0.35em]
+        uppercase
+        text-slate-400
+    ">
+                        HISTORY
+                    </p>
+
+                    <h2 class="
+        mt-2
+        text-3xl
+        font-black
+        text-slate-900
+    ">
+                        活動紀錄
+                    </h2>
+
+                    <div class="
+        mt-3
+        w-12
+        h-[2px]
+        bg-slate-900
+    ">
+                    </div>
+
+                </div>
                 <!-- Order -->
 
                 <div>
