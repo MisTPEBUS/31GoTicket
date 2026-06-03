@@ -305,6 +305,7 @@ function renderActivities(
             .join("");
 
     bindAccordionEvents();
+    bindActionEvents();
 }
 function renderActivityCard(
     activity
@@ -348,6 +349,117 @@ function renderActivityCard(
         activity.status
         ] ??
         statusMap.pending;
+    let actionButton = `
+    <button
+        disabled
+        class="
+            mt-5
+            w-full
+            rounded-2xl
+            bg-slate-200
+            py-4
+            text-slate-500
+            font-bold
+            cursor-not-allowed
+        "
+    >
+        不可操作
+    </button>
+`;
+
+    if (activity.status === "active") {
+
+        actionButton = `
+        <button
+            class="
+                activity-enter-btn
+                mt-5
+                w-full
+                rounded-2xl
+                bg-sky-600
+                py-4
+                text-white
+                font-bold
+            "
+            data-id="${activity.userActivityId}"
+        >
+            前往活動
+        </button>
+    `;
+    }
+
+    if (
+        activity.status ===
+        "completed_unclaimed"
+    ) {
+
+        actionButton = `
+        <button
+            class="
+                activity-qrcode-btn
+                mt-5
+                w-full
+                rounded-2xl
+                bg-amber-500
+                py-4
+                text-white
+                font-bold
+            "
+            data-id="${activity.userActivityId}"
+            data-order="${activity.orderNo}"
+        >
+            產生 QRCode
+        </button>
+    `;
+    }
+
+    if (
+        activity.status ===
+        "completed_claimed"
+    ) {
+
+        actionButton = `
+        <button
+            disabled
+            class="
+                mt-5
+                w-full
+                rounded-2xl
+                bg-emerald-100
+                py-4
+                text-emerald-700
+                font-bold
+                cursor-not-allowed
+            "
+        >
+            已兌獎
+        </button>
+    `;
+    }
+
+    if (
+        activity.status ===
+        "expired"
+    ) {
+
+        actionButton = `
+        <button
+            disabled
+            class="
+                mt-5
+                w-full
+                rounded-2xl
+                bg-red-100
+                py-4
+                text-red-700
+                font-bold
+                cursor-not-allowed
+            "
+        >
+            已逾期
+        </button>
+    `;
+    }
 
     return `
         <div
@@ -521,19 +633,7 @@ function renderActivityCard(
 
                 </div>
 
-                <button
-                    class="
-                        mt-5
-                        w-full
-                        rounded-2xl
-                        bg-slate-900
-                        py-4
-                        text-white
-                        font-bold
-                    "
-                >
-                    產生 QRCode
-                </button>
+                ${actionButton}
 
             </div>
 
@@ -569,6 +669,41 @@ function bindAccordionEvents() {
                 };
         });
 }
+function bindActionEvents() {
+
+    document
+        .querySelectorAll(
+            ".activity-enter-btn"
+        )
+        .forEach(btn => {
+
+            btn.onclick = () => {
+
+                const userActivityId =
+                    btn.dataset.id;
+
+                window.location.href =
+                    `./progress.html?userActivityId=${userActivityId}`;
+            };
+        });
+
+    document
+        .querySelectorAll(
+            ".activity-qrcode-btn"
+        )
+        .forEach(btn => {
+
+            btn.onclick = () => {
+
+                const userActivityId =
+                    btn.dataset.id;
+
+                window.location.href =
+                    `./reward.html?userActivityId=${userActivityId}`;
+            };
+        });
+}
+
 function renderRoleBadge(role) {
 
     const container =
