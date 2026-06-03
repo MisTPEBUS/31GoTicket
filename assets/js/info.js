@@ -69,65 +69,61 @@ cancelNoticeBtn?.addEventListener(
 );
 
 async function init() {
+    try {
 
-    const profile =
-        await initLiff();
+        const profile =
+            await initLiff();
 
-    if (!profile) {
-        return;
-    }
+        if (!profile) {
+            return;
+        }
 
-    const profile =
-        await liff.getProfile();
+        console.log(profile);
 
-    console.log(profile);
+        const lineUserId =
+            profile.userId;
 
-    const lineUserId =
-        profile.userId;
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/user/info/${lineUserId}`,
+                {
+                    method: "GET",
 
-    /*
-            activity api
-        */
-
-    const response =
-        await fetch(
-            `${API_BASE_URL}/api/activity/current/${lineUserId}`,
-            {
-                method: "GET",
-
-                headers: {
-                    "ngrok-skip-browser-warning":
-                        "true"
+                    headers: {
+                        "ngrok-skip-browser-warning":
+                            "true"
+                    }
                 }
-            }
-        );
+            );
 
-    console.log(response);
+        console.log(response);
 
+        document
+            .getElementById(
+                "coverImage"
+            )
+            .src =
+            profile.pictureUrl;
 
-    document
-        .getElementById(
-            "coverImage"
-        )
-        .src =
-        profile.pictureUrl;
+        document
+            .getElementById(
+                "avatarImage"
+            )
+            .src =
+            profile.pictureUrl;
 
-    document
-        .getElementById(
-            "avatarImage"
-        )
-        .src =
-        profile.pictureUrl;
+        document
+            .getElementById(
+                "displayName"
+            )
+            .innerText =
+            profile.displayName;
 
+    }
+    catch (error) {
 
-
-
-    document
-        .getElementById(
-            "displayName"
-        )
-        .innerText =
-        profile.displayName;
+        console.error(error);
+    }
 }
 
 init();
