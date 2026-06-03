@@ -633,7 +633,57 @@ function renderActivityCard(
 
                 </div>
 
-                ${actionButton}
+              ${actionButton}
+
+<div
+    id="qrcode-panel-${activity.userActivityId}"
+    class="
+        hidden
+        mt-6
+        rounded-[28px]
+        border
+        border-dashed
+        border-slate-300
+        p-5
+        text-center
+    "
+>
+
+    <div
+        class="
+            text-xs
+            tracking-[0.2em]
+            text-slate-400
+        "
+    >
+        REWARD QR CODE
+    </div>
+
+    <div
+        id="qrcode-${activity.userActivityId}"
+        class="
+            mt-4
+            flex
+            justify-center
+        "
+    >
+    </div>
+
+    <p
+        class="
+            mt-4
+            text-sm
+            text-slate-500
+        "
+    >
+        請向工作人員出示此 QRCode
+    </p>
+
+</div>
+
+            </div>
+
+        </div>
 
             </div>
 
@@ -698,8 +748,37 @@ function bindActionEvents() {
                 const userActivityId =
                     btn.dataset.id;
 
-                window.location.href =
-                    `./reward.html?userActivityId=${userActivityId}`;
+                const panel =
+                    document.getElementById(
+                        `qrcode-panel-${userActivityId}`
+                    );
+
+                const qrcodeContainer =
+                    document.getElementById(
+                        `qrcode-${userActivityId}`
+                    );
+
+                panel.classList.remove(
+                    "hidden"
+                );
+
+                if (
+                    qrcodeContainer.dataset.loaded
+                ) {
+                    return;
+                }
+
+                new QRCode(
+                    qrcodeContainer,
+                    {
+                        text: userActivityId,
+                        width: 180,
+                        height: 180
+                    }
+                );
+
+                qrcodeContainer.dataset.loaded =
+                    "true";
             };
         });
 }
