@@ -1,3 +1,10 @@
+import {
+    initLiff
+} from "../liff/liff-init.js";
+
+const API_BASE_URL =
+    "http://localhost:5140";
+
 const sendCodeBtn =
     document.getElementById(
         "sendCodeBtn"
@@ -25,23 +32,174 @@ const otpInputs =
 
 let countdownTimer = null;
 
+/*
+|--------------------------------------------------------------------------
+| Modal
+|--------------------------------------------------------------------------
+*/
+
+function showSuccess(
+    message
+) {
+
+    document
+        .getElementById(
+            "successMessage"
+        )
+        .innerText =
+        message;
+
+    document
+        .getElementById(
+            "successModal"
+        )
+        .classList
+        .remove(
+            "hidden"
+        );
+}
+
+function showError(
+    message
+) {
+
+    document
+        .getElementById(
+            "errorMessage"
+        )
+        .innerText =
+        message;
+
+    document
+        .getElementById(
+            "errorModal"
+        )
+        .classList
+        .remove(
+            "hidden"
+        );
+}
+
+document
+    .getElementById(
+        "successCloseBtn"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById(
+                    "successModal"
+                )
+                .classList
+                .add(
+                    "hidden"
+                );
+        }
+    );
+
+document
+    .getElementById(
+        "errorCloseBtn"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById(
+                    "errorModal"
+                )
+                .classList
+                .add(
+                    "hidden"
+                );
+        }
+    );
+
+/*
+|--------------------------------------------------------------------------
+| 取得驗證碼
+|--------------------------------------------------------------------------
+*/
+
 sendCodeBtn?.addEventListener(
     "click",
     handleSendCode
 );
 
-function handleSendCode() {
+async function handleSendCode() {
 
-    loginStep1.classList.add(
-        "hidden"
-    );
+    try {
 
-    loginStep2.classList.remove(
-        "hidden"
-    );
+        const profile =
+            await initLiff();
 
-    startCountdown();
+        if (!profile) {
+
+            showError(
+                "LINE 登入失敗"
+            );
+
+            return;
+        }
+
+        const lineUserId =
+            profile.userId;
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/Login/${lineUserId}/登入頁面`,
+                {
+                    method: "POST"
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+
+            showError(
+                result.message
+            );
+
+            return;
+        }
+
+        showSuccess(
+            result.message
+        );
+
+        loginStep1.classList.add(
+            "hidden"
+        );
+
+        loginStep2.classList.remove(
+            "hidden"
+        );
+
+        startCountdown();
+
+    }
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        showError(
+            "取得驗證碼失敗"
+        );
+    }
 }
+
+/*
+|--------------------------------------------------------------------------
+| 倒數計時
+|--------------------------------------------------------------------------
+*/
 
 function startCountdown() {
 
@@ -83,6 +241,12 @@ function startCountdown() {
         );
 }
 
+/*
+|--------------------------------------------------------------------------
+| OTP
+|--------------------------------------------------------------------------
+*/
+
 otpInputs.forEach(
     (input, index) => {
 
@@ -107,13 +271,19 @@ otpInputs.forEach(
     }
 );
 
+/*
+|--------------------------------------------------------------------------
+| 驗證登入
+|--------------------------------------------------------------------------
+*/
+
 document
     .getElementById(
         "verifyBtn"
     )
     ?.addEventListener(
         "click",
-        () => {
+        async () => {
 
             const otp =
                 Array.from(
@@ -125,18 +295,82 @@ document
                     )
                     .join("");
 
-            console.log(
-                "otp",
-                otp
-            );
+            if (otp.length !== 4) {
 
-            /*
-            TODO:
-            POST /api/admin/verify-code
-            */
+                showError(
+                    "請輸入完整驗證碼"
+                );
+
+                return;
+            }
+
+            try {
+
+                const profile =
+                    await initLiff();
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/admin/Login-Verify/${profile.userId}/登入頁面/${otp}`,
+                        {
+                            method:
+                                "POST"
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    showError(
+                        result.message
+                    );
+
+                    return;
+                }
+
+                localStorage.setItem(
+                    "adminUser",
+                    JSON.stringify(
+                        result.data
+                    )
+                );
+
+                showSuccess(
+                    "登入成功"
+                );
+
+                setTimeout(
+                    () => {
+
+                        window.location.href =
+                            "./dashboard.html";
+
+                    },
+                    1000
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    error
+                );
+
+                showError(
+                    "驗證失敗"
+                );
+            }
 
         }
     );
+
+/*
+|--------------------------------------------------------------------------
+| 重新發送
+|--------------------------------------------------------------------------
+*/
 
 document
     .getElementById(
@@ -144,14 +378,51 @@ document
     )
     ?.addEventListener(
         "click",
-        () => {
+        async () => {
 
-            startCountdown();
+            try {
 
-            /*
-            TODO:
-            POST /api/admin/resend-code
-            */
+                const profile =
+                    await initLiff();
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/admin/Login/${profile.userId}/登入頁面`,
+                        {
+                            method:
+                                "POST"
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (!response.ok) {
+
+                    showError(
+                        result.message
+                    );
+
+                    return;
+                }
+
+                startCountdown();
+
+                showSuccess(
+                    "驗證碼已重新發送"
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    error
+                );
+
+                showError(
+                    "重新發送失敗"
+                );
+            }
 
         }
     );
