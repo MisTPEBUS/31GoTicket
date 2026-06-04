@@ -95,12 +95,7 @@ async function init() {
 
 
 
-        renderRoleBadge(
-            data.role
-        );
-        renderActivities(
-            data.userActivities
-        );
+
     }
     catch (error) {
         alert(error.message || "發生錯誤，請稍後再試。");
