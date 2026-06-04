@@ -1,6 +1,6 @@
 import {
     initLiff
-} from "../liff/liff-init.js";
+} from "../liff/liff-init";
 
 const API_BASE_URL =
     "https://9f4d-59-124-220-148.ngrok-free.app";
