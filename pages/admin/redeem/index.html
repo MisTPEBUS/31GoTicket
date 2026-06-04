@@ -5,10 +5,14 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="
+            width=device-width,
+            initial-scale=1.0,
+            maximum-scale=1
+        ">
 
     <title>
-        三鶯 GO｜打卡核銷
+        打卡核銷
     </title>
 
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -58,7 +62,7 @@
         mx-auto
         px-5
         py-6
-        pb-28
+        pb-24
     ">
 
         <!-- Header -->
@@ -79,11 +83,32 @@
                 gap-4
             ">
 
-
+                <div class="
+                    w-16
+                    h-16
+                    rounded-3xl
+                    bg-gradient-to-br
+                    from-[#4FA3D9]
+                    to-[#2C6E9B]
+                    text-white
+                    flex
+                    items-center
+                    justify-center
+                    font-black
+                    text-xl
+                ">
+                    QR
+                </div>
 
                 <div>
 
-
+                    <div class="
+                        text-xs
+                        tracking-[0.2em]
+                        text-slate-400
+                    ">
+                        CHECK-IN REDEEM
+                    </div>
 
                     <h1 class="
                         text-2xl
@@ -96,18 +121,6 @@
                 </div>
 
             </div>
-
-        </div>
-
-        <!-- Today Status -->
-
-        <div class="
-            mt-5
-            grid
-            grid-cols-2
-            gap-4
-        ">
-
 
         </div>
 
@@ -177,7 +190,7 @@
                     </div>
 
                     <div>
-                        確認資料後完成打卡
+                        LINE 驗證後完成核銷
                     </div>
 
                 </div>
@@ -186,7 +199,7 @@
 
         </div>
 
-        <!-- Scan Button -->
+        <!-- Scan -->
 
         <button id="startScanBtn" class="
                 mt-5
@@ -250,9 +263,9 @@
 
     </div>
 
-    <!-- Confirm Modal -->
+    <!-- Loading Modal -->
 
-    <div id="confirmModal" class="
+    <div id="loadingModal" class="
             hidden
             fixed
             inset-0
@@ -269,92 +282,220 @@
             max-w-sm
             bg-white
             rounded-[36px]
-            p-7
+            p-8
+            text-center
         ">
 
+            <div class="
+                w-16
+                h-16
+                border-4
+                border-slate-200
+                border-t-[#2C6E9B]
+                rounded-full
+                animate-spin
+                mx-auto
+            ">
+            </div>
+
             <h2 class="
+                mt-6
                 text-2xl
                 font-black
-                text-slate-800
             ">
-                打卡確認
+                驗證中
             </h2>
 
-            <div class="
-                mt-6
-                space-y-4
+            <p class="
+                mt-3
+                text-slate-500
             ">
+                正在發送驗證碼至 LINE
+            </p>
 
-                <div>
+        </div>
 
-                    <div class="
-                        text-xs
-                        text-slate-400
-                    ">
-                        活動碼
-                    </div>
+    </div>
 
-                    <div id="modalActivityCode" class="font-bold">
-                        -
-                    </div>
+    <!-- OTP Modal -->
+
+    <div id="otpModal" class="
+            hidden
+            fixed
+            inset-0
+            z-50
+            bg-black/50
+            flex
+            items-center
+            justify-center
+            p-5
+        ">
+
+        <div class="
+            w-full
+            max-w-sm
+            bg-white
+            rounded-[36px]
+            p-8
+        ">
+
+            <div class="text-center">
+
+                <div class="
+                    w-20
+                    h-20
+                    rounded-full
+                    bg-[#E6F2FB]
+                    flex
+                    items-center
+                    justify-center
+                    mx-auto
+                ">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#2C6E9B]" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8" />
+
+                    </svg>
 
                 </div>
 
-                <div>
+                <h2 class="
+                    mt-6
+                    text-2xl
+                    font-black
+                ">
+                    驗證登入
+                </h2>
 
-                    <div class="
-                        text-xs
-                        text-slate-400
+                <p class="
+                    mt-3
+                    text-slate-500
+                ">
+                    驗證碼已傳送至 LINE
+                </p>
+
+                <div id="countdown" class="
+                        mt-4
+                        text-xl
+                        font-black
+                        text-[#F28C28]
                     ">
-                        會員姓名
-                    </div>
-
-                    <div id="modalName" class="font-bold">
-                        -
-                    </div>
-
-                </div>
-
-                <div>
-
-                    <div class="
-                        text-xs
-                        text-slate-400
-                    ">
-                        景點
-                    </div>
-
-                    <div id="modalSpot" class="font-bold">
-                        -
-                    </div>
-
+                    05:00
                 </div>
 
             </div>
 
             <div class="
                 mt-8
-                grid
-                grid-cols-2
+                flex
+                justify-center
                 gap-3
             ">
 
-                <button id="cancelBtn" class="
-                        h-12
-                        rounded-2xl
-                        border
-                    ">
-                    取消
-                </button>
+                <input maxlength="1" class="otp w-14 h-14 rounded-2xl border text-center text-2xl font-black">
 
-                <button id="confirmBtn" class="
+                <input maxlength="1" class="otp w-14 h-14 rounded-2xl border text-center text-2xl font-black">
+
+                <input maxlength="1" class="otp w-14 h-14 rounded-2xl border text-center text-2xl font-black">
+
+                <input maxlength="1" class="otp w-14 h-14 rounded-2xl border text-center text-2xl font-black">
+
+            </div>
+
+            <button id="verifyBtn" class="
+                    mt-8
+                    w-full
+                    h-14
+                    rounded-2xl
+                    bg-gradient-to-r
+                    from-[#4FA3D9]
+                    to-[#2C6E9B]
+                    text-white
+                    font-bold
+                ">
+                驗證登入
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Compare Result -->
+
+    <div id="resultModal" class="
+            hidden
+            fixed
+            inset-0
+            z-50
+            bg-black/50
+            flex
+            items-center
+            justify-center
+            p-5
+        ">
+
+        <div class="
+            w-full
+            max-w-sm
+            bg-white
+            rounded-[36px]
+            p-8
+        ">
+
+            <div class="
+                text-center
+            ">
+
+                <div id="resultIcon" class="
+                        w-24
+                        h-24
+                        rounded-full
+                        bg-emerald-50
+                        border
+                        border-emerald-100
+                        flex
+                        items-center
+                        justify-center
+                        mx-auto
+                    ">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-emerald-600" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+
+                    </svg>
+
+                </div>
+
+                <h2 id="resultTitle" class="
+                        mt-6
+                        text-3xl
+                        font-black
+                    ">
+                    核銷成功
+                </h2>
+
+                <p id="resultMessage" class="
+                        mt-4
+                        text-slate-500
+                        leading-7
+                    ">
+                </p>
+
+                <button id="closeResultBtn" class="
+                        mt-8
+                        w-full
                         h-12
                         rounded-2xl
-                        bg-[#F28C28]
+                        bg-[#2C6E9B]
                         text-white
                         font-bold
                     ">
-                    確認核銷
+                    確定
                 </button>
 
             </div>

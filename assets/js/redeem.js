@@ -2,7 +2,25 @@ import {
     initLiff
 } from "../liff/liff-init.js";
 
+const API_BASE_URL =
+    "https://9f4d-59-124-220-148.ngrok-free.app";
+
 let html5QrCode = null;
+
+let currentQrCode =
+    null;
+
+let currentLineUserId =
+    null;
+
+let countdownTimer =
+    null;
+
+/*
+|--------------------------------------------------------------------------
+| Elements
+|--------------------------------------------------------------------------
+*/
 
 const startScanBtn =
     document.getElementById(
@@ -19,23 +37,30 @@ const scanResult =
         "scanResult"
     );
 
-const confirmModal =
+const loadingModal =
     document.getElementById(
-        "confirmModal"
+        "loadingModal"
     );
 
-const cancelBtn =
+const otpModal =
     document.getElementById(
-        "cancelBtn"
+        "otpModal"
     );
 
-const confirmBtn =
+const resultModal =
     document.getElementById(
-        "confirmBtn"
+        "resultModal"
     );
 
-let currentQrCode =
-    null;
+const countdownElement =
+    document.getElementById(
+        "countdown"
+    );
+
+const otpInputs =
+    document.querySelectorAll(
+        ".otp"
+    );
 
 /*
 |--------------------------------------------------------------------------
@@ -50,8 +75,10 @@ async function init() {
         const profile =
             await initLiff();
 
+        currentLineUserId =
+            profile.userId;
+
         console.log(
-            "profile",
             profile
         );
 
@@ -68,7 +95,7 @@ init();
 
 /*
 |--------------------------------------------------------------------------
-| Start Scanner
+| Scanner
 |--------------------------------------------------------------------------
 */
 
@@ -85,12 +112,6 @@ async function startScanner() {
             "hidden"
         );
 
-        startScanBtn.disabled =
-            true;
-
-        startScanBtn.innerText =
-            "掃描中...";
-
         html5QrCode =
             new Html5Qrcode(
                 "scanner"
@@ -103,8 +124,7 @@ async function startScanner() {
             },
             {
                 fps: 10,
-                qrbox: 240,
-                aspectRatio: 1
+                qrbox: 240
             },
             onScanSuccess
         );
@@ -116,54 +136,181 @@ async function startScanner() {
             error
         );
 
-        alert(
+        showResult(
+            false,
             "無法開啟相機"
+        );
+    }
+}
+
+async function onScanSuccess(
+    decodedText
+) {
+
+    currentQrCode =
+        decodedText;
+
+    scanResult.innerText =
+        decodedText;
+
+    if (html5QrCode) {
+
+        await html5QrCode.stop();
+    }
+
+    await sendOtp();
+}
+
+/*
+|--------------------------------------------------------------------------
+| Login API
+|--------------------------------------------------------------------------
+*/
+
+async function sendOtp() {
+
+    try {
+
+        showLoading();
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/Login/${currentLineUserId}/打卡核銷`,
+                {
+                    method: "POST"
+                }
+            );
+
+        const result =
+            await response.json();
+
+        hideLoading();
+
+        if (!response.ok) {
+
+            showResult(
+                false,
+                result.message
+            );
+
+            return;
+        }
+
+        showOtpModal();
+
+        startCountdown();
+
+    }
+    catch (error) {
+
+        hideLoading();
+
+        console.error(
+            error
+        );
+
+        showResult(
+            false,
+            "發送驗證碼失敗"
         );
     }
 }
 
 /*
 |--------------------------------------------------------------------------
-| Scan Success
+| OTP
 |--------------------------------------------------------------------------
 */
 
-async function onScanSuccess(
-    decodedText
-) {
+otpInputs.forEach(
+    (
+        input,
+        index
+    ) => {
+
+        input.addEventListener(
+            "input",
+            () => {
+
+                if (
+                    input.value &&
+                    index <
+                    otpInputs.length - 1
+                ) {
+
+                    otpInputs[
+                        index + 1
+                    ].focus();
+                }
+
+            }
+        );
+
+    }
+);
+
+document
+    .getElementById(
+        "verifyBtn"
+    )
+    ?.addEventListener(
+        "click",
+        verifyOtp
+    );
+
+async function verifyOtp() {
+
+    const otp =
+        Array.from(
+            otpInputs
+        )
+            .map(
+                input =>
+                    input.value
+            )
+            .join("");
+
+    if (otp.length !== 4) {
+
+        showResult(
+            false,
+            "請輸入完整驗證碼"
+        );
+
+        return;
+    }
 
     try {
 
-        currentQrCode =
-            decodedText;
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/Login-Verify/${currentLineUserId}/打卡核銷/${otp}`,
+                {
+                    method: "POST"
+                }
+            );
 
-        scanResult.innerText =
-            decodedText;
+        const result =
+            await response.json();
 
-        if (html5QrCode) {
+        otpModal.classList.add(
+            "hidden"
+        );
 
-            await html5QrCode.stop();
+        if (!response.ok) {
+
+            showResult(
+                false,
+                result.message
+            );
+
+            return;
         }
 
-        /*
-        TODO
-
-        API:
-        POST /api/checkin/verify
-
-        decodedText
-        */
-
-        showConfirmModal({
-            activityCode:
-                "00001234",
-
-            userName:
-                "王小明",
-
-            spotName:
-                "鶯歌陶瓷博物館"
-        });
+        showResult(
+            true,
+            "驗證成功，完成打卡核銷"
+        );
 
     }
     catch (error) {
@@ -171,50 +318,81 @@ async function onScanSuccess(
         console.error(
             error
         );
+
+        showResult(
+            false,
+            "驗證失敗"
+        );
     }
 }
 
 /*
 |--------------------------------------------------------------------------
-| Confirm Modal
+| Countdown
 |--------------------------------------------------------------------------
 */
 
-function showConfirmModal(
-    data
-) {
+function startCountdown() {
 
-    document
-        .getElementById(
-            "modalActivityCode"
-        )
-        .innerText =
-        data.activityCode;
+    let seconds =
+        300;
 
-    document
-        .getElementById(
-            "modalName"
-        )
-        .innerText =
-        data.userName;
+    clearInterval(
+        countdownTimer
+    );
 
-    document
-        .getElementById(
-            "modalSpot"
-        )
-        .innerText =
-        data.spotName;
+    countdownTimer =
+        setInterval(
+            () => {
 
-    confirmModal
+                const min =
+                    Math.floor(
+                        seconds / 60
+                    );
+
+                const sec =
+                    seconds % 60;
+
+                countdownElement.innerText =
+                    `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+
+                seconds--;
+
+                if (
+                    seconds < 0
+                ) {
+
+                    clearInterval(
+                        countdownTimer
+                    );
+
+                    countdownElement.innerText =
+                        "驗證碼已失效";
+                }
+
+            },
+            1000
+        );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Loading
+|--------------------------------------------------------------------------
+*/
+
+function showLoading() {
+
+    loadingModal
         .classList
         .remove(
             "hidden"
         );
 }
 
-function closeConfirmModal() {
+function hideLoading() {
 
-    confirmModal
+    loadingModal
         .classList
         .add(
             "hidden"
@@ -223,196 +401,72 @@ function closeConfirmModal() {
 
 /*
 |--------------------------------------------------------------------------
-| Cancel
+| OTP Modal
 |--------------------------------------------------------------------------
 */
 
-cancelBtn?.addEventListener(
-    "click",
-    async () => {
+function showOtpModal() {
 
-        closeConfirmModal();
+    otpModal
+        .classList
+        .remove(
+            "hidden"
+        );
 
-        await restartScanner();
-
-    }
-);
-
-/*
-|--------------------------------------------------------------------------
-| Confirm Redeem
-|--------------------------------------------------------------------------
-*/
-
-confirmBtn?.addEventListener(
-    "click",
-    async () => {
-
-        try {
-
-            confirmBtn.disabled =
-                true;
-
-            confirmBtn.innerText =
-                "核銷中...";
-
-            /*
-            TODO
-
-            POST
-            /api/checkin/redeem
-
-            currentQrCode
-            */
-
-            closeConfirmModal();
-
-            showSuccessPage();
-
-        }
-        catch (error) {
-
-            console.error(
-                error
-            );
-
-            alert(
-                "核銷失敗"
-            );
-        }
-        finally {
-
-            confirmBtn.disabled =
-                false;
-
-            confirmBtn.innerText =
-                "確認核銷";
-        }
-
-    }
-);
-
-/*
-|--------------------------------------------------------------------------
-| Success
-|--------------------------------------------------------------------------
-*/
-
-function showSuccessPage() {
-
-    document.body.insertAdjacentHTML(
-        "beforeend",
-        `
-        <div
-            id="successOverlay"
-            class="
-                fixed
-                inset-0
-                z-[999]
-                bg-white
-                flex
-                items-center
-                justify-center
-                p-6
-            ">
-
-            <div class="text-center">
-
-                <div
-                    class="
-                        w-28
-                        h-28
-                        rounded-full
-                        bg-emerald-50
-                        border
-                        border-emerald-100
-                        flex
-                        items-center
-                        justify-center
-                        mx-auto
-                    ">
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="
-                            w-14
-                            h-14
-                            text-emerald-600
-                        "
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2.5"
-                            d="M5 13l4 4L19 7" />
-
-                    </svg>
-
-                </div>
-
-                <h2
-                    class="
-                        mt-8
-                        text-3xl
-                        font-black
-                    ">
-                    打卡成功
-                </h2>
-
-                <p
-                    class="
-                        mt-4
-                        text-slate-500
-                    ">
-                    已完成景點核銷
-                </p>
-
-            </div>
-
-        </div>
-        `
-    );
-
-    setTimeout(
-        async () => {
-
-            document
-                .getElementById(
-                    "successOverlay"
-                )
-                ?.remove();
-
-            await restartScanner();
-
-        },
-        2000
-    );
+    otpInputs[0]?.focus();
 }
 
 /*
 |--------------------------------------------------------------------------
-| Restart Scanner
+| Result
 |--------------------------------------------------------------------------
 */
 
-async function restartScanner() {
+function showResult(
+    success,
+    message
+) {
 
-    scanner.innerHTML =
-        "";
+    const title =
+        document.getElementById(
+            "resultTitle"
+        );
 
-    scanner.classList.add(
-        "hidden"
-    );
+    const content =
+        document.getElementById(
+            "resultMessage"
+        );
 
-    startScanBtn.disabled =
-        false;
+    title.innerText =
+        success
+            ? "核銷成功"
+            : "核銷失敗";
 
-    startScanBtn.innerText =
-        "開始掃描";
+    content.innerText =
+        message;
 
-    currentQrCode =
-        null;
+    resultModal
+        .classList
+        .remove(
+            "hidden"
+        );
 }
+
+document
+    .getElementById(
+        "closeResultBtn"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
+
+            resultModal
+                .classList
+                .add(
+                    "hidden"
+                );
+
+            location.reload();
+
+        }
+    );
