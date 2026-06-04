@@ -86,6 +86,7 @@
 | reward_qrcode     | varchar(255) NULL   | 領獎QRCode Token | base64(random uuid) |
 | status            | varchar(30)         | 活動狀態         |
 | created_at        | varchar(19)         | 建立時間         |
+| confirmed_at      | varchar(19)         | 建立時間         |
 | updated_at        | varchar(19)         | 更新時間         |
 
 status VARCHAR(30) NOT NULL
@@ -101,7 +102,7 @@ status IN (
 
 ---
 
-# user_activity_checkins 使用者打卡紀錄表
+# user_activity_spot 使用者打卡紀錄表
 
 每次掃描景點 QRCode 都建立紀錄。
 UNIQUE(user_activity_id, spot_id)
@@ -171,7 +172,8 @@ UNIQUE(user_activity_id, spot_id)
 
 | 狀態                | 說明     |
 | ------------------- | -------- |
-| pending             | 未完成   |
+| pending             | 未核准   |
+| active              | 未完成   |
 | expired             | 已逾期   |
 | completed_unclaimed | 未領獎   |
 | completed_claimed   | 已領獎   |
