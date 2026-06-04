@@ -65,7 +65,7 @@ cancelNoticeBtn?.addEventListener(
 
         if (window.liff) {
 
-            window.liff.closeWindow();
+            liff.closeWindow();
 
             return;
         }
