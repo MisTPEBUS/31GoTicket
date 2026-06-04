@@ -4,174 +4,182 @@
 <head>
 
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>核銷工作站</title>
+    <title>
+        三鶯 GO｜打卡核銷
+    </title>
 
     <script src="https://unpkg.com/html5-qrcode"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
 <body class="
     min-h-screen
-    bg-gradient-to-br
-    from-slate-50
-    via-white
-    to-sky-50
+    bg-gradient-to-b
+    from-[#F8FBFD]
+    via-[#F3F7FA]
+    to-[#EDF3F7]
 ">
+
+    <!-- Glow -->
 
     <div class="
-    max-w-md
-    mx-auto
-    min-h-screen
-    px-5
-    py-8
-">
+        fixed
+        top-[-120px]
+        right-[-80px]
+        w-[320px]
+        h-[320px]
+        rounded-full
+        bg-sky-200/40
+        blur-3xl
+    ">
+    </div>
 
-        <!-- Hero -->
+    <div class="
+        fixed
+        bottom-[-100px]
+        left-[-80px]
+        w-[260px]
+        h-[260px]
+        rounded-full
+        bg-cyan-200/30
+        blur-3xl
+    ">
+    </div>
 
-        <div class=" 
-		hidden
+    <div class="
         relative
-        overflow-hidden
-        rounded-[36px]
-        bg-gradient-to-br
-        from-[#183B5B]
-        via-[#295A86]
-        to-[#4A8BC7]
-        p-7
-        text-white
-        shadow-[0_25px_60px_rgba(24,59,91,0.25)]
+        z-10
+        max-w-md
+        mx-auto
+        px-5
+        py-6
+        pb-28
     ">
 
-            <div class="
-            absolute
-            top-0
-            right-0
-            text-[120px]
-            opacity-10
-            font-black
+        <!-- Header -->
+
+        <div class="
+            bg-white/80
+            backdrop-blur-xl
+            border
+            border-white/70
+            rounded-[36px]
+            p-6
+            shadow-[0_20px_60px_rgba(44,110,155,0.12)]
         ">
-                QR
-            </div>
 
-            <div class="relative z-10">
-
-                <div class="
-                text-xs
-                tracking-[0.3em]
-                opacity-70
+            <div class="
+                flex
+                items-center
+                gap-4
             ">
-                    STAFF STATION
+
+
+
+                <div>
+
+
+
+                    <h1 class="
+                        text-2xl
+                        font-black
+                        text-slate-800
+                    ">
+                        打卡核銷
+                    </h1>
+
                 </div>
 
-                <h1 class="
-                mt-3
-                text-3xl
-                font-black
-            ">
-                    核銷工作站
-                </h1>
-
-                <p class="
-                mt-3
-                text-white/80
-                text-sm
-            ">
-                    掃描會員 QRCode 完成活動獎勵核銷
-                </p>
-
             </div>
+
+        </div>
+
+        <!-- Today Status -->
+
+        <div class="
+            mt-5
+            grid
+            grid-cols-2
+            gap-4
+        ">
+
 
         </div>
 
         <!-- Guide -->
 
         <div class="
-        mt-6
-        rounded-[30px]
-        bg-white
-        p-6
-        shadow-sm
-        border
-        border-slate-100
-    ">
-
-            <div class="
-            flex
-            items-center
-            gap-3
+            mt-5
+            bg-white
+            rounded-[32px]
+            p-6
+            border
+            border-slate-100
+            shadow-sm
         ">
 
-                <div class="
-                w-12
-                h-12
-                rounded-2xl
-                bg-sky-50
-                flex
-                items-center
-                justify-center
+            <h2 class="
+                text-lg
+                font-black
+                text-slate-800
+            ">
+                使用說明
+            </h2>
+
+            <div class="
+                mt-5
+                space-y-4
+                text-sm
             ">
 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-sky-700" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 10l4.553-4.553a2 2 0 10-2.828-2.828L12.172 7.172M9 14l-4.553 4.553a2 2 0 102.828 2.828L11.828 16.828" />
-                    </svg>
-
-                </div>
-
-                <div>
-
-                    <h2 class="
-                    font-black
-                    text-slate-900
-                ">
-                        使用方式
-                    </h2>
-
-                    <p class="
-                    text-sm
-                    text-slate-500
-                ">
-                        三步驟完成核銷
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="
-            mt-6
-            space-y-4
-        ">
-
                 <div class="flex gap-4">
-                    <div class="font-black text-slate-400">
+
+                    <div class="
+                        text-[#4FA3D9]
+                        font-black
+                    ">
                         01
                     </div>
+
                     <div>
                         點擊開始掃描
                     </div>
+
                 </div>
 
                 <div class="flex gap-4">
-                    <div class="font-black text-slate-400">
+
+                    <div class="
+                        text-[#4FA3D9]
+                        font-black
+                    ">
                         02
                     </div>
+
                     <div>
-                        對準會員 QRCode
+                        掃描會員 QRCode
                     </div>
+
                 </div>
 
                 <div class="flex gap-4">
-                    <div class="font-black text-slate-400">
+
+                    <div class="
+                        text-[#4FA3D9]
+                        font-black
+                    ">
                         03
                     </div>
+
                     <div>
-                        系統自動完成核銷
+                        確認資料後完成打卡
                     </div>
+
                 </div>
 
             </div>
@@ -181,45 +189,47 @@
         <!-- Scan Button -->
 
         <button id="startScanBtn" class="
-            mt-6
-            w-full
-            py-5
-            rounded-[28px]
-            bg-slate-900
-            text-white
-            font-bold
-            text-lg
-            shadow-lg
-        ">
+                mt-5
+                w-full
+                h-16
+                rounded-[28px]
+                bg-gradient-to-r
+                from-[#4FA3D9]
+                to-[#2C6E9B]
+                text-white
+                font-black
+                text-lg
+                shadow-lg
+            ">
             開始掃描
         </button>
 
         <!-- Result -->
 
         <div class="
-        mt-6
-        rounded-[30px]
-        bg-white
-        p-6
-        shadow-sm
-        border
-        border-slate-100
-    ">
+            mt-5
+            bg-white
+            rounded-[32px]
+            p-6
+            border
+            border-slate-100
+            shadow-sm
+        ">
 
             <div class="
-            text-xs
-            tracking-[0.2em]
-            text-slate-400
-        ">
+                text-xs
+                tracking-[0.2em]
+                text-slate-400
+            ">
                 SCAN RESULT
             </div>
 
             <div id="scanResult" class="
-                mt-4
-                text-lg
-                font-bold
-                text-slate-800
-            ">
+                    mt-4
+                    text-lg
+                    font-bold
+                    text-slate-700
+                ">
                 尚未掃描
             </div>
 
@@ -228,12 +238,127 @@
         <!-- Scanner -->
 
         <div id="scanner" class="
-            mt-6
-            overflow-hidden
-            rounded-[30px]
+                hidden
+                mt-5
+                overflow-hidden
+                rounded-[32px]
+                border
+                border-slate-200
+                bg-black
+            ">
+        </div>
+
+    </div>
+
+    <!-- Confirm Modal -->
+
+    <div id="confirmModal" class="
             hidden
-            bg-black
+            fixed
+            inset-0
+            z-50
+            bg-black/50
+            flex
+            items-center
+            justify-center
+            p-5
         ">
+
+        <div class="
+            w-full
+            max-w-sm
+            bg-white
+            rounded-[36px]
+            p-7
+        ">
+
+            <h2 class="
+                text-2xl
+                font-black
+                text-slate-800
+            ">
+                打卡確認
+            </h2>
+
+            <div class="
+                mt-6
+                space-y-4
+            ">
+
+                <div>
+
+                    <div class="
+                        text-xs
+                        text-slate-400
+                    ">
+                        活動碼
+                    </div>
+
+                    <div id="modalActivityCode" class="font-bold">
+                        -
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <div class="
+                        text-xs
+                        text-slate-400
+                    ">
+                        會員姓名
+                    </div>
+
+                    <div id="modalName" class="font-bold">
+                        -
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <div class="
+                        text-xs
+                        text-slate-400
+                    ">
+                        景點
+                    </div>
+
+                    <div id="modalSpot" class="font-bold">
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="
+                mt-8
+                grid
+                grid-cols-2
+                gap-3
+            ">
+
+                <button id="cancelBtn" class="
+                        h-12
+                        rounded-2xl
+                        border
+                    ">
+                    取消
+                </button>
+
+                <button id="confirmBtn" class="
+                        h-12
+                        rounded-2xl
+                        bg-[#F28C28]
+                        text-white
+                        font-bold
+                    ">
+                    確認核銷
+                </button>
+
+            </div>
+
         </div>
 
     </div>
