@@ -169,7 +169,11 @@ async function handleSendCode() {
             await fetch(
                 `${API_BASE_URL}/api/admin/Login/${lineUserId}/登入頁面`,
                 {
-                    method: "POST"
+                    method: "POST",
+                    headers: {
+                        "ngrok-skip-browser-warning":
+                            "true"
+                    }
                 }
             );
 
@@ -335,7 +339,11 @@ document
                         `${API_BASE_URL}/api/admin/Login-Verify/${profile.userId}/登入頁面/${otp}`,
                         {
                             method:
-                                "POST"
+                                "POST",
+                            headers: {
+                                "ngrok-skip-browser-warning":
+                                    "true"
+                            }
                         }
                     );
 
@@ -411,7 +419,11 @@ document
                         `${API_BASE_URL}/api/admin/Login/${profile.userId}/登入頁面`,
                         {
                             method:
-                                "POST"
+                                "POST",
+                            headers: {
+                                "ngrok-skip-browser-warning":
+                                    "true"
+                            }
                         }
                     );
 
