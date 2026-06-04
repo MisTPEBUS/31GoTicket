@@ -3,7 +3,7 @@ import {
 } from "../liff/liff-init.js";
 
 const API_BASE_URL =
-    "http://localhost:5140";
+    "https://9f4d-59-124-220-148.ngrok-free.app";
 
 const sendCodeBtn =
     document.getElementById(
