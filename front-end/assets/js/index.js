@@ -89,6 +89,11 @@ async function init() {
                     "./pages/admin/login.html";
 
                 break;
+            case "redeem":
+                window.location.href =
+                    "./pages/admin/redeem/index.html";
+
+                break;
             case "admin-dashboard":
                 window.location.href =
                     "./pages/admin/dashboard.html";
