@@ -84,6 +84,21 @@ async function init() {
         console.log(`page: ${page}`);
 
         switch (page) {
+            case "login":
+                window.location.href =
+                    "./pages/admin/login.html";
+
+                break;
+            case "admin-dashboard":
+                window.location.href =
+                    "./pages/admin/dashboard.html";
+
+                break;
+            case "admin-redeem":
+                window.location.href =
+                    "./pages/admin/redeem/index.html";
+
+                break;
 
             case "progress":
 
