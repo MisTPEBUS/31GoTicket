@@ -131,6 +131,23 @@ sendCodeBtn?.addEventListener(
 
 async function handleSendCode() {
 
+    const activityCode =
+        document
+            .getElementById(
+                "activityCode"
+            )
+            ?.value
+            .trim();
+
+    if (!activityCode) {
+
+        showError(
+            "請輸入活動碼"
+        );
+
+        return;
+    }
+
     try {
 
         const profile =
@@ -147,7 +164,7 @@ async function handleSendCode() {
 
         const lineUserId =
             profile.userId;
-        alert(lineUserId);
+
         const response =
             await fetch(
                 `${API_BASE_URL}/api/admin/Login/${lineUserId}/登入頁面`,
@@ -171,6 +188,12 @@ async function handleSendCode() {
         showSuccess(
             result.message
         );
+        document
+            .getElementById(
+                "activityCodeDisplay"
+            )
+            .innerText =
+            `活動碼：${activityCode}`;
 
         loginStep1.classList.add(
             "hidden"
@@ -185,9 +208,7 @@ async function handleSendCode() {
     }
     catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
         showError(
             "取得驗證碼失敗"
