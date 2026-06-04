@@ -147,7 +147,7 @@ async function handleSendCode() {
 
         const lineUserId =
             profile.userId;
-
+        alert(lineUserId);
         const response =
             await fetch(
                 `${API_BASE_URL}/api/admin/Login/${lineUserId}/登入頁面`,
