@@ -46,26 +46,11 @@ async function init() {
                 ?.toString()
                 .padStart(8, "0");
 
-        document
-            .getElementById(
-                "coverImage"
-            )
-            .src =
-            profile.pictureUrl;
 
-        document
-            .getElementById(
-                "avatarImage"
-            )
-            .src =
-            profile.pictureUrl;
 
-        document
-            .getElementById(
-                "displayName"
-            )
-            .innerText =
-            profile.displayName;
+
+
+
         document
             .getElementById(
                 "registerCampaignBtn"
@@ -108,12 +93,7 @@ async function init() {
                 );
             });
 
-        document
-            .getElementById(
-                "activityCode"
-            )
-            .innerText =
-            activityCode;
+
 
         renderRoleBadge(
             data.role
