@@ -3,7 +3,7 @@ import {
 } from "../liff/liff-init.js";
 
 const API_BASE_URL =
-    "https://你的-ngrok-url";
+    "http://localhost:5140";
 
 const sendCodeBtn =
     document.getElementById(
@@ -34,6 +34,92 @@ let countdownTimer = null;
 
 /*
 |--------------------------------------------------------------------------
+| Modal
+|--------------------------------------------------------------------------
+*/
+
+function showSuccess(
+    message
+) {
+
+    document
+        .getElementById(
+            "successMessage"
+        )
+        .innerText =
+        message;
+
+    document
+        .getElementById(
+            "successModal"
+        )
+        .classList
+        .remove(
+            "hidden"
+        );
+}
+
+function showError(
+    message
+) {
+
+    document
+        .getElementById(
+            "errorMessage"
+        )
+        .innerText =
+        message;
+
+    document
+        .getElementById(
+            "errorModal"
+        )
+        .classList
+        .remove(
+            "hidden"
+        );
+}
+
+document
+    .getElementById(
+        "successCloseBtn"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById(
+                    "successModal"
+                )
+                .classList
+                .add(
+                    "hidden"
+                );
+        }
+    );
+
+document
+    .getElementById(
+        "errorCloseBtn"
+    )
+    ?.addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById(
+                    "errorModal"
+                )
+                .classList
+                .add(
+                    "hidden"
+                );
+        }
+    );
+
+/*
+|--------------------------------------------------------------------------
 | 取得驗證碼
 |--------------------------------------------------------------------------
 */
@@ -52,23 +138,21 @@ async function handleSendCode() {
 
         if (!profile) {
 
-            alert(
+            showError(
                 "LINE 登入失敗"
             );
 
             return;
         }
 
+        const lineUserId =
+            profile.userId;
+
         const response =
             await fetch(
-                `${API_BASE_URL}/api/admin/Login/${profile.userId}/管理頁面`,
+                `${API_BASE_URL}/api/admin/Login/${lineUserId}/登入頁面`,
                 {
-                    method: "POST",
-
-                    headers: {
-                        "ngrok-skip-browser-warning":
-                            "true"
-                    }
+                    method: "POST"
                 }
             );
 
@@ -77,12 +161,16 @@ async function handleSendCode() {
 
         if (!response.ok) {
 
-            alert(
+            showError(
                 result.message
             );
 
             return;
         }
+
+        showSuccess(
+            result.message
+        );
 
         loginStep1.classList.add(
             "hidden"
@@ -94,10 +182,6 @@ async function handleSendCode() {
 
         startCountdown();
 
-        alert(
-            "驗證碼已發送至 LINE"
-        );
-
     }
     catch (error) {
 
@@ -105,7 +189,7 @@ async function handleSendCode() {
             error
         );
 
-        alert(
+        showError(
             "取得驗證碼失敗"
         );
     }
@@ -159,7 +243,7 @@ function startCountdown() {
 
 /*
 |--------------------------------------------------------------------------
-| OTP 自動跳下一格
+| OTP
 |--------------------------------------------------------------------------
 */
 
@@ -213,7 +297,7 @@ document
 
             if (otp.length !== 4) {
 
-                alert(
+                showError(
                     "請輸入完整驗證碼"
                 );
 
@@ -225,38 +309,21 @@ document
                 const profile =
                     await initLiff();
 
-                if (!profile) {
-
-                    alert(
-                        "LINE 登入失敗"
-                    );
-
-                    return;
-                }
-
                 const response =
                     await fetch(
-                        `${API_BASE_URL}/api/admin/Login-Verify/${profile.userId}/管理頁面/${otp}`,
+                        `${API_BASE_URL}/api/admin/Login-Verify/${profile.userId}/登入頁面/${otp}`,
                         {
                             method:
-                                "POST",
-
-                            headers:
-                            {
-                                "ngrok-skip-browser-warning":
-                                    "true"
-                            }
+                                "POST"
                         }
                     );
 
                 const result =
                     await response.json();
 
-                if (
-                    !response.ok
-                ) {
+                if (!response.ok) {
 
-                    alert(
+                    showError(
                         result.message
                     );
 
@@ -270,23 +337,28 @@ document
                     )
                 );
 
-                alert(
+                showSuccess(
                     "登入成功"
                 );
 
-                window.location.href =
-                    "./dashboard.html";
+                setTimeout(
+                    () => {
+
+                        window.location.href =
+                            "./dashboard.html";
+
+                    },
+                    1000
+                );
 
             }
-            catch (
-            error
-            ) {
+            catch (error) {
 
                 console.error(
                     error
                 );
 
-                alert(
+                showError(
                     "驗證失敗"
                 );
             }
@@ -296,7 +368,7 @@ document
 
 /*
 |--------------------------------------------------------------------------
-| 重新發送驗證碼
+| 重新發送
 |--------------------------------------------------------------------------
 */
 
@@ -313,38 +385,21 @@ document
                 const profile =
                     await initLiff();
 
-                if (!profile) {
-
-                    alert(
-                        "LINE 登入失敗"
-                    );
-
-                    return;
-                }
-
                 const response =
                     await fetch(
-                        `${API_BASE_URL}/api/admin/Login/${profile.userId}/管理頁面`,
+                        `${API_BASE_URL}/api/admin/Login/${profile.userId}/登入頁面`,
                         {
                             method:
-                                "POST",
-
-                            headers:
-                            {
-                                "ngrok-skip-browser-warning":
-                                    "true"
-                            }
+                                "POST"
                         }
                     );
 
                 const result =
                     await response.json();
 
-                if (
-                    !response.ok
-                ) {
+                if (!response.ok) {
 
-                    alert(
+                    showError(
                         result.message
                     );
 
@@ -353,20 +408,18 @@ document
 
                 startCountdown();
 
-                alert(
+                showSuccess(
                     "驗證碼已重新發送"
                 );
 
             }
-            catch (
-            error
-            ) {
+            catch (error) {
 
                 console.error(
                     error
                 );
 
-                alert(
+                showError(
                     "重新發送失敗"
                 );
             }
