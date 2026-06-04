@@ -91,7 +91,7 @@ async function init() {
 
         const response =
             await fetch(
-                `${API_BASE_URL}/api/user/info/${lineUserId}`,
+                `${API_BASE_URL}/api/user/incfo/${lineUserId}`,
                 {
                     method: "GET",
 
