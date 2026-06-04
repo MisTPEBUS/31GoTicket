@@ -175,7 +175,7 @@ async function sendOtp() {
 
         const response =
             await fetch(
-                `${API_BASE_URL}/api/admin/Login/${currentLineUserId}/打卡核銷`,
+                `${API_BASE_URL}/api/admin/TicketCheck/${currentLineUserId}/${currentQrCode}/打卡核銷`,
                 {
                     method: "POST"
                 }
