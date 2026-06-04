@@ -192,12 +192,7 @@ async function handleSendCode() {
         showSuccess(
             result.message
         );
-        document
-            .getElementById(
-                "activityCodeDisplay"
-            )
-            .innerText =
-            `活動碼：${activityCode}`;
+
 
         loginStep1.classList.add(
             "hidden"
