@@ -1,3 +1,10 @@
+import {
+    initLiff
+} from "../liff/liff-init.js";
+
+const API_BASE_URL =
+    "https://你的-ngrok-url";
+
 const sendCodeBtn =
     document.getElementById(
         "sendCodeBtn"
@@ -25,23 +32,90 @@ const otpInputs =
 
 let countdownTimer = null;
 
+/*
+|--------------------------------------------------------------------------
+| 取得驗證碼
+|--------------------------------------------------------------------------
+*/
+
 sendCodeBtn?.addEventListener(
     "click",
     handleSendCode
 );
 
-function handleSendCode() {
+async function handleSendCode() {
 
-    loginStep1.classList.add(
-        "hidden"
-    );
+    try {
 
-    loginStep2.classList.remove(
-        "hidden"
-    );
+        const profile =
+            await initLiff();
 
-    startCountdown();
+        if (!profile) {
+
+            alert(
+                "LINE 登入失敗"
+            );
+
+            return;
+        }
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/Login/${profile.userId}/管理頁面`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "ngrok-skip-browser-warning":
+                            "true"
+                    }
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+
+            alert(
+                result.message
+            );
+
+            return;
+        }
+
+        loginStep1.classList.add(
+            "hidden"
+        );
+
+        loginStep2.classList.remove(
+            "hidden"
+        );
+
+        startCountdown();
+
+        alert(
+            "驗證碼已發送至 LINE"
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        alert(
+            "取得驗證碼失敗"
+        );
+    }
 }
+
+/*
+|--------------------------------------------------------------------------
+| 倒數計時
+|--------------------------------------------------------------------------
+*/
 
 function startCountdown() {
 
@@ -83,6 +157,12 @@ function startCountdown() {
         );
 }
 
+/*
+|--------------------------------------------------------------------------
+| OTP 自動跳下一格
+|--------------------------------------------------------------------------
+*/
+
 otpInputs.forEach(
     (input, index) => {
 
@@ -107,13 +187,19 @@ otpInputs.forEach(
     }
 );
 
+/*
+|--------------------------------------------------------------------------
+| 驗證登入
+|--------------------------------------------------------------------------
+*/
+
 document
     .getElementById(
         "verifyBtn"
     )
     ?.addEventListener(
         "click",
-        () => {
+        async () => {
 
             const otp =
                 Array.from(
@@ -125,18 +211,94 @@ document
                     )
                     .join("");
 
-            console.log(
-                "otp",
-                otp
-            );
+            if (otp.length !== 4) {
 
-            /*
-            TODO:
-            POST /api/admin/verify-code
-            */
+                alert(
+                    "請輸入完整驗證碼"
+                );
+
+                return;
+            }
+
+            try {
+
+                const profile =
+                    await initLiff();
+
+                if (!profile) {
+
+                    alert(
+                        "LINE 登入失敗"
+                    );
+
+                    return;
+                }
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/admin/Login-Verify/${profile.userId}/管理頁面/${otp}`,
+                        {
+                            method:
+                                "POST",
+
+                            headers:
+                            {
+                                "ngrok-skip-browser-warning":
+                                    "true"
+                            }
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (
+                    !response.ok
+                ) {
+
+                    alert(
+                        result.message
+                    );
+
+                    return;
+                }
+
+                localStorage.setItem(
+                    "adminUser",
+                    JSON.stringify(
+                        result.data
+                    )
+                );
+
+                alert(
+                    "登入成功"
+                );
+
+                window.location.href =
+                    "./dashboard.html";
+
+            }
+            catch (
+            error
+            ) {
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    "驗證失敗"
+                );
+            }
 
         }
     );
+
+/*
+|--------------------------------------------------------------------------
+| 重新發送驗證碼
+|--------------------------------------------------------------------------
+*/
 
 document
     .getElementById(
@@ -144,14 +306,70 @@ document
     )
     ?.addEventListener(
         "click",
-        () => {
+        async () => {
 
-            startCountdown();
+            try {
 
-            /*
-            TODO:
-            POST /api/admin/resend-code
-            */
+                const profile =
+                    await initLiff();
+
+                if (!profile) {
+
+                    alert(
+                        "LINE 登入失敗"
+                    );
+
+                    return;
+                }
+
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/admin/Login/${profile.userId}/管理頁面`,
+                        {
+                            method:
+                                "POST",
+
+                            headers:
+                            {
+                                "ngrok-skip-browser-warning":
+                                    "true"
+                            }
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (
+                    !response.ok
+                ) {
+
+                    alert(
+                        result.message
+                    );
+
+                    return;
+                }
+
+                startCountdown();
+
+                alert(
+                    "驗證碼已重新發送"
+                );
+
+            }
+            catch (
+            error
+            ) {
+
+                console.error(
+                    error
+                );
+
+                alert(
+                    "重新發送失敗"
+                );
+            }
 
         }
     );
