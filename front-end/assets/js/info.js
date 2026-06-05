@@ -660,24 +660,52 @@ function renderActivityCard(
     </div>
 
     <div
-        id="qrcode-${activity.userActivityId}"
-        class="
-            mt-4
-            flex
-            justify-center
-        "
-    >
-    </div>
+    id="qrcode-${activity.userActivityId}"
+    class="
+        mt-4
+        flex
+        justify-center
+    "
+>
+</div>
 
-    <p
-        class="
-            mt-4
-            text-sm
-            text-slate-500
-        "
-    >
-        請向工作人員出示此 QRCode
-    </p>
+<div
+    id="qrcode-timer-${activity.userActivityId}"
+    class="
+        mt-4
+        text-sm
+        font-bold
+        text-amber-600
+    "
+>
+    QRCode 尚未產生
+</div>
+
+<p
+    class="
+        mt-3
+        text-sm
+        text-slate-500
+    "
+>
+    QRCode 5 分鐘後失效，請於現場出示。
+</p>
+
+<button
+    class="
+        refresh-qrcode-btn
+        mt-4
+        w-full
+        rounded-2xl
+        bg-slate-900
+        py-3
+        text-white
+        font-bold
+    "
+    data-id="${activity.userActivityId}"
+>
+    重新產生 QRCode
+</button>
 
 </div>
 
@@ -720,7 +748,112 @@ function bindAccordionEvents() {
         });
 }
 function bindActionEvents() {
+    const qrcodeTimers = {};
 
+    function generateRewardQRCode(
+        userActivityId
+    ) {
+        const qrcodeContainer =
+            document.getElementById(
+                `qrcode-${userActivityId}`
+            );
+
+        const timerContainer =
+            document.getElementById(
+                `qrcode-timer-${userActivityId}`
+            );
+
+        if (!qrcodeContainer || !timerContainer) {
+            return;
+        }
+
+        qrcodeContainer.innerHTML =
+            "";
+
+        if (qrcodeTimers[userActivityId]) {
+
+            clearInterval(
+                qrcodeTimers[userActivityId]
+            );
+        }
+
+        const createdAt =
+            Date.now();
+
+        const expiresAt =
+            createdAt +
+            5 * 60 * 1000;
+
+        const qrPayload = {
+            id:
+                userActivityId,
+
+            createdAt:
+                createdAt,
+
+            expiresAt:
+                expiresAt
+        };
+
+        new QRCode(
+            qrcodeContainer,
+            {
+                text:
+                    JSON.stringify(
+                        qrPayload
+                    ),
+
+                width:
+                    180,
+
+                height:
+                    180
+            }
+        );
+
+        qrcodeTimers[userActivityId] =
+            setInterval(
+                () => {
+
+                    const remaining =
+                        expiresAt -
+                        Date.now();
+
+                    if (remaining <= 0) {
+
+                        clearInterval(
+                            qrcodeTimers[
+                            userActivityId
+                            ]
+                        );
+
+                        timerContainer.innerText =
+                            "QRCode 已失效，請重新產生";
+
+                        qrcodeContainer.innerHTML =
+                            "";
+
+                        return;
+                    }
+
+                    const minutes =
+                        Math.floor(
+                            remaining / 1000 / 60
+                        );
+
+                    const seconds =
+                        Math.floor(
+                            (
+                                remaining / 1000
+                            ) % 60
+                        );
+
+                    timerContainer.innerText =
+                        `QRCode 剩餘 ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+                },
+                1000
+            );
+    }
     document
         .querySelectorAll(
             ".activity-enter-btn"
@@ -752,6 +885,9 @@ function bindActionEvents() {
                     document.getElementById(
                         `qrcode-panel-${userActivityId}`
                     );
+                generateRewardQRCode(
+                    userActivityId
+                );
 
                 const qrcodeContainer =
                     document.getElementById(
@@ -761,24 +897,10 @@ function bindActionEvents() {
                 panel.classList.remove(
                     "hidden"
                 );
-
-                if (
-                    qrcodeContainer.dataset.loaded
-                ) {
-                    return;
-                }
-
-                new QRCode(
-                    qrcodeContainer,
-                    {
-                        text: userActivityId,
-                        width: 180,
-                        height: 180
-                    }
+                generateRewardQRCode(
+                    userActivityId
                 );
 
-                qrcodeContainer.dataset.loaded =
-                    "true";
             };
         });
 }
