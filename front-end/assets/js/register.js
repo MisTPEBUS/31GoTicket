@@ -2,89 +2,76 @@ import {
     initLiff
 } from "../liff/liff-init.js";
 
+
+
 const API_BASE_URL =
     "https://9f4d-59-124-220-148.ngrok-free.app";
-
-const CAMPAIGN_ID =
-    "2750ef49-8292-42fa-9660-273c46678aad";
-
-let scannerInstance = null;
-
-let currentMode =
-    "manual";
-
-let currentProfile =
-    null;
-
+let html5QrCode = null;
 /*
 |--------------------------------------------------------------------------
-| DOM
+| 使用者須知狀態
 |--------------------------------------------------------------------------
 */
 
-const manualModeBtn =
+let isAgreeNotice = false;
+
+/*
+|--------------------------------------------------------------------------
+| Modal DOM
+|--------------------------------------------------------------------------
+*/
+
+const noticeModal =
     document.getElementById(
-        "manualModeBtn"
+        "noticeModal"
     );
 
-const scanModeBtn =
+const confirmNoticeBtn =
     document.getElementById(
-        "scanModeBtn"
+        "confirmNoticeBtn"
     );
 
-const manualPanel =
+const cancelNoticeBtn =
     document.getElementById(
-        "manualPanel"
-    );
-
-const scanPanel =
-    document.getElementById(
-        "scanPanel"
-    );
-
-const startScanBtn =
-    document.getElementById(
-        "startScanBtn"
-    );
-
-const scannerContainer =
-    document.getElementById(
-        "scannerContainer"
-    );
-
-const ticketNoInput =
-    document.getElementById(
-        "ticketNoInput"
-    );
-
-const resultMessage =
-    document.getElementById(
-        "resultMessage"
-    );
-
-const submitBtn =
-    document.getElementById(
-        "submitBtn"
-    );
-
-const successModal =
-    document.getElementById(
-        "successModal"
-    );
-
-const successText =
-    document.getElementById(
-        "successText"
-    );
-
-const successCloseBtn =
-    document.getElementById(
-        "successCloseBtn"
+        "cancelNoticeBtn"
     );
 
 /*
 |--------------------------------------------------------------------------
-| Init
+| 使用者須知事件
+|--------------------------------------------------------------------------
+*/
+
+confirmNoticeBtn?.addEventListener(
+    "click",
+    () => {
+
+        isAgreeNotice = true;
+
+        noticeModal.classList.add(
+            "hidden"
+        );
+    }
+);
+
+cancelNoticeBtn?.addEventListener(
+    "click",
+    () => {
+
+        if (window.liff) {
+
+            liff.closeWindow();
+
+            return;
+        }
+
+        window.history.back();
+    }
+);
+
+/*
+|--------------------------------------------------------------------------
+| 初始化
 |--------------------------------------------------------------------------
 */
 
@@ -92,34 +79,273 @@ async function init() {
 
     try {
 
-        currentProfile =
+        const profile =
             await initLiff();
 
-        if (!currentProfile) {
+        if (!profile) {
+            return;
+        }
 
-            showMessage(
-                "LINE 初始化失敗，請重新開啟頁面。"
+        console.log(profile);
+
+        const userId =
+            profile.userId;
+
+        /*
+        |--------------------------------------------------------------------------
+        | 讀取活動狀態
+        |--------------------------------------------------------------------------
+        */
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/activity/current/${userId}`,
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "ngrok-skip-browser-warning":
+                            "true"
+                    }
+                }
+            );
+
+        if (!response.ok) {
+
+            alert(
+                "活動狀態讀取失敗"
             );
 
             return;
         }
 
-        console.log(
-            currentProfile
+        const data =
+            await response.json();
+
+        console.log(data);
+
+        /*
+        |--------------------------------------------------------------------------
+        | 已參加活動
+        |--------------------------------------------------------------------------
+        */
+
+
+        /*   if (data.status !== "NONE") {
+  
+               window.location.href =
+                   "./progress.html";
+  
+              return;
+          } */
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 顯示資料
+        |--------------------------------------------------------------------------
+        */
+
+
+        document.getElementById(
+            "lineUserId"
+        ).value =
+            profile.userId;
+
+        document.getElementById(
+            "name"
+        ).value =
+            profile.displayName;
+
+        document.getElementById(
+            "loading"
+        ).classList.add(
+            "hidden"
         );
 
-        await checkCurrentActivity();
+        document.getElementById(
+            "registerForm"
+        ).classList.remove(
+            "hidden"
+        );
+        document
+            .getElementById(
+                "scanTicketBtn"
+            )
+            ?.addEventListener(
+                "click",
+                startTicketScanner
+            );
 
-        bindEvents();
 
-    }
-    catch (error) {
+        /*
+        |--------------------------------------------------------------------------
+        | Submit
+        |--------------------------------------------------------------------------
+        */
 
-        console.error(
-            error
+        const registerForm =
+            document.getElementById(
+                "registerForm"
+            );
+
+        registerForm.addEventListener(
+            "submit",
+            async (e) => {
+
+                e.preventDefault();
+
+                /*
+                |--------------------------------------------------------------------------
+                | 須知驗證
+                |--------------------------------------------------------------------------
+                */
+
+                if (!isAgreeNotice) {
+
+                    alert(
+                        "請先閱讀並同意使用者須知"
+                    );
+
+                    return;
+                }
+
+                const submitBtn =
+                    document.getElementById(
+                        "submitBtn"
+                    );
+
+                submitBtn.disabled =
+                    true;
+
+                submitBtn.innerText =
+                    "送出中...";
+
+                const payload = {
+
+                    LineUserId:
+                        profile.userId,
+
+                    Name:
+                        document.getElementById(
+                            "name"
+                        ).value.trim(),
+
+                    OrderNo:
+                        document.getElementById(
+                            "orderNo"
+                        ).value.trim() ?? "",
+                    TicketNo:
+                        document.getElementById(
+                            "ticketNo"
+                        ).value.trim() ?? z,
+
+                    CampaignId:
+                        "2750ef49-8292-42fa-9660-273c46678aad"
+                };
+
+                console.log(payload);
+
+                try {
+
+                    const registerResponse =
+                        await fetch(
+                            `${API_BASE_URL}/api/activity/register`,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "ngrok-skip-browser-warning":
+                                        "true"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        payload
+                                    )
+                            }
+                        );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | API Error
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (!registerResponse.ok) {
+
+                        alert(
+                            "報名失敗"
+                        );
+
+                        return;
+                    }
+
+                    const registerData =
+                        await registerResponse.json();
+
+                    console.log(
+                        registerData
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Success
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                        registerData.success
+                    ) {
+
+                        alert(
+                            registerData.message
+                        );
+
+
+                        window.location.href = `./progress.html?campaignId=2750ef49-8292-42fa-9660-273c46678aad`;
+
+                        return;
+                    }
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Fail Message
+                    |--------------------------------------------------------------------------
+                    */
+
+                    /*  */
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "系統發生錯誤"
+                    );
+
+                } finally {
+
+                    submitBtn.disabled =
+                        false;
+
+                    submitBtn.innerText =
+                        "立即參加";
+                }
+            }
         );
 
-        showMessage(
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
             "LIFF 初始化失敗"
         );
     }
@@ -127,548 +353,74 @@ async function init() {
 
 init();
 
-/*
-|--------------------------------------------------------------------------
-| Current Activity
-|--------------------------------------------------------------------------
-*/
+async function startTicketScanner() {
 
-async function checkCurrentActivity() {
-
-    const response =
-        await fetch(
-            `${API_BASE_URL}/api/activity/current/${currentProfile.userId}`,
-            {
-                method: "GET",
-
-                headers: {
-                    "Content-Type":
-                        "application/json",
-
-                    "ngrok-skip-browser-warning":
-                        "true"
-                }
-            }
+    const container =
+        document.getElementById(
+            "scannerContainer"
         );
 
-    if (!response.ok) {
+    container.classList.remove(
+        "hidden"
+    );
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
 
-        showMessage(
-            "活動狀態讀取失敗"
+    if (html5QrCode) {
+
+        try {
+
+            await html5QrCode.stop();
+
+        } catch { }
+
+        try {
+
+            await html5QrCode.clear();
+
+        } catch { }
+
+        html5QrCode = null;
+    }
+
+    html5QrCode =
+        new Html5Qrcode(
+            "reader"
         );
 
-        return;
-    }
+    await html5QrCode.start(
+        {
+            facingMode:
+                "environment"
+        },
+        {
+            fps: 10,
+            qrbox: 250
+        },
+        async decodedText => {
 
-    const data =
-        await response.json();
-
-    console.log(
-        "current activity",
-        data
-    );
-
-    /*
-    如果要阻擋已參加活動者，再打開：
-
-    if (data.status && data.status !== "NONE") {
-        window.location.href =
-            "./progress.html";
-    }
-    */
-}
-
-/*
-|--------------------------------------------------------------------------
-| Events
-|--------------------------------------------------------------------------
-*/
-
-function bindEvents() {
-
-    manualModeBtn?.addEventListener(
-        "click",
-        () => {
-
-            switchMode(
-                "manual"
+            console.log(
+                decodedText
             );
-        }
-    );
 
-    scanModeBtn?.addEventListener(
-        "click",
-        () => {
+            document
+                .getElementById(
+                    "ticketNo"
+                )
+                .value =
+                decodedText;
 
-            switchMode(
-                "scan"
-            );
-        }
-    );
+            await html5QrCode.stop();
 
-    ticketNoInput?.addEventListener(
-        "input",
-        formatTicketNo
-    );
+            await html5QrCode.clear();
 
-    startScanBtn?.addEventListener(
-        "click",
-        startScanner
-    );
+            html5QrCode = null;
 
-    submitBtn?.addEventListener(
-        "click",
-        submitRegister
-    );
-
-    successCloseBtn?.addEventListener(
-        "click",
-        () => {
-
-            successModal.classList.add(
+            container.classList.add(
                 "hidden"
             );
-
-            window.location.href =
-                `./progress.html?campaignId=${CAMPAIGN_ID}`;
         }
-    );
-}
-
-/*
-|--------------------------------------------------------------------------
-| Mode Switch
-|--------------------------------------------------------------------------
-*/
-
-function switchMode(
-    mode
-) {
-
-    currentMode =
-        mode;
-
-    if (mode === "manual") {
-
-        manualPanel.classList.remove(
-            "hidden"
-        );
-
-        scanPanel.classList.add(
-            "hidden"
-        );
-
-        manualModeBtn.className =
-            "h-12 rounded-2xl bg-white text-[#2C6E9B] font-black shadow-sm transition";
-
-        scanModeBtn.className =
-            "h-12 rounded-2xl text-slate-500 font-black transition";
-
-        return;
-    }
-
-    scanPanel.classList.remove(
-        "hidden"
-    );
-
-    manualPanel.classList.add(
-        "hidden"
-    );
-
-    scanModeBtn.className =
-        "h-12 rounded-2xl bg-white text-[#2C6E9B] font-black shadow-sm transition";
-
-    manualModeBtn.className =
-        "h-12 rounded-2xl text-slate-500 font-black transition";
-}
-
-/*
-|--------------------------------------------------------------------------
-| Ticket Format
-|--------------------------------------------------------------------------
-*/
-
-function formatTicketNo() {
-
-    ticketNoInput.value =
-        ticketNoInput
-            .value
-            .toUpperCase()
-            .replace(
-                /[^A-Z0-9]/g,
-                ""
-            )
-            .slice(
-                0,
-                10
-            );
-}
-
-function getOrderNo() {
-
-    const ticketNumber =
-        ticketNoInput
-            .value
-            .trim()
-            .toUpperCase();
-
-    return `PO-${ticketNumber}`;
-}
-
-function isValidOrderNo(
-    orderNo
-) {
-
-    return /^PO-[A-Z0-9]{10}$/.test(
-        orderNo
-    );
-}
-
-/*
-|--------------------------------------------------------------------------
-| Scanner
-|--------------------------------------------------------------------------
-*/
-
-async function startScanner() {
-
-    try {
-
-        scannerContainer.classList.remove(
-            "hidden"
-        );
-
-        scannerContainer.scrollIntoView({
-            behavior:
-                "smooth",
-
-            block:
-                "center"
-        });
-
-        startScanBtn.disabled =
-            true;
-
-        startScanBtn.innerText =
-            "掃描中...";
-
-        if (scannerInstance) {
-
-            await stopScanner();
-        }
-
-        scannerInstance =
-            new Html5Qrcode(
-                "reader"
-            );
-
-        await scannerInstance.start(
-            {
-                facingMode:
-                    "environment"
-            },
-            {
-                fps: 10,
-                qrbox: 240
-            },
-            handleScanSuccess
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-        showMessage(
-            "無法開啟相機，請確認瀏覽器權限。"
-        );
-
-        startScanBtn.disabled =
-            false;
-
-        startScanBtn.innerText =
-            "開啟相機掃描";
-    }
-}
-
-async function handleScanSuccess(
-    decodedText
-) {
-
-    const orderNo =
-        parseTicketNo(
-            decodedText
-        );
-
-    const ticketNumber =
-        orderNo.replace(
-            /^PO-/,
-            ""
-        );
-
-    ticketNoInput.value =
-        ticketNumber;
-
-    showMessage(
-        `已掃描票號：${orderNo}`
-    );
-
-    await stopScanner();
-
-    scannerContainer.classList.add(
-        "hidden"
-    );
-
-    startScanBtn.disabled =
-        false;
-
-    startScanBtn.innerText =
-        "重新掃描";
-
-    switchMode(
-        "manual"
-    );
-}
-
-function parseTicketNo(
-    decodedText
-) {
-
-    let value =
-        decodedText
-            .trim()
-            .toUpperCase();
-
-    try {
-
-        const url =
-            new URL(
-                value
-            );
-
-        const ticketNo =
-            url
-                .searchParams
-                .get(
-                    "ticketNo"
-                );
-
-        if (ticketNo) {
-
-            value =
-                ticketNo
-                    .trim()
-                    .toUpperCase();
-        }
-
-    }
-    catch {
-    }
-
-    if (
-        value.startsWith(
-            "PO-"
-        )
-    ) {
-
-        return value;
-    }
-
-    return `PO-${value}`;
-}
-
-async function stopScanner() {
-
-    if (!scannerInstance) {
-        return;
-    }
-
-    try {
-
-        await scannerInstance.stop();
-
-    }
-    catch {
-    }
-
-    try {
-
-        await scannerInstance.clear();
-
-    }
-    catch {
-    }
-
-    scannerInstance =
-        null;
-}
-
-/*
-|--------------------------------------------------------------------------
-| Submit
-|--------------------------------------------------------------------------
-*/
-
-async function submitRegister() {
-
-    hideMessage();
-
-    const orderNo =
-        getOrderNo();
-
-    if (
-        !isValidOrderNo(
-            orderNo
-        )
-    ) {
-
-        showMessage(
-            "請輸入正確票號格式：PO-xxxxxxxxxx"
-        );
-
-        return;
-    }
-
-    if (!currentProfile) {
-
-        showMessage(
-            "LINE 使用者資料讀取失敗，請重新開啟頁面。"
-        );
-
-        return;
-    }
-
-    submitBtn.disabled =
-        true;
-
-    submitBtn.innerText =
-        "註冊中...";
-
-    const payload = {
-        LineUserId:
-            currentProfile.userId,
-
-        Name:
-            currentProfile.displayName,
-
-        OrderNo:
-            orderNo,
-
-        TicketNo:
-            orderNo,
-
-        CampaignId:
-            CAMPAIGN_ID
-    };
-
-    console.log(
-        "register payload",
-        payload
-    );
-
-    try {
-
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/activity/register`,
-                {
-                    method:
-                        "POST",
-
-                    headers:
-                    {
-                        "Content-Type":
-                            "application/json",
-
-                        "ngrok-skip-browser-warning":
-                            "true"
-                    },
-
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-                }
-            );
-
-        const result =
-            await response.json();
-
-        if (!response.ok) {
-
-            showMessage(
-                result.message ||
-                "報名失敗"
-            );
-
-            return;
-        }
-
-        if (result.success === false) {
-
-            showMessage(
-                result.message ||
-                "報名失敗"
-            );
-
-            return;
-        }
-
-        successText.innerText =
-            result.message ||
-            `車票號碼 ${orderNo} 已完成註冊。`;
-
-        successModal.classList.remove(
-            "hidden"
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            error
-        );
-
-        showMessage(
-            "系統發生錯誤，請稍後再試。"
-        );
-    }
-    finally {
-
-        submitBtn.disabled =
-            false;
-
-        submitBtn.innerText =
-            "確認註冊";
-    }
-}
-
-/*
-|--------------------------------------------------------------------------
-| UI
-|--------------------------------------------------------------------------
-*/
-
-function showMessage(
-    message
-) {
-
-    resultMessage.innerText =
-        message;
-
-    resultMessage.classList.remove(
-        "hidden"
-    );
-}
-
-function hideMessage() {
-
-    resultMessage.innerText =
-        "";
-
-    resultMessage.classList.add(
-        "hidden"
     );
 }
