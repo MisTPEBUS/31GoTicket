@@ -288,9 +288,19 @@ async function handleScanResult(
 
         scanResultTimer =
             setTimeout(
-                () => {
+                async () => {
 
-                    resetScanState();
+                    const activity =
+                        await fetchActivity(
+                            lineUserId
+                        );
+
+                    renderPage(
+                        activity,
+                        lineUserId
+                    );
+
+                    finishScanFlow();
 
                 },
                 3000
@@ -314,7 +324,7 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    resetScanState();
+                    finishScanFlow();
 
                 },
                 3000
@@ -1434,6 +1444,14 @@ function resetScanState() {
         scanResultTimer =
             null;
     }
+}
+function finishScanFlow() {
+
+    isScanningLocked =
+        false;
+
+    scanResultTimer =
+        null;
 
     hideScanResultModal();
 }
