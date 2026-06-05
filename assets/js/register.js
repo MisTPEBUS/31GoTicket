@@ -331,7 +331,7 @@ async function handleScanSuccess(decodedText) {
         ticketNumber;
 
     showMessage(
-        `已掃描票號：${orderNo}`
+        `已掃描票號`
     );
 
     await stopScanner();
@@ -471,7 +471,7 @@ async function submitRegister() {
 
         const registerResponse =
             await fetch(
-                `${API_BASE_URL}/api/activityx/register`,
+                `${API_BASE_URL}/api/activity/register`,
                 {
                     method: "POST",
 
