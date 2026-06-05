@@ -369,21 +369,24 @@ async function handleScanResult(
 
         return;
     }
+    else {
+        showScanError(
+            data.message ||
+            "打卡失敗"
+        );
 
-    showScanError(
-        data.message ||
-        "打卡失敗"
-    );
+        scanResultTimer =
+            setTimeout(
+                () => {
 
-    /*  scanResultTimer =
-         setTimeout(
-             () => {
- 
-                 resetScanState();
- 
-             },
-             3000
-         ); */
+                    resetScanState();
+
+                },
+                3000
+            );
+    }
+
+
 }
 
 function hideScanResultModal() {
