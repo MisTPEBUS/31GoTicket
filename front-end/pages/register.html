@@ -205,28 +205,47 @@
                     車票號碼
                 </label>
                 <div>
-                    PO-
+                    <div class="
+    mt-3
+    flex
+    items-center
+    h-16
+    rounded-3xl
+    border
+    border-slate-200
+    bg-slate-50
+    overflow-hidden
+    focus-within:border-[#4FA3D9]
+    focus-within:ring-4
+    focus-within:ring-sky-100
+">
 
-                    <input id="ticketNoInput" type="text" inputmode="numeric" maxlength="13" placeholder="PO-xxxxxxxxxx"
-                        class="
-            mt-3
-            w-full
-            h-16
-            rounded-3xl
-            border
-            border-slate-200
-            bg-slate-50
-            px-5
+                        <div class="
+        px-5
+        text-lg
+        font-black
+        text-slate-700
+        border-r
+        border-slate-200
+        shrink-0
+    ">
+                            PO-
+                        </div>
+
+                        <input id="ticketNoInput" type="text" inputmode="numeric" maxlength="10"
+                            placeholder="xxxxxxxxxx" class="
+            flex-1
+            h-full
+            bg-transparent
+            px-4
             text-center
             text-lg
             font-black
             tracking-[0.12em]
-            uppercase
             outline-none
-            focus:border-[#4FA3D9]
-            focus:ring-4
-            focus:ring-sky-100
         ">
+
+                    </div>
 
                     <p class="
         mt-3
@@ -326,7 +345,7 @@
 
             <!-- Submit -->
 
-            <button id="submitRegisterBtn" class="
+            <button id="submitBtn" class="
                     mt-7
                     w-full
                     h-16
@@ -347,6 +366,152 @@
         </section>
 
         <!-- Notice -->
+        <section class="mt-6">
+
+            <div class="
+                rounded-[36px]
+                bg-white
+                p-7
+                border
+                border-[#EDF1F6]
+                shadow-sm
+            ">
+
+                <h2 class="
+                    text-2xl
+                    font-black
+                    mb-7
+                ">
+                    注意事項
+                </h2>
+
+                <div class="space-y-5">
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            01
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            每張票券限參加一次活動。
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            02
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            活動期間內請於指定景點完成打卡。
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            03
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            領獎 QR Code 僅供本人使用，請勿轉讓或分享。
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            04
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            活動獎品數量有限，依活動公告為準。
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <span class="
+                            w-9
+                            h-9
+                            rounded-full
+                            bg-[#EEF1FF]
+                            text-[#183B5B]
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                            shrink-0
+                        ">
+                            05
+                        </span>
+
+                        <p class="
+                            text-slate-600
+                            leading-7
+                        ">
+                            主辦單位保留活動解釋、修改及終止之權利。
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
         <section class="
             mt-6
@@ -493,381 +658,7 @@
 
     </div>
 
-    <script>
 
-        /*
-        |--------------------------------------------------------------------------
-        | State
-        |--------------------------------------------------------------------------
-        */
-
-        let scannerInstance =
-            null;
-
-        let currentMode =
-            "manual";
-
-        /*
-        |--------------------------------------------------------------------------
-        | DOM
-        |--------------------------------------------------------------------------
-        */
-
-        const manualModeBtn =
-            document.getElementById(
-                "manualModeBtn"
-            );
-
-        const scanModeBtn =
-            document.getElementById(
-                "scanModeBtn"
-            );
-
-        const manualPanel =
-            document.getElementById(
-                "manualPanel"
-            );
-
-        const scanPanel =
-            document.getElementById(
-                "scanPanel"
-            );
-
-        const startScanBtn =
-            document.getElementById(
-                "startScanBtn"
-            );
-
-        const scannerContainer =
-            document.getElementById(
-                "scannerContainer"
-            );
-
-        const ticketNoInput =
-            document.getElementById(
-                "ticketNoInput"
-            );
-
-        const resultMessage =
-            document.getElementById(
-                "resultMessage"
-            );
-
-        const submitRegisterBtn =
-            document.getElementById(
-                "submitRegisterBtn"
-            );
-
-        const successModal =
-            document.getElementById(
-                "successModal"
-            );
-
-        const successText =
-            document.getElementById(
-                "successText"
-            );
-
-        /*
-        |--------------------------------------------------------------------------
-        | Mode Switch
-        |--------------------------------------------------------------------------
-        */
-
-        manualModeBtn.addEventListener(
-            "click",
-            () => {
-
-                currentMode =
-                    "manual";
-
-                manualPanel.classList.remove(
-                    "hidden"
-                );
-
-                scanPanel.classList.add(
-                    "hidden"
-                );
-
-                manualModeBtn.className =
-                    "h-12 rounded-2xl bg-white text-[#2C6E9B] font-black shadow-sm transition";
-
-                scanModeBtn.className =
-                    "h-12 rounded-2xl text-slate-500 font-black transition";
-
-            }
-        );
-
-        scanModeBtn.addEventListener(
-            "click",
-            () => {
-
-                currentMode =
-                    "scan";
-
-                scanPanel.classList.remove(
-                    "hidden"
-                );
-
-                manualPanel.classList.add(
-                    "hidden"
-                );
-
-                scanModeBtn.className =
-                    "h-12 rounded-2xl bg-white text-[#2C6E9B] font-black shadow-sm transition";
-
-                manualModeBtn.className =
-                    "h-12 rounded-2xl text-slate-500 font-black transition";
-
-            }
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | Ticket Input Format
-        |--------------------------------------------------------------------------
-        */
-
-        ticketNoInput.addEventListener(
-            "input",
-            () => {
-
-                ticketNoInput.value =
-                    ticketNoInput
-                        .value
-                        .toUpperCase()
-                        .replace(
-                            /[^A-Z0-9-]/g,
-                            ""
-                        );
-            }
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | Scanner
-        |--------------------------------------------------------------------------
-        */
-
-        startScanBtn.addEventListener(
-            "click",
-            async () => {
-
-                scannerContainer.classList.remove(
-                    "hidden"
-                );
-
-                startScanBtn.disabled =
-                    true;
-
-                startScanBtn.innerText =
-                    "掃描中...";
-
-                scannerInstance =
-                    new Html5Qrcode(
-                        "reader"
-                    );
-
-                try {
-
-                    await scannerInstance.start(
-                        {
-                            facingMode:
-                                "environment"
-                        },
-                        {
-                            fps: 10,
-                            qrbox: 240
-                        },
-                        async decodedText => {
-
-                            await handleScanSuccess(
-                                decodedText
-                            );
-                        }
-                    );
-
-                }
-                catch (error) {
-
-                    showMessage(
-                        "無法開啟相機，請確認瀏覽器權限。"
-                    );
-
-                    startScanBtn.disabled =
-                        false;
-
-                    startScanBtn.innerText =
-                        "開啟相機掃描";
-                }
-            }
-        );
-
-        async function handleScanSuccess(
-            decodedText
-        ) {
-
-            let ticketNo =
-                decodedText
-                    .trim()
-                    .toUpperCase();
-
-            /*
-            如果 QRCode 是網址，可嘗試從 query string 取得 ticketNo
-            例如：https://example.com/register?ticketNo=PO-1234567890
-            */
-
-            try {
-
-                const url =
-                    new URL(
-                        ticketNo
-                    );
-
-                const queryTicketNo =
-                    url
-                        .searchParams
-                        .get(
-                            "ticketNo"
-                        );
-
-                if (queryTicketNo) {
-
-                    ticketNo =
-                        queryTicketNo
-                            .trim()
-                            .toUpperCase();
-                }
-
-            }
-            catch {
-
-                /*
-                不是 URL 就直接使用 decodedText
-                */
-            }
-
-            ticketNoInput.value =
-                ticketNo;
-
-            showMessage(
-                `已掃描票號：${ticketNo}`
-            );
-
-            if (scannerInstance) {
-
-                await scannerInstance.stop();
-
-                scannerInstance.clear();
-
-                scannerInstance =
-                    null;
-            }
-
-            scannerContainer.classList.add(
-                "hidden"
-            );
-
-            startScanBtn.disabled =
-                false;
-
-            startScanBtn.innerText =
-                "重新掃描";
-
-            /*
-            掃描完成後切回輸入確認狀態
-            */
-
-            manualModeBtn.click();
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Submit
-        |--------------------------------------------------------------------------
-        */
-
-        submitRegisterBtn.addEventListener(
-            "click",
-            () => {
-
-                const ticketNo =
-                    ticketNoInput
-                        .value
-                        .trim()
-                        .toUpperCase();
-
-                const isValid =
-                    /^PO-[A-Z0-9]{10}$/.test(
-                        ticketNo
-                    );
-
-                if (!isValid) {
-
-                    showMessage(
-                        "請輸入正確票號格式：PO-xxxxxxxxxx"
-                    );
-
-                    return;
-                }
-
-                /*
-                TODO:
-                後續接 API：
-                POST /api/activity/register
-                */
-
-                console.log(
-                    {
-                        ticketNo,
-                        registerType:
-                            currentMode
-                    }
-                );
-
-                successText.innerText =
-                    `車票號碼 ${ticketNo} 已完成註冊。`;
-
-                successModal.classList.remove(
-                    "hidden"
-                );
-
-            }
-        );
-
-        document
-            .getElementById(
-                "successCloseBtn"
-            )
-            .addEventListener(
-                "click",
-                () => {
-
-                    successModal.classList.add(
-                        "hidden"
-                    );
-                }
-            );
-
-        /*
-        |--------------------------------------------------------------------------
-        | Helper
-        |--------------------------------------------------------------------------
-        */
-
-        function showMessage(
-            message
-        ) {
-
-            resultMessage.innerText =
-                message;
-
-            resultMessage.classList.remove(
-                "hidden"
-            );
-        }
-
-    </script>
 
 </body>
 <script type="module" src="../assets/js/register.js">

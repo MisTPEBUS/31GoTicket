@@ -228,18 +228,14 @@ async function init() {
                         profile.userId,
 
                     Name:
-                        document.getElementById(
-                            "name"
-                        ).value.trim(),
+                        profile.name,
 
                     OrderNo:
-                        document.getElementById(
-                            "orderNo"
+                        "PO-" + document.getElementById(
+                            "ticketNoInput"
                         ).value.trim() ?? "",
                     TicketNo:
-                        document.getElementById(
-                            "ticketNo"
-                        ).value.trim() ?? "",
+                        "",
 
                     CampaignId:
                         "2750ef49-8292-42fa-9660-273c46678aad"
@@ -251,7 +247,7 @@ async function init() {
 
                     const registerResponse =
                         await fetch(
-                            `${API_BASE_URL}/api/activity/register`,
+                            `${API_BASE_URL}/api/activityx/register`,
                             {
                                 method: "POST",
 
