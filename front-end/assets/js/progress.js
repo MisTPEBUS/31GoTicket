@@ -8,6 +8,7 @@ const API_BASE_URL =
 let html5QrCode = null;
 let isScanningLocked = false;
 let scanResultTimer = null;
+let isScannerOpening = false;
 /*
 |--------------------------------------------------------------------------
 | 初始化
@@ -113,27 +114,7 @@ async function init() {
         | 綁定 QRCode 掃描
         |--------------------------------------------------------------------------
         */
-        const checkBtn =
-            document.getElementById(
-                "checkBtn"
-            );
 
-        if (checkBtn) {
-
-            checkBtn.addEventListener(
-                "click",
-                async () => {
-
-                    console.log(
-                        "checkBtn clicked"
-                    );
-
-                    await openScanner(
-                        userId
-                    );
-                }
-            );
-        }
 
 
 
@@ -153,31 +134,38 @@ document
     .addEventListener("click", closeScanner);
 async function closeScanner() {
 
-    const modal = document
-        .getElementById(
+    const modal =
+        document.getElementById(
             "scannerModal"
         );
-    modal.classList.remove(
-        "flex"
-    );
-    modal.classList.add(
-        "hidden"
-    );
 
-    if (html5QrCode) {
+    if (modal) {
 
-        try {
+        modal.classList.remove(
+            "flex"
+        );
 
-            await html5QrCode.stop();
-            await html5QrCode.clear();
-            html5QrCode = null;
-
-        } catch {
-
-        }
-
-        html5QrCode = null;
+        modal.classList.add(
+            "hidden"
+        );
     }
+
+    if (!html5QrCode) {
+        return;
+    }
+
+    const scanner =
+        html5QrCode;
+
+    html5QrCode = null;
+
+    try {
+        await scanner.stop();
+    } catch { }
+
+    try {
+        await scanner.clear();
+    } catch { }
 }
 
 /*
@@ -190,9 +178,13 @@ async function closeScanner() {
 async function openScanner(
     lineUserId
 ) {
-    resetScanState();
-    isScanningLocked =
-        false;
+    if (isScannerOpening || html5QrCode) {
+        return;
+    }
+
+    isScannerOpening = true;
+    isScanningLocked = false;
+
     const modal =
         document.getElementById(
             "scannerModal"
@@ -206,19 +198,6 @@ async function openScanner(
         "flex"
     );
 
-    if (html5QrCode) {
-
-        try {
-            await html5QrCode.stop();
-        } catch { }
-
-        try {
-            await html5QrCode.clear();
-        } catch { }
-
-        html5QrCode = null;
-    }
-
     html5QrCode =
         new Html5Qrcode(
             "reader"
@@ -230,35 +209,51 @@ async function openScanner(
             320
         );
 
-    await html5QrCode.start(
-        {
-            facingMode:
-                "environment"
-        },
-        {
-            fps: 10,
-            qrbox: {
-                width: qrSize,
-                height: qrSize
+    try {
+
+        await html5QrCode.start(
+            {
+                facingMode:
+                    "environment"
+            },
+            {
+                fps: 10,
+                qrbox: {
+                    width: qrSize,
+                    height: qrSize
+                }
+            },
+            async decodedText => {
+
+                if (isScanningLocked) {
+                    return;
+                }
+
+                isScanningLocked = true;
+
+                await closeScanner();
+
+                await handleScanResult(
+                    lineUserId,
+                    decodedText
+                );
             }
-        },
-        async decodedText => {
+        );
 
-            if (isScanningLocked) {
-                return;
-            }
+    } catch (error) {
 
-            isScanningLocked =
-                true;
+        console.error(error);
 
-            await closeScanner();
+        await closeScanner();
 
-            await handleScanResult(
-                lineUserId,
-                decodedText
-            );
-        }
-    );
+        showScanError(
+            "相機啟動失敗，請確認瀏覽器權限"
+        );
+
+    } finally {
+
+        isScannerOpening = false;
+    }
 }
 
 async function handleScanResult(
