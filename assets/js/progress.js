@@ -288,17 +288,7 @@ async function handleScanResult(
 
         scanResultTimer =
             setTimeout(
-                async () => {
-
-                    const activity =
-                        await fetchActivity(
-                            lineUserId
-                        );
-
-                    renderPage(
-                        activity,
-                        lineUserId
-                    );
+                () => {
 
                     finishScanFlow();
 
@@ -333,53 +323,55 @@ async function handleScanResult(
         return;
     }
 
-    const response =
-        await fetch(
-            `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type":
-                        "application/json",
-                    "ngrok-skip-browser-warning":
-                        "true"
+    try {
+
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                        "ngrok-skip-browser-warning":
+                            "true"
+                    }
                 }
-            }
-        );
+            );
 
-    const data =
-        await response.json();
+        const data =
+            await response.json();
 
-    if (data.success) {
+        if (data.success) {
 
-        showScanSuccess(
-            data.message ||
-            "景點打卡完成"
-        );
+            showScanSuccess(
+                data.message ||
+                "景點打卡完成"
+            );
 
-        scanResultTimer =
-            setTimeout(
-                async () => {
+            scanResultTimer =
+                setTimeout(
+                    async () => {
 
-                    const activity =
-                        await fetchActivity(
+                        const activity =
+                            await fetchActivity(
+                                lineUserId
+                            );
+
+                        renderPage(
+                            activity,
                             lineUserId
                         );
 
-                    renderPage(
-                        activity,
-                        lineUserId
-                    );
+                        finishScanFlow();
 
-                    resetScanState();
+                    },
+                    3000
+                );
 
-                },
-                3000
-            );
+            return;
+        }
 
-        return;
-    }
-    else {
         showScanError(
             data.message ||
             "打卡失敗"
@@ -389,14 +381,33 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    resetScanState();
+                    finishScanFlow();
+
+                },
+                3000
+            );
+
+    }
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        showScanError(
+            "系統發生錯誤，請稍後再試"
+        );
+
+        scanResultTimer =
+            setTimeout(
+                () => {
+
+                    finishScanFlow();
 
                 },
                 3000
             );
     }
-
-
 }
 
 function hideScanResultModal() {
