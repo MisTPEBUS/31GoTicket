@@ -62,9 +62,10 @@ async function init() {
         const activity =
             await response.json();
 
-        renderHeroStatus(activity);
-        renderSpotList(activity);
-        renderSpotCarousel(activity);
+        renderPage(
+            activity,
+            userId
+        );
 
         document
             .getElementById(
@@ -1063,20 +1064,21 @@ function bindEvents(
     userId,
     activity
 ) {
-    document
-        .getElementById(
+    const checkBtn =
+        document.getElementById(
             "checkBtn"
-        )
-        .forEach(button => {
+        );
 
-            button.onclick =
-                async () => {
+    if (checkBtn) {
 
-                    await openScanner(
-                        userId
-                    );
-                };
-        });
+        checkBtn.onclick =
+            async () => {
+
+                await openScanner(
+                    userId
+                );
+            };
+    }
 
     document
         .querySelectorAll(
