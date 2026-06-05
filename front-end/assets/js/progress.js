@@ -111,31 +111,27 @@ async function init() {
         | 綁定 QRCode 掃描
         |--------------------------------------------------------------------------
         */
-        document
-            .querySelectorAll("[id^='scanButton-']")
-            .forEach(button => {
+        const checkBtn =
+            document.getElementById(
+                "checkBtn"
+            );
 
-                button.addEventListener(
-                    "click",
-                    async () => {
+        if (checkBtn) {
 
-                        const spotId =
-                            button.id.replace(
-                                "scanButton-",
-                                ""
-                            );
+            checkBtn.addEventListener(
+                "click",
+                async () => {
 
-                        console.log(
-                            "spotId:",
-                            spotId
-                        );
+                    console.log(
+                        "checkBtn clicked"
+                    );
 
-                        await openScanner(
-                            userId
-                        );
-                    }
-                );
-            });
+                    await openScanner(
+                        userId
+                    );
+                }
+            );
+        }
 
 
 
