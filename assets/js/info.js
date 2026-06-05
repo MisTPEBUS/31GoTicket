@@ -395,6 +395,7 @@ function renderActivityCard(
 
         actionButton = `
         <button
+         id="generate-qrcode-btn-${activity.userActivityId}"
             class="
                 activity-qrcode-btn
                 mt-5
@@ -688,7 +689,7 @@ function renderActivityCard(
         text-slate-500
     "
 >
-    QRCode 5 分鐘後失效，請於現場出示。
+     5 分鐘後自動失效
 </p>
 
 <button
@@ -810,49 +811,77 @@ function bindActionEvents() {
                     180
             }
         );
+        updateQRCodeTimer(
+            userActivityId,
+            expiresAt
+        );
 
         qrcodeTimers[userActivityId] =
             setInterval(
                 () => {
 
-                    const remaining =
-                        expiresAt -
-                        Date.now();
+                    updateQRCodeTimer(
+                        userActivityId,
+                        expiresAt
+                    );
 
-                    if (remaining <= 0) {
-
-                        clearInterval(
-                            qrcodeTimers[
-                            userActivityId
-                            ]
-                        );
-
-                        timerContainer.innerText =
-                            "QRCode 已失效，請重新產生";
-
-                        qrcodeContainer.innerHTML =
-                            "";
-
-                        return;
-                    }
-
-                    const minutes =
-                        Math.floor(
-                            remaining / 1000 / 60
-                        );
-
-                    const seconds =
-                        Math.floor(
-                            (
-                                remaining / 1000
-                            ) % 60
-                        );
-
-                    timerContainer.innerText =
-                        `QRCode 剩餘 ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
                 },
                 1000
             );
+    }
+    function updateQRCodeTimer(
+        userActivityId,
+        expiresAt
+    ) {
+        const qrcodeContainer =
+            document.getElementById(
+                `qrcode-${userActivityId}`
+            );
+
+        const timerContainer =
+            document.getElementById(
+                `qrcode-timer-${userActivityId}`
+            );
+
+        if (!qrcodeContainer || !timerContainer) {
+            return;
+        }
+
+        const remaining =
+            expiresAt -
+            Date.now();
+
+        if (remaining <= 0) {
+
+            clearInterval(
+                qrcodeTimers[
+                userActivityId
+                ]
+            );
+
+            timerContainer.innerText =
+                "QRCode 已失效，請重新產生";
+
+            qrcodeContainer.innerHTML =
+                "";
+
+            return;
+        }
+
+        const minutes =
+            Math.floor(
+                remaining / 1000 / 60
+            );
+
+        const seconds =
+            Math.floor(
+                (
+                    remaining / 1000
+                ) % 60
+            );
+
+        timerContainer.innerText =
+            `剩餘時間 ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     }
     document
         .querySelectorAll(
@@ -876,32 +905,58 @@ function bindActionEvents() {
         )
         .forEach(btn => {
 
-            btn.onclick = () => {
+            btn.onclick =
+                () => {
 
-                const userActivityId =
-                    btn.dataset.id;
+                    const userActivityId =
+                        btn.dataset.id;
 
-                const panel =
-                    document.getElementById(
-                        `qrcode-panel-${userActivityId}`
+                    const panel =
+                        document.getElementById(
+                            `qrcode-panel-${userActivityId}`
+                        );
+
+                    const generateBtn =
+                        document.getElementById(
+                            `generate-qrcode-btn-${userActivityId}`
+                        );
+
+                    if (!panel) {
+                        return;
+                    }
+
+                    panel.classList.remove(
+                        "hidden"
                     );
-                generateRewardQRCode(
-                    userActivityId
-                );
 
-                const qrcodeContainer =
-                    document.getElementById(
-                        `qrcode-${userActivityId}`
+                    if (generateBtn) {
+
+                        generateBtn.classList.add(
+                            "hidden"
+                        );
+                    }
+
+                    generateRewardQRCode(
+                        userActivityId
                     );
+                };
+        });
+    document
+        .querySelectorAll(
+            ".refresh-qrcode-btn"
+        )
+        .forEach(btn => {
 
-                panel.classList.remove(
-                    "hidden"
-                );
-                generateRewardQRCode(
-                    userActivityId
-                );
+            btn.onclick =
+                () => {
 
-            };
+                    const userActivityId =
+                        btn.dataset.id;
+
+                    generateRewardQRCode(
+                        userActivityId
+                    );
+                };
         });
 }
 
