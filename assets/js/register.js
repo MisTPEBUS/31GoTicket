@@ -1,6 +1,8 @@
 import {
     initLiff
-} from "../liff/liff-init";
+} from "../liff/liff-init.js";
+
+
 
 const API_BASE_URL =
     "https://9f4d-59-124-220-148.ngrok-free.app";
@@ -228,14 +230,18 @@ async function init() {
                         profile.userId,
 
                     Name:
-                        profile.name,
+                        document.getElementById(
+                            "name"
+                        ).value.trim(),
 
                     OrderNo:
-                        "PO-" + document.getElementById(
-                            "ticketNoInput"
+                        document.getElementById(
+                            "orderNo"
                         ).value.trim() ?? "",
                     TicketNo:
-                        "",
+                        document.getElementById(
+                            "ticketNo"
+                        ).value.trim() ?? z,
 
                     CampaignId:
                         "2750ef49-8292-42fa-9660-273c46678aad"
@@ -247,7 +253,7 @@ async function init() {
 
                     const registerResponse =
                         await fetch(
-                            `${API_BASE_URL}/api/activityx/register`,
+                            `${API_BASE_URL}/api/activity/register`,
                             {
                                 method: "POST",
 
