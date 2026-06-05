@@ -8,6 +8,11 @@ const API_BASE_URL =
 const CAMPAIGN_ID =
     "2750ef49-8292-42fa-9660-273c46678aad";
 
+const TICKET_QR_MAP = {
+    "UQZUV1RWMDFSP2EBMWIBWmMBMWQOMjAyNzA0MjYyMzU5NTllFAEHAQDeFIpMSG9DftKa77IlJ8cfZw4yMDE5MDUwMTE3MzAwMFNPEQg3MDc2NTkwORMBMRUBNR0SMDAwMDEwMDAwMDAwODkwOTIwHgMxNzciFGQ5":
+        "6201203571"
+};
+
 let html5QrCode = null;
 
 let currentMode =
@@ -318,70 +323,74 @@ async function startTicketScanner() {
 
 async function handleScanSuccess(decodedText) {
 
-    const orderNo =
-        parseTicketNo(decodedText);
+    try {
 
-    const ticketNumber =
-        orderNo.replace(
-            /^PO-/,
-            ""
+        const orderNo =
+            parseTicketNo(decodedText);
+
+        const ticketNumber =
+            orderNo.replace(
+                /^PO-/,
+                ""
+            );
+
+        ticketNoInput.value =
+            ticketNumber;
+
+        showMessage(
+            `已掃描票號：${orderNo}`
         );
 
-    ticketNoInput.value =
-        ticketNumber;
+        await stopScanner();
 
-    showMessage(
-        `已掃描票號`
-    );
+        scannerContainer.classList.add("hidden");
 
-    await stopScanner();
+        startScanBtn.disabled =
+            false;
 
-    scannerContainer.classList.add("hidden");
+        startScanBtn.innerText =
+            "重新掃描";
 
-    startScanBtn.disabled =
-        false;
+        switchMode("manual");
 
-    startScanBtn.innerText =
-        "重新掃描";
+    }
+    catch (error) {
 
-    switchMode("manual");
+        await stopScanner();
+
+        scannerContainer.classList.add("hidden");
+
+        startScanBtn.disabled =
+            false;
+
+        startScanBtn.innerText =
+            "重新掃描";
+
+        showMessage(
+            error.message || "車票不存在"
+        );
+    }
 }
 
 function parseTicketNo(decodedText) {
 
-    let value =
+    const value =
         decodedText
-            .trim()
-            .toUpperCase();
+            .trim();
 
-    try {
+    const ticketMap = {
+        "UQZUV1RWMDFSP2EBMWIBWmMBMWQOMjAyNzA0MjYyMzU5NTllFAEHAQDeFIpMSG9DftKa77IlJ8cfZw4yMDE5MDUwMTE3MzAwMFNPEQg3MDc2NTkwORMBMRUBNR0SMDAwMDEwMDAwMDAwODkwOTIwHgMxNzciFGQ5":
+            "6201203571"
+    };
 
-        const url =
-            new URL(value);
+    if (ticketMap[value]) {
 
-        const queryTicketNo =
-            url.searchParams.get(
-                "ticketNo"
-            );
-
-        if (queryTicketNo) {
-
-            value =
-                queryTicketNo
-                    .trim()
-                    .toUpperCase();
-        }
-
-    }
-    catch {
+        return `PO-${ticketMap[value]}`;
     }
 
-    if (value.startsWith("PO-")) {
-
-        return value;
-    }
-
-    return `PO-${value}`;
+    throw new Error(
+        "車票不存在"
+    );
 }
 
 async function stopScanner() {
