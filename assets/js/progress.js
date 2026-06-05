@@ -318,7 +318,7 @@ async function handleScanResult(
                     );
 
             },
-            2000
+            5000
         );
 
         const activity =
@@ -894,36 +894,7 @@ function renderSpotList(activity) {
                             完成景點集章。
                         </p>
     
-                       <button
-                           id="scanButton-${spot.spotId}"
-                            ${isExpired ? "disabled" : ""}
-                            class="
-                                mt-6
-                                rounded-2xl
-                                px-6
-                                py-3
-                                font-bold
-                                shadow-lg
-                                transition-all
-
-                                ${isExpired
-                            ? `
-                                        bg-slate-300
-                                        text-slate-500
-                                        cursor-not-allowed
-                                    `
-                            : `
-                                        bg-white
-                                        text-[#183B5B]
-                                    `
-                        }
-                            "
-                        >
-                            ${isExpired
-                            ? "活動已逾時"
-                            : "前往打卡"
-                        }
-                        </button>
+                       
 
     
                     </div>
@@ -1093,8 +1064,8 @@ function bindEvents(
     activity
 ) {
     document
-        .querySelectorAll(
-            "[id^='scanButton-']"
+        .getElementById(
+            "checkBtn"
         )
         .forEach(button => {
 
@@ -1280,7 +1251,7 @@ function showScanSuccess(
             "resultTitle"
         )
         .innerText =
-        "打卡成功";
+        "";
 
     document
         .getElementById(
@@ -1333,7 +1304,7 @@ function showScanError(
             "resultTitle"
         )
         .innerText =
-        "打卡失敗";
+        "";
 
     document
         .getElementById(
