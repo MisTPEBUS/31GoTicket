@@ -306,13 +306,7 @@ async function handleScanResult(
                     lineUserId
                 );
 
-                document
-                    .getElementById(
-                        "scanResultModal"
-                    )
-                    .classList.add(
-                        "hidden"
-                    );
+                hideScanResultModal();
 
             },
             5000
@@ -333,6 +327,35 @@ async function handleScanResult(
 
     showScanError(
         data.message
+    );
+
+    setTimeout(
+        () => {
+
+            hideScanResultModal();
+
+        },
+        3000
+    );
+}
+
+function hideScanResultModal() {
+
+    const modal =
+        document.getElementById(
+            "scanResultModal"
+        );
+
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove(
+        "flex"
+    );
+
+    modal.classList.add(
+        "hidden"
     );
 }
 function renderReward(
@@ -1197,76 +1220,57 @@ function showScanSuccess(
     message
 ) {
 
-    const modal =
-        document.getElementById(
-            "scanResultModal"
-        );
-
-    modal.classList.remove(
-        "hidden"
+    showScanResultModal(
+        true,
+        "打卡成功",
+        message || "景點打卡完成"
     );
-
-    modal.classList.add(
-        "flex"
-    );
-
-    document
-        .getElementById(
-            "resultIcon"
-        )
-        .innerHTML =
-        `
-        <div
-            class="
-                w-24
-                h-24
-                rounded-full
-                bg-emerald-50
-                flex
-                items-center
-                justify-center
-            "
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-12 h-12 text-emerald-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2.5"
-                    d="M5 13l4 4L19 7"
-                />
-            </svg>
-        </div>
-        `;
-
-    document
-        .getElementById(
-            "resultTitle"
-        )
-        .innerText =
-        "";
-
-    document
-        .getElementById(
-            "resultMessage"
-        )
-        .innerText =
-        message;
 }
 
 function showScanError(
     message
 ) {
 
+    showScanResultModal(
+        false,
+        "打卡失敗",
+        message || "請確認 QRCode 是否正確"
+    );
+}
+
+function showScanResultModal(
+    success,
+    title,
+    message
+) {
     const modal =
         document.getElementById(
             "scanResultModal"
         );
+
+    const resultIcon =
+        document.getElementById(
+            "resultIcon"
+        );
+
+    const resultTitle =
+        document.getElementById(
+            "resultTitle"
+        );
+
+    const resultMessage =
+        document.getElementById(
+            "resultMessage"
+        );
+
+    if (
+        !modal ||
+        !resultIcon ||
+        !resultTitle ||
+        !resultMessage
+    ) {
+        return;
+    }
 
     modal.classList.remove(
         "hidden"
@@ -1276,38 +1280,74 @@ function showScanError(
         "flex"
     );
 
-    document
-        .getElementById(
-            "resultIcon"
-        )
-        .innerHTML =
-        `
-        <div
-            class="
-                w-24
-                h-24
-                rounded-full
-                bg-red-50
-                flex
-                items-center
-                justify-center
-            "
-        >
-            ✕
-        </div>
-        `;
+    resultIcon.innerHTML =
+        success
+            ? `
+                <div
+                    class="
+                        w-24
+                        h-24
+                        rounded-full
+                        bg-emerald-50
+                        border
+                        border-emerald-100
+                        flex
+                        items-center
+                        justify-center
+                        mx-auto
+                    "
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-12 h-12 text-emerald-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2.5"
+                            d="M5 13l4 4L19 7"
+                        />
+                    </svg>
+                </div>
+            `
+            : `
+                <div
+                    class="
+                        w-24
+                        h-24
+                        rounded-full
+                        bg-red-50
+                        border
+                        border-red-100
+                        flex
+                        items-center
+                        justify-center
+                        mx-auto
+                    "
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-12 h-12 text-red-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2.5"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </div>
+            `;
 
-    document
-        .getElementById(
-            "resultTitle"
-        )
-        .innerText =
-        "";
+    resultTitle.innerText =
+        title;
 
-    document
-        .getElementById(
-            "resultMessage"
-        )
-        .innerText =
+    resultMessage.innerText =
         message;
 }
