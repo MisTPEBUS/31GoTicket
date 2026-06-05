@@ -297,7 +297,7 @@ async function startTicketScanner() {
                 qrbox: 240
             },
             async decodedText => {
-
+                alert(decodedText)
                 await handleScanSuccess(
                     decodedText
                 );
