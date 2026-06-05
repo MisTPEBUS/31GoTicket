@@ -384,13 +384,9 @@ function parseTicketNo(decodedText) {
             "6201203571"
     };
 
-    if (
-        Object.hasOwn(
-            ticketMap,
-            value
-        )) {
+    if (tmp_ticket.includes(value)) {
 
-        return `PO-${ticketMap[tmp_ticket]}`;
+        return `PO-6201203571`;
     }
 
     throw new Error(
