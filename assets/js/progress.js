@@ -151,7 +151,7 @@ init();
 document
     .getElementById("closeScanner")
     .addEventListener("click", closeScanner);
-async function closeScanner() {
+function closeScanner() {
 
     const modal = document
         .getElementById(
@@ -192,7 +192,7 @@ async function openScanner(
 ) {
     resetScanState();
 
-    await closeScanner();
+    closeScanner();
 
     const modal =
         document.getElementById(
@@ -239,7 +239,7 @@ async function openScanner(
             isScanningLocked =
                 true;
 
-            await closeScanner();
+            closeScanner();
 
             await handleScanResult(
                 lineUserId,
@@ -390,7 +390,7 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    await finishScanFlow();
+                    finishScanFlow();
 
                 },
                 3000
@@ -1302,7 +1302,15 @@ function showScanResultModal(
     title,
     message
 ) {
+    if (scanResultTimer) {
 
+        clearTimeout(
+            scanResultTimer
+        );
+
+        scanResultTimer =
+            null;
+    }
     const modal =
         document.getElementById(
             "scanResultModal"
