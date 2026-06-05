@@ -375,15 +375,15 @@ async function handleScanResult(
         "打卡失敗"
     );
 
-    scanResultTimer =
-        setTimeout(
-            () => {
-
-                resetScanState();
-
-            },
-            3000
-        );
+    /*  scanResultTimer =
+         setTimeout(
+             () => {
+ 
+                 resetScanState();
+ 
+             },
+             3000
+         ); */
 }
 
 function hideScanResultModal() {
