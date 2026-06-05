@@ -151,7 +151,7 @@ init();
 document
     .getElementById("closeScanner")
     .addEventListener("click", closeScanner);
-function closeScanner() {
+async function closeScanner() {
 
     const modal = document
         .getElementById(
@@ -192,7 +192,7 @@ async function openScanner(
 ) {
     resetScanState();
 
-    closeScanner();
+    await closeScanner();
 
     const modal =
         document.getElementById(
@@ -239,7 +239,7 @@ async function openScanner(
             isScanningLocked =
                 true;
 
-            closeScanner();
+            await closeScanner();
 
             await handleScanResult(
                 lineUserId,
