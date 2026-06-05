@@ -6,6 +6,7 @@ import {
 const API_BASE_URL =
     "https://9f4d-59-124-220-148.ngrok-free.app";
 let html5QrCode = null;
+let isScanningLocked = false;
 /*
 |--------------------------------------------------------------------------
 | 初始化
@@ -188,7 +189,8 @@ async function closeScanner() {
 async function openScanner(
     lineUserId
 ) {
-
+    isScanningLocked =
+        false;
     const modal =
         document.getElementById(
             "scannerModal"
@@ -239,6 +241,13 @@ async function openScanner(
             }
         },
         async decodedText => {
+
+            if (isScanningLocked) {
+                return;
+            }
+
+            isScanningLocked =
+                true;
 
             await closeScanner();
 
