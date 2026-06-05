@@ -190,6 +190,7 @@ async function closeScanner() {
 async function openScanner(
     lineUserId
 ) {
+    resetScanState();
     isScanningLocked =
         false;
     const modal =
@@ -303,24 +304,25 @@ async function handleScanResult(
             "景點打卡完成"
         );
 
-        setTimeout(
-            async () => {
+        scanResultTimer =
+            setTimeout(
+                async () => {
 
-                const activity =
-                    await fetchActivity(
+                    const activity =
+                        await fetchActivity(
+                            lineUserId
+                        );
+
+                    renderPage(
+                        activity,
                         lineUserId
                     );
 
-                renderPage(
-                    activity,
-                    lineUserId
-                );
+                    resetScanState();
 
-                hideScanResultModal();
-
-            },
-            5000
-        );
+                },
+                5000
+            );
 
         const activity =
             await fetchActivity(
@@ -353,10 +355,10 @@ async function handleScanResult(
                     lineUserId
                 );
 
-                hideScanResultModal();
+                resetScanState();
 
             },
-            5000
+            3000
         );
 }
 
@@ -1389,4 +1391,22 @@ function showScanResultModal(
 
     resultMessage.innerText =
         message;
+}
+
+function resetScanState() {
+
+    isScanningLocked =
+        false;
+
+    if (scanResultTimer) {
+
+        clearTimeout(
+            scanResultTimer
+        );
+
+        scanResultTimer =
+            null;
+    }
+
+    hideScanResultModal();
 }
