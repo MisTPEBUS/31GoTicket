@@ -428,15 +428,6 @@ function hideScanResultModal() {
     modal.classList.add(
         "hidden"
     );
-    if (scanResultTimer) {
-
-        clearTimeout(
-            scanResultTimer
-        );
-
-        scanResultTimer =
-            null;
-    }
 }
 function renderReward(
     activity
