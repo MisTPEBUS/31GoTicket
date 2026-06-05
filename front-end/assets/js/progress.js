@@ -191,8 +191,9 @@ async function openScanner(
     lineUserId
 ) {
     resetScanState();
-    isScanningLocked =
-        false;
+
+    await closeScanner();
+
     const modal =
         document.getElementById(
             "scannerModal"
@@ -205,19 +206,6 @@ async function openScanner(
     modal.classList.add(
         "flex"
     );
-
-    if (html5QrCode) {
-
-        try {
-            await html5QrCode.stop();
-        } catch { }
-
-        try {
-            await html5QrCode.clear();
-        } catch { }
-
-        html5QrCode = null;
-    }
 
     html5QrCode =
         new Html5Qrcode(
@@ -290,7 +278,7 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    finishScanFlow();
+                    await finishScanFlow();
 
                 },
                 3000
@@ -314,7 +302,7 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    finishScanFlow();
+                    await finishScanFlow();
 
                 },
                 3000
@@ -363,7 +351,7 @@ async function handleScanResult(
                             lineUserId
                         );
 
-                        finishScanFlow();
+                        await finishScanFlow();
 
                     },
                     3000
@@ -381,7 +369,7 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    finishScanFlow();
+                    await finishScanFlow();
 
                 },
                 3000
@@ -402,7 +390,7 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    finishScanFlow();
+                    await finishScanFlow();
 
                 },
                 3000
@@ -1314,15 +1302,7 @@ function showScanResultModal(
     title,
     message
 ) {
-    if (scanResultTimer) {
 
-        clearTimeout(
-            scanResultTimer
-        );
-
-        scanResultTimer =
-            null;
-    }
     const modal =
         document.getElementById(
             "scanResultModal"
@@ -1447,7 +1427,7 @@ function resetScanState() {
             null;
     }
 }
-function finishScanFlow() {
+async function finishScanFlow() {
 
     isScanningLocked =
         false;
