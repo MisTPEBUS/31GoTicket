@@ -62,9 +62,10 @@ async function init() {
         const activity =
             await response.json();
 
-        renderHeroStatus(activity);
-        renderSpotList(activity);
-        renderSpotCarousel(activity);
+        renderPage(
+            activity,
+            userId
+        );
 
         document
             .getElementById(
@@ -110,31 +111,27 @@ async function init() {
         | 綁定 QRCode 掃描
         |--------------------------------------------------------------------------
         */
-        document
-            .querySelectorAll("[id^='scanButton-']")
-            .forEach(button => {
+        const checkBtn =
+            document.getElementById(
+                "checkBtn"
+            );
 
-                button.addEventListener(
-                    "click",
-                    async () => {
+        if (checkBtn) {
 
-                        const spotId =
-                            button.id.replace(
-                                "scanButton-",
-                                ""
-                            );
+            checkBtn.addEventListener(
+                "click",
+                async () => {
 
-                        console.log(
-                            "spotId:",
-                            spotId
-                        );
+                    console.log(
+                        "checkBtn clicked"
+                    );
 
-                        await openScanner(
-                            userId
-                        );
-                    }
-                );
-            });
+                    await openScanner(
+                        userId
+                    );
+                }
+            );
+        }
 
 
 
@@ -1063,20 +1060,21 @@ function bindEvents(
     userId,
     activity
 ) {
-    document
-        .getElementById(
+    const checkBtn =
+        document.getElementById(
             "checkBtn"
-        )
-        .forEach(button => {
+        );
 
-            button.onclick =
-                async () => {
+    if (checkBtn) {
 
-                    await openScanner(
-                        userId
-                    );
-                };
-        });
+        checkBtn.onclick =
+            async () => {
+
+                await openScanner(
+                    userId
+                );
+            };
+    }
 
     document
         .querySelectorAll(
