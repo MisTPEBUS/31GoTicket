@@ -265,20 +265,63 @@ async function handleScanResult(
     lineUserId,
     qrValue
 ) {
-    const url =
-        new URL(
-            qrValue
+    let spot = "";
+
+    try {
+
+        const url =
+            new URL(
+                qrValue
+            );
+
+        spot =
+            url.searchParams.get(
+                "spot"
+            ) || "";
+
+    }
+    catch {
+
+        showScanError(
+            "QRCode 格式錯誤"
         );
 
-    const spot =
-        url.searchParams.get(
-            "spot"
-        );
+        scanResultTimer =
+            setTimeout(
+                () => {
+
+                    resetScanState();
+
+                },
+                3000
+            );
+
+        return;
+    }
 
     console.log(
         "spot:",
         spot
     );
+
+    if (!spot) {
+
+        showScanError(
+            "QRCode 缺少景點參數"
+        );
+
+        scanResultTimer =
+            setTimeout(
+                () => {
+
+                    resetScanState();
+
+                },
+                3000
+            );
+
+        return;
+    }
 
     const response =
         await fetch(
@@ -321,39 +364,20 @@ async function handleScanResult(
                     resetScanState();
 
                 },
-                5000
+                3000
             );
-
-        const activity =
-            await fetchActivity(
-                lineUserId
-            );
-
-        renderPage(
-            activity,
-            lineUserId
-        );
 
         return;
     }
 
     showScanError(
-        data.message
+        data.message ||
+        "打卡失敗"
     );
 
     scanResultTimer =
         setTimeout(
-            async () => {
-
-                const activity =
-                    await fetchActivity(
-                        lineUserId
-                    );
-
-                renderPage(
-                    activity,
-                    lineUserId
-                );
+            () => {
 
                 resetScanState();
 
