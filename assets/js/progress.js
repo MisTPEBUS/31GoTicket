@@ -7,6 +7,7 @@ const API_BASE_URL =
     "https://9f4d-59-124-220-148.ngrok-free.app";
 let html5QrCode = null;
 let isScanningLocked = false;
+let scanResultTimer = null;
 /*
 |--------------------------------------------------------------------------
 | 初始化
@@ -338,14 +339,25 @@ async function handleScanResult(
         data.message
     );
 
-    setTimeout(
-        () => {
+    scanResultTimer =
+        setTimeout(
+            async () => {
 
-            hideScanResultModal();
+                const activity =
+                    await fetchActivity(
+                        lineUserId
+                    );
 
-        },
-        3000
-    );
+                renderPage(
+                    activity,
+                    lineUserId
+                );
+
+                hideScanResultModal();
+
+            },
+            5000
+        );
 }
 
 function hideScanResultModal() {
@@ -366,6 +378,15 @@ function hideScanResultModal() {
     modal.classList.add(
         "hidden"
     );
+    if (scanResultTimer) {
+
+        clearTimeout(
+            scanResultTimer
+        );
+
+        scanResultTimer =
+            null;
+    }
 }
 function renderReward(
     activity
@@ -1242,8 +1263,8 @@ function showScanError(
 
     showScanResultModal(
         false,
-        "打卡失敗",
-        message || "請確認 QRCode 是否正確"
+        message,
+        "請確認 QRCode 是否正確或是已經打卡成功"
     );
 }
 
@@ -1252,6 +1273,15 @@ function showScanResultModal(
     title,
     message
 ) {
+    if (scanResultTimer) {
+
+        clearTimeout(
+            scanResultTimer
+        );
+
+        scanResultTimer =
+            null;
+    }
     const modal =
         document.getElementById(
             "scanResultModal"
