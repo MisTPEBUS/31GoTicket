@@ -298,6 +298,7 @@ async function startTicketScanner() {
             },
             async decodedText => {
                 alert(decodedText);
+                console.log(decodedText);
                 await handleScanSuccess(
                     decodedText
                 );
