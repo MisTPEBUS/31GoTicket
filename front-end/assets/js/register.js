@@ -7,7 +7,7 @@ const API_BASE_URL =
 
 const CAMPAIGN_ID =
     "2750ef49-8292-42fa-9660-273c46678aad";
-
+const tmp_ticket = "UQZUV1RWMDFSP2EBMWIBWmMBMWQOMjAyNzA0MjYyMzU5NTllFAEHAQDeFIpMSG9DftKa77IlJ8cfZw4yMDE5MDUwMTE3MzAwMFNPEQg3MDc2NTkwORMBMRUBNR0SMDAwMDEwMDAwMDAwODkwOTIwHgMxNzciFGQ5";
 const TICKET_QR_MAP = {
     "UQZUV1RWMDFSP2EBMWIBWmMBMWQOMjAyNzA0MjYyMzU5NTllFAEHAQDeFIpMSG9DftKa77IlJ8cfZw4yMDE5MDUwMTE3MzAwMFNPEQg3MDc2NTkwORMBMRUBNR0SMDAwMDEwMDAwMDAwODkwOTIwHgMxNzciFGQ5":
         "6201203571"
@@ -384,9 +384,9 @@ function parseTicketNo(decodedText) {
             "6201203571"
     };
 
-    if (ticketMap[value]) {
+    if (ticketMap.includes(value)) {
 
-        return `PO-${ticketMap[value]}`;
+        return `PO-${ticketMap[tmp_ticket]}`;
     }
 
     throw new Error(
