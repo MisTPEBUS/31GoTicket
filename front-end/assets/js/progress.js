@@ -191,9 +191,8 @@ async function openScanner(
     lineUserId
 ) {
     resetScanState();
-
-    await closeScanner();
-
+    isScanningLocked =
+        false;
     const modal =
         document.getElementById(
             "scannerModal"
@@ -206,6 +205,19 @@ async function openScanner(
     modal.classList.add(
         "flex"
     );
+
+    if (html5QrCode) {
+
+        try {
+            await html5QrCode.stop();
+        } catch { }
+
+        try {
+            await html5QrCode.clear();
+        } catch { }
+
+        html5QrCode = null;
+    }
 
     html5QrCode =
         new Html5Qrcode(
@@ -278,7 +290,7 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    await finishScanFlow();
+                    resetScanState();
 
                 },
                 3000
@@ -302,7 +314,7 @@ async function handleScanResult(
             setTimeout(
                 () => {
 
-                    await finishScanFlow();
+                    resetScanState();
 
                 },
                 3000
@@ -311,91 +323,67 @@ async function handleScanResult(
         return;
     }
 
-    try {
-
-        const response =
-            await fetch(
-                `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-                        "ngrok-skip-browser-warning":
-                            "true"
-                    }
+    const response =
+        await fetch(
+            `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json",
+                    "ngrok-skip-browser-warning":
+                        "true"
                 }
-            );
+            }
+        );
 
-        const data =
-            await response.json();
+    const data =
+        await response.json();
 
-        if (data.success) {
+    if (data.success) {
 
-            showScanSuccess(
-                data.message ||
-                "景點打卡完成"
-            );
+        showScanSuccess(
+            data.message ||
+            "景點打卡完成"
+        );
 
-            scanResultTimer =
-                setTimeout(
-                    async () => {
+        scanResultTimer =
+            setTimeout(
+                async () => {
 
-                        const activity =
-                            await fetchActivity(
-                                lineUserId
-                            );
-
-                        renderPage(
-                            activity,
+                    const activity =
+                        await fetchActivity(
                             lineUserId
                         );
 
-                        await finishScanFlow();
+                    renderPage(
+                        activity,
+                        lineUserId
+                    );
 
-                    },
-                    3000
-                );
-
-            return;
-        }
-
-        showScanError(
-            data.message ||
-            "打卡失敗"
-        );
-
-        scanResultTimer =
-            setTimeout(
-                () => {
-
-                    await finishScanFlow();
+                    resetScanState();
 
                 },
                 3000
             );
 
+        return;
     }
-    catch (error) {
 
-        console.error(
-            error
+    showScanError(
+        data.message ||
+        "打卡失敗"
+    );
+
+    scanResultTimer =
+        setTimeout(
+            () => {
+
+                resetScanState();
+
+            },
+            3000
         );
-
-        showScanError(
-            "系統發生錯誤，請稍後再試"
-        );
-
-        scanResultTimer =
-            setTimeout(
-                () => {
-
-                    finishScanFlow();
-
-                },
-                3000
-            );
-    }
 }
 
 function hideScanResultModal() {
@@ -416,6 +404,15 @@ function hideScanResultModal() {
     modal.classList.add(
         "hidden"
     );
+    if (scanResultTimer) {
+
+        clearTimeout(
+            scanResultTimer
+        );
+
+        scanResultTimer =
+            null;
+    }
 }
 function renderReward(
     activity
@@ -1434,14 +1431,6 @@ function resetScanState() {
         scanResultTimer =
             null;
     }
-}
-async function finishScanFlow() {
-
-    isScanningLocked =
-        false;
-
-    scanResultTimer =
-        null;
 
     hideScanResultModal();
 }
