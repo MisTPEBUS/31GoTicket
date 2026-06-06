@@ -1,7 +1,3 @@
-import {
-    initLiff
-} from "../liff/liff-init.js";
-
 const API_BASE_URL =
     "https://9f4d-59-124-220-148.ngrok-free.app";
 
@@ -30,7 +26,11 @@ const otpInputs =
         ".otp"
     );
 
-let countdownTimer = null;
+let countdownTimer =
+    null;
+
+let loginCode =
+    "";
 
 /*
 |--------------------------------------------------------------------------
@@ -41,82 +41,58 @@ let countdownTimer = null;
 function showSuccess(
     message
 ) {
-
-    document
-        .getElementById(
-            "successMessage"
-        )
-        .innerText =
+    document.getElementById(
+        "successMessage"
+    ).innerText =
         message;
 
-    document
-        .getElementById(
-            "successModal"
-        )
-        .classList
-        .remove(
-            "hidden"
-        );
+    document.getElementById(
+        "successModal"
+    ).classList.remove(
+        "hidden"
+    );
 }
 
 function showError(
     message
 ) {
-
-    document
-        .getElementById(
-            "errorMessage"
-        )
-        .innerText =
+    document.getElementById(
+        "errorMessage"
+    ).innerText =
         message;
 
-    document
-        .getElementById(
-            "errorModal"
-        )
-        .classList
-        .remove(
-            "hidden"
-        );
+    document.getElementById(
+        "errorModal"
+    ).classList.remove(
+        "hidden"
+    );
 }
 
-document
-    .getElementById(
-        "successCloseBtn"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
+document.getElementById(
+    "successCloseBtn"
+)?.addEventListener(
+    "click",
+    () => {
+        document.getElementById(
+            "successModal"
+        ).classList.add(
+            "hidden"
+        );
+    }
+);
 
-            document
-                .getElementById(
-                    "successModal"
-                )
-                .classList
-                .add(
-                    "hidden"
-                );
-        }
-    );
-
-document
-    .getElementById(
-        "errorCloseBtn"
-    )
-    ?.addEventListener(
-        "click",
-        () => {
-
-            document
-                .getElementById(
-                    "errorModal"
-                )
-                .classList
-                .add(
-                    "hidden"
-                );
-        }
-    );
+document.getElementById(
+    "errorCloseBtn"
+)?.addEventListener(
+    "click",
+    () => {
+        document.getElementById(
+            "errorModal"
+        ).classList.add(
+            "hidden"
+        );
+    }
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -130,17 +106,12 @@ sendCodeBtn?.addEventListener(
 );
 
 async function handleSendCode() {
-
     const activityCode =
-        document
-            .getElementById(
-                "activityCode"
-            )
-            ?.value
-            .trim();
+        document.getElementById(
+            "activityCode"
+        )?.value.trim();
 
     if (!activityCode) {
-
         showError(
             "請輸入活動碼"
         );
@@ -148,28 +119,16 @@ async function handleSendCode() {
         return;
     }
 
+    loginCode =
+        activityCode;
+
     try {
-
-        const profile =
-            await initLiff();
-
-        if (!profile) {
-
-            showError(
-                "LINE 登入失敗"
-            );
-
-            return;
-        }
-
-        const lineUserId =
-            profile.userId;
-
         const response =
             await fetch(
-                `${API_BASE_URL}/api/admin/Login/${lineUserId}/登入頁面`,
+                `${API_BASE_URL}/api/admin/Login/${loginCode}/登入頁面`,
                 {
-                    method: "POST",
+                    method:
+                        "POST",
                     headers: {
                         "ngrok-skip-browser-warning":
                             "true"
@@ -181,18 +140,16 @@ async function handleSendCode() {
             await response.json();
 
         if (!response.ok) {
-
             showError(
-                result.message
+                result.message ?? "取得驗證碼失敗"
             );
 
             return;
         }
 
         showSuccess(
-            result.message
+            result.message ?? "驗證碼已發送"
         );
-
 
         loginStep1.classList.add(
             "hidden"
@@ -203,11 +160,11 @@ async function handleSendCode() {
         );
 
         startCountdown();
-
     }
     catch (error) {
-
-        console.error(error);
+        console.error(
+            error
+        );
 
         showError(
             "取得驗證碼失敗"
@@ -222,8 +179,8 @@ async function handleSendCode() {
 */
 
 function startCountdown() {
-
-    let seconds = 300;
+    let seconds =
+        300;
 
     clearInterval(
         countdownTimer
@@ -232,7 +189,6 @@ function startCountdown() {
     countdownTimer =
         setInterval(
             () => {
-
                 const min =
                     Math.floor(
                         seconds / 60
@@ -247,7 +203,6 @@ function startCountdown() {
                 seconds--;
 
                 if (seconds < 0) {
-
                     clearInterval(
                         countdownTimer
                     );
@@ -255,7 +210,6 @@ function startCountdown() {
                     countdownElement.innerText =
                         "驗證碼已失效";
                 }
-
             },
             1000
         );
@@ -268,26 +222,44 @@ function startCountdown() {
 */
 
 otpInputs.forEach(
-    (input, index) => {
-
+    (
+        input,
+        index
+    ) => {
         input.addEventListener(
             "input",
             () => {
+                input.value =
+                    input.value.replace(
+                        /\D/g,
+                        ""
+                    );
 
                 if (
                     input.value &&
-                    index <
-                    otpInputs.length - 1
+                    index < otpInputs.length - 1
                 ) {
-
                     otpInputs[
                         index + 1
                     ].focus();
                 }
-
             }
         );
 
+        input.addEventListener(
+            "keydown",
+            event => {
+                if (
+                    event.key === "Backspace" &&
+                    !input.value &&
+                    index > 0
+                ) {
+                    otpInputs[
+                        index - 1
+                    ].focus();
+                }
+            }
+        );
     }
 );
 
@@ -297,98 +269,92 @@ otpInputs.forEach(
 |--------------------------------------------------------------------------
 */
 
-document
-    .getElementById(
-        "verifyBtn"
-    )
-    ?.addEventListener(
-        "click",
-        async () => {
-
-            const otp =
-                Array.from(
-                    otpInputs
+document.getElementById(
+    "verifyBtn"
+)?.addEventListener(
+    "click",
+    async () => {
+        const otp =
+            Array.from(
+                otpInputs
+            )
+                .map(
+                    input =>
+                        input.value
                 )
-                    .map(
-                        input =>
-                            input.value
-                    )
-                    .join("");
+                .join("");
 
-            if (otp.length !== 4) {
+        if (!loginCode) {
+            showError(
+                "請重新輸入活動碼"
+            );
 
+            return;
+        }
+
+        if (otp.length !== 4) {
+            showError(
+                "請輸入完整驗證碼"
+            );
+
+            return;
+        }
+
+        try {
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/admin/Login-Verify/${loginCode}/登入頁面/${otp}`,
+                    {
+                        method:
+                            "POST",
+                        headers: {
+                            "ngrok-skip-browser-warning":
+                                "true"
+                        }
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
                 showError(
-                    "請輸入完整驗證碼"
+                    result.message ?? "驗證失敗"
                 );
 
                 return;
             }
 
-            try {
+            localStorage.setItem(
+                "adminUser",
+                JSON.stringify(
+                    result.data
+                )
+            );
 
-                const profile =
-                    await initLiff();
+            showSuccess(
+                "登入成功"
+            );
 
-                const response =
-                    await fetch(
-                        `${API_BASE_URL}/api/admin/Login-Verify/${profile.userId}/登入頁面/${otp}`,
-                        {
-                            method:
-                                "POST",
-                            headers: {
-                                "ngrok-skip-browser-warning":
-                                    "true"
-                            }
-                        }
-                    );
-
-                const result =
-                    await response.json();
-
-                if (!response.ok) {
-
-                    showError(
-                        result.message
-                    );
-
-                    return;
-                }
-
-                localStorage.setItem(
-                    "adminUser",
-                    JSON.stringify(
-                        result.data
-                    )
-                );
-
-                showSuccess(
-                    "登入成功"
-                );
-
-                setTimeout(
-                    () => {
-
-                        window.location.href =
-                            "./dashboard.html";
-
-                    },
-                    1000
-                );
-
-            }
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-                showError(
-                    "驗證失敗"
-                );
-            }
-
+            setTimeout(
+                () => {
+                    window.location.href =
+                        "./dashboard.html";
+                },
+                1000
+            );
         }
-    );
+        catch (error) {
+            console.error(
+                error
+            );
+
+            showError(
+                "驗證失敗"
+            );
+        }
+    }
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -396,61 +362,58 @@ document
 |--------------------------------------------------------------------------
 */
 
-document
-    .getElementById(
-        "resendBtn"
-    )
-    ?.addEventListener(
-        "click",
-        async () => {
+document.getElementById(
+    "resendBtn"
+)?.addEventListener(
+    "click",
+    async () => {
+        if (!loginCode) {
+            showError(
+                "請重新輸入活動碼"
+            );
 
-            try {
-
-                const profile =
-                    await initLiff();
-
-                const response =
-                    await fetch(
-                        `${API_BASE_URL}/api/admin/Login/${profile.userId}/登入頁面`,
-                        {
-                            method:
-                                "POST",
-                            headers: {
-                                "ngrok-skip-browser-warning":
-                                    "true"
-                            }
-                        }
-                    );
-
-                const result =
-                    await response.json();
-
-                if (!response.ok) {
-
-                    showError(
-                        result.message
-                    );
-
-                    return;
-                }
-
-                startCountdown();
-
-                showSuccess(
-                    "驗證碼已重新發送"
-                );
-
-            }
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
-                showError(
-                    "重新發送失敗"
-                );
-            }
-
+            return;
         }
-    );
+
+        try {
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/admin/Login/${loginCode}/登入頁面`,
+                    {
+                        method:
+                            "POST",
+                        headers: {
+                            "ngrok-skip-browser-warning":
+                                "true"
+                        }
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
+                showError(
+                    result.message ?? "重新發送失敗"
+                );
+
+                return;
+            }
+
+            startCountdown();
+
+            showSuccess(
+                "驗證碼已重新發送"
+            );
+        }
+        catch (error) {
+            console.error(
+                error
+            );
+
+            showError(
+                "重新發送失敗"
+            );
+        }
+    }
+);
