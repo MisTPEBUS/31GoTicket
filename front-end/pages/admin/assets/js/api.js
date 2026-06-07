@@ -47,3 +47,25 @@ const OrdersApi = {
         });
     }
 };
+
+//spots
+
+const SpotsApi = {
+    getAll() {
+        return apiFetch('/api/admin/activity-campaign-spots/spots');
+    },
+
+    create(payload) {
+        return apiFetch('/api/admin/activity-campaign-spots/spots', {
+            method: 'POST',
+            body: payload
+        });
+    },
+
+    update(id, payload) {
+        return apiFetch(`/api/admin/activity-campaign-spots/spots/${encodeURIComponent(id)}`, {
+            method: 'PUT',
+            body: payload
+        });
+    }
+};

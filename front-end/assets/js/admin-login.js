@@ -325,11 +325,23 @@ document.getElementById(
                 return;
             }
 
+            // JWT
+            localStorage.setItem(
+                "accessToken",
+                result.data.token
+            );
+
+            // 使用者資訊
             localStorage.setItem(
                 "adminUser",
-                JSON.stringify(
-                    result.data
-                )
+                JSON.stringify({
+                    userId:
+                        result.data.userId,
+                    role:
+                        result.data.role,
+                    activityCode:
+                        result.data.activityCode
+                })
             );
 
             showSuccess(
@@ -339,9 +351,9 @@ document.getElementById(
             setTimeout(
                 () => {
                     window.location.href =
-                        "./dashboard.html";
+                        "./";
                 },
-                1000
+                1500
             );
         }
         catch (error) {

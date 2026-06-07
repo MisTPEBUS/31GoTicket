@@ -1,6 +1,6 @@
 'use strict';
 
-const API_BASE_URL = 'https://9f4d-59-124-220-148.ngrok-free.app';
+const API_BASE_URL = 'https://api.example.com';
 const LIFF_BASE_URL = 'https://liff.line.me/YOUR_LIFF_ID';
 
 const STATUS_TEXT_MAP = {
@@ -52,6 +52,28 @@ function getState() {
         saveState(DEFAULT_DATA);
         return structuredClone(DEFAULT_DATA);
     }
+}
+
+export function getToken() {
+    return localStorage.getItem(
+        "accessToken"
+    );
+}
+
+export function requireLogin() {
+    const token =
+        localStorage.getItem(
+            "accessToken"
+        );
+
+    if (!token) {
+        window.location.href =
+            "/pages/admin/login.html";
+
+        return false;
+    }
+
+    return true;
 }
 
 function saveState(nextState) {
