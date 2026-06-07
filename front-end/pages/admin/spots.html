@@ -102,17 +102,8 @@
                                 class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100" />
                         </label>
 
-                        <label class="block">
-                            <span class="mb-2 block text-sm font-medium text-slate-600">QRCode Token</span>
-                            <input name="qrcodeToken" required
-                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100" />
-                        </label>
-
-                        <label class="block">
-                            <span class="mb-2 block text-sm font-medium text-slate-600">圖片 URL</span>
-                            <input name="imageUrl"
-                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100" />
-                        </label>
+                        <input name="qrcodeToken" type="hidden" />
+                        <input name="imageUrl" type="hidden" />
 
                         <label class="block">
                             <span class="mb-2 block text-sm font-medium text-slate-600">排序</span>
@@ -148,7 +139,7 @@
                                 class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100"
                                 placeholder="輸入名稱或代碼" /></label>
                     </div>
-                    <div id="spotList" class="mt-6 grid gap-4 md:grid-cols-2"></div>
+                    <div id="spotList" class="mt-6 grid grid-cols-1 gap-4"></div>
                 </div>
             </section>
 
