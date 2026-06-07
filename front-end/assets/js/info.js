@@ -795,8 +795,7 @@ function bindActionEvents() {
                 return;
             }
 
-            qrcodeContainer.innerHTML =
-                "";
+            qrcodeContainer.innerHTML = "";
 
             timerContainer.innerText =
                 "QRCode 產生中...";
@@ -808,23 +807,22 @@ function bindActionEvents() {
             }
 
             try {
+
                 const response =
                     await fetch(
                         `${API_BASE_URL}/api/rewards/qrcode-token`,
                         {
-                            method:
-                                "POST",
+                            method: "POST",
                             headers: {
                                 "Content-Type":
                                     "application/json",
                                 "ngrok-skip-browser-warning":
                                     "true"
                             },
-                            body:
-                                JSON.stringify({
-                                    activityId:
-                                        userActivityId
-                                })
+                            body: JSON.stringify({
+                                activityId:
+                                    userActivityId
+                            })
                         }
                     );
 
@@ -832,8 +830,10 @@ function bindActionEvents() {
                     await response.json();
 
                 if (!response.ok) {
+
                     timerContainer.innerText =
-                        result.message ?? "QRCode 產生失敗";
+                        result.message ??
+                        "QRCode 產生失敗";
 
                     return;
                 }
@@ -841,22 +841,16 @@ function bindActionEvents() {
                 const token =
                     result.data.token;
 
-                const expiresIn =
-                    result.data.expiresIn;
-
                 const expiresAt =
                     Date.now() +
-                    expiresIn * 1000;
+                    result.data.expiresIn * 1000;
 
                 new QRCode(
                     qrcodeContainer,
                     {
-                        text:
-                            token,
-                        width:
-                            180,
-                        height:
-                            180
+                        text: token,
+                        width: 180,
+                        height: 180
                     }
                 );
 
@@ -868,18 +862,19 @@ function bindActionEvents() {
                 qrcodeTimers[userActivityId] =
                     setInterval(
                         () => {
+
                             updateQRCodeTimer(
                                 userActivityId,
                                 expiresAt
                             );
+
                         },
                         1000
                     );
-            }
-            catch (error) {
-                console.error(
-                    error
-                );
+
+            } catch (error) {
+
+                console.error(error);
 
                 timerContainer.innerText =
                     "QRCode 產生失敗";
