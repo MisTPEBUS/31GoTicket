@@ -398,10 +398,10 @@ async function getTicketCodeFromQr(
                 })
             }
         );
-    alert(data.success)
+
     const data =
         await response.json();
-
+    alert(data.success);
     if (!response.ok || !data.success) {
 
         throw new Error(
