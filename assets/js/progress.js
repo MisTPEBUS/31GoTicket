@@ -256,129 +256,67 @@ async function openScanner(
     }
 }
 
-async function handleScanResult(
-    lineUserId,
-    qrValue
-) {
+async function handleScanResult(lineUserId, qrValue) {
     let spot = "";
 
     try {
-
-        const url =
-            new URL(
-                qrValue
-            );
-
-        spot =
-            url.searchParams.get(
-                "spot"
-            ) || "";
-
-    }
-    catch {
-
-        showScanError(
-            "QRCode 格式錯誤"
-        );
-
-        scanResultTimer =
-            setTimeout(
-                () => {
-
-                    resetScanState();
-
-                },
-                3000
-            );
-
+        const url = new URL(qrValue);
+        spot = url.searchParams.get("spot") || "";
+    } catch {
+        showScanError("QRCode 格式錯誤");
+        autoCloseScanResult();
         return;
     }
-
-    console.log(
-        "spot:",
-        spot
-    );
 
     if (!spot) {
-
-        showScanError(
-            "QRCode 缺少景點參數"
-        );
-
-        scanResultTimer =
-            setTimeout(
-                () => {
-
-                    resetScanState();
-
-                },
-                3000
-            );
-
+        showScanError("QRCode 缺少景點參數");
+        autoCloseScanResult();
         return;
     }
 
-    const response =
-        await fetch(
+    try {
+        const response = await fetch(
             `${API_BASE_URL}/api/activity/spot-check/${lineUserId}/${spot}`,
             {
                 method: "POST",
                 headers: {
-                    "Content-Type":
-                        "application/json",
-                    "ngrok-skip-browser-warning":
-                        "true"
+                    "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning": "true"
                 }
             }
         );
 
-    const data =
-        await response.json();
+        const data = await response.json();
 
-    if (data.success) {
+        if (!response.ok || !data.success) {
+            showScanError(data.message || "打卡失敗");
+            autoCloseScanResult();
+            return;
+        }
 
-        showScanSuccess(
-            data.message ||
-            "景點打卡完成"
-        );
+        showScanSuccess(data.message || "景點打卡完成");
 
-        scanResultTimer =
-            setTimeout(
-                async () => {
-
-                    const activity =
-                        await fetchActivity(
-                            lineUserId
-                        );
-
-                    renderPage(
-                        activity,
-                        lineUserId
-                    );
-
-                    resetScanState();
-
-                },
-                3000
-            );
-
-        return;
-    }
-
-    showScanError(
-        data.message ||
-        "打卡失敗"
-    );
-
-    scanResultTimer =
-        setTimeout(
-            () => {
-
+        scanResultTimer = setTimeout(async () => {
+            try {
+                const activity = await fetchActivity(lineUserId);
+                renderPage(activity, lineUserId);
+            } catch (error) {
+                console.error(error);
+            } finally {
                 resetScanState();
+            }
+        }, 3000);
 
-            },
-            3000
-        );
+    } catch (error) {
+        console.error(error);
+        showScanError("系統連線失敗，請稍後再試");
+        autoCloseScanResult();
+    }
+}
+function autoCloseScanResult() {
+    scanResultTimer = setTimeout(() => {
+        resetScanState();
+    }, 3000);
 }
 
 function hideScanResultModal() {
@@ -433,64 +371,23 @@ function renderReward(
         activity.status?.toLowerCase() ===
         "active";
 
-    rewardBox.innerHTML =
-        canClaim
-            ? `
-            <div class="mt-6 bg-white rounded-3xl shadow p-6 text-center">
+    rewardBox.innerHTML = "";
+}
+function canClaimReward(activity) {
+    const completedCount =
+        activity.spots.filter(
+            spot =>
+                spot.status === "COMPLETED"
+        ).length;
 
-                <h2 class="text-xl font-bold mb-2">
-                    活動獎勵
-                </h2>
+    const totalCount =
+        activity.spots.length;
 
-                <p class="text-emerald-600 mb-4 font-medium">
-                    恭喜完成所有景點集章
-                </p>
-
-                <button
-                    id="rewardButton"
-                    class="
-                        w-full
-                        bg-gradient-to-r
-                        from-emerald-500
-                        to-green-600
-                        text-white
-                        py-3
-                        rounded-2xl
-                        font-bold
-                    "
-                >
-                    前往領獎
-                </button>
-
-            </div>
-            `
-            : `
-            <div class="mt-6 bg-white rounded-3xl shadow p-6 text-center">
-
-                <h2 class="text-xl font-bold mb-2">
-                    活動獎勵
-                </h2>
-
-                <p class="text-gray-500 mb-4">
-                    完成全部景點即可兌換限量紀念禮
-                </p>
-
-                <button
-                    class="
-                        w-full
-                        bg-gray-300
-                        text-gray-500
-                        py-3
-                        rounded-2xl
-                        cursor-not-allowed
-                    "
-                    disabled
-                >
-                    尚未達成領獎資格
-                </button>
-
-            </div>
-            `;
+    return (
+        totalCount > 0 &&
+        completedCount === totalCount &&
+        activity.status?.toLowerCase() === "active"
+    );
 }
 
 function renderHeroStatus(activity) {
@@ -1141,8 +1038,23 @@ function bindEvents(
 
     if (checkBtn) {
 
+        const isRewardReady =
+            canClaimReward(activity);
+
+        checkBtn.innerText =
+            isRewardReady
+                ? "前往領獎"
+                : "點我打卡";
+
         checkBtn.onclick =
             async () => {
+
+                if (isRewardReady) {
+                    window.location.href =
+                        `./info.html?userActivityId=${activity.userActivityId}`;
+
+                    return;
+                }
 
                 await openScanner(
                     userId
@@ -1171,80 +1083,9 @@ function bindEvents(
                     });
                 };
         });
-    const rewardButton =
-        document.getElementById(
-            "rewardButton"
-        );
 
-    if (rewardButton) {
 
-        rewardButton.onclick =
-            async () => {
 
-                try {
-
-                    rewardButton.disabled =
-                        true;
-
-                    rewardButton.innerText =
-                        "處理中...";
-
-                    /* const response =
-                        await fetch(
-                            `${API_BASE_URL}/api/activity/user-activities/complete/${activity.userActivityId}`,
-                            {
-                                method: "POST",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json",
-
-                                    "ngrok-skip-browser-warning":
-                                        "true"
-                                }
-                            }
-                        );
-
-                    const data =
-                        await response.json();
-
-                    if (!response.ok) {
-
-                        alert(
-                            data.message ||
-                            "領獎失敗"
-                        );
-
-                        rewardButton.disabled =
-                            false;
-
-                        rewardButton.innerText =
-                            "前往領獎";
-
-                        return;
-                    } */
-
-                    window.location.href =
-                        `./info.html?userActivityId=${activity.userActivityId}`;
-
-                } catch (error) {
-
-                    console.error(
-                        error
-                    );
-
-                    alert(
-                        "系統忙碌中"
-                    );
-
-                    rewardButton.disabled =
-                        false;
-
-                    rewardButton.innerText =
-                        "前往領獎";
-                }
-            };
-    }
 }
 
 async function fetchActivity(userId) {
@@ -1278,14 +1119,11 @@ function showScanSuccess(
     );
 }
 
-function showScanError(
-    message
-) {
-
+function showScanError(message) {
     showScanResultModal(
         false,
-        message,
-        "請確認 QRCode 是否正確或是已經打卡成功"
+        "",
+        message || "請確認 QRCode 是否正確或是否已完成打卡"
     );
 }
 
