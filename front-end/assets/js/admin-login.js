@@ -125,7 +125,7 @@ async function handleSendCode() {
     try {
         const response =
             await fetch(
-                `${API_BASE_URL}/api/admin/Login/${loginCode}/登入頁面`,
+                `${API_BASE_URL}/api/admin/Login-Line/${loginCode}/登入頁面`,
                 {
                     method:
                         "POST",
