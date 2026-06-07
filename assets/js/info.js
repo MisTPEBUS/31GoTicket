@@ -778,39 +778,110 @@ function bindActionEvents() {
             );
         }
 
-        const createdAt =
-            Date.now();
+        async function generateRewardQRCode(
+            userActivityId
+        ) {
+            const qrcodeContainer =
+                document.getElementById(
+                    `qrcode-${userActivityId}`
+                );
 
-        const expiresAt =
-            createdAt +
-            5 * 60 * 1000;
+            const timerContainer =
+                document.getElementById(
+                    `qrcode-timer-${userActivityId}`
+                );
 
-        const qrPayload = {
-            id:
-                userActivityId,
-
-            createdAt:
-                createdAt,
-
-            expiresAt:
-                expiresAt
-        };
-
-        new QRCode(
-            qrcodeContainer,
-            {
-                text:
-                    JSON.stringify(
-                        qrPayload
-                    ),
-
-                width:
-                    180,
-
-                height:
-                    180
+            if (!qrcodeContainer || !timerContainer) {
+                return;
             }
-        );
+
+            qrcodeContainer.innerHTML =
+                "";
+
+            timerContainer.innerText =
+                "QRCode 產生中...";
+
+            if (qrcodeTimers[userActivityId]) {
+                clearInterval(
+                    qrcodeTimers[userActivityId]
+                );
+            }
+
+            try {
+                const response =
+                    await fetch(
+                        `${API_BASE_URL}/api/rewards/qrcode-token`,
+                        {
+                            method:
+                                "POST",
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+                                "ngrok-skip-browser-warning":
+                                    "true"
+                            },
+                            body:
+                                JSON.stringify({
+                                    activityId:
+                                        userActivityId
+                                })
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (!response.ok) {
+                    timerContainer.innerText =
+                        result.message ?? "QRCode 產生失敗";
+
+                    return;
+                }
+
+                const token =
+                    result.data.token;
+
+                const expiresAt =
+                    Date.now() +
+                    result.data.expiresIn * 1000;
+
+                new QRCode(
+                    qrcodeContainer,
+                    {
+                        text:
+                            token,
+                        width:
+                            180,
+                        height:
+                            180
+                    }
+                );
+
+                updateQRCodeTimer(
+                    userActivityId,
+                    expiresAt
+                );
+
+                qrcodeTimers[userActivityId] =
+                    setInterval(
+                        () => {
+                            updateQRCodeTimer(
+                                userActivityId,
+                                expiresAt
+                            );
+                        },
+                        1000
+                    );
+            }
+            catch (error) {
+                console.error(
+                    error
+                );
+
+                timerContainer.innerText =
+                    "QRCode 產生失敗";
+            }
+        }
         updateQRCodeTimer(
             userActivityId,
             expiresAt
@@ -936,7 +1007,7 @@ function bindActionEvents() {
                         );
                     }
 
-                    generateRewardQRCode(
+                    await generateRewardQRCode(
                         userActivityId
                     );
                 };
@@ -948,12 +1019,12 @@ function bindActionEvents() {
         .forEach(btn => {
 
             btn.onclick =
-                () => {
+                async () => {
 
                     const userActivityId =
                         btn.dataset.id;
 
-                    generateRewardQRCode(
+                    await generateRewardQRCode(
                         userActivityId
                     );
                 };
