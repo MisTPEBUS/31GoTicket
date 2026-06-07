@@ -398,7 +398,7 @@ async function getTicketCodeFromQr(
                 })
             }
         );
-
+    alert(data.success)
     const data =
         await response.json();
 
