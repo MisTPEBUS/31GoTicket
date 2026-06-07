@@ -7,11 +7,7 @@ const API_BASE_URL =
 
 const CAMPAIGN_ID =
     "2750ef49-8292-42fa-9660-273c46678aad";
-const tmp_ticket = "UQZUV1RWMDFSP2EBMWIBWmMBMWQOMjAyNzA0MjYyMzU5NTllFAEHAQDeFIpMSG9DftKa77IlJ8cfZw4yMDE5MDUwMTE3MzAwMFNPEQg3MDc2NTkwORMBMRUBNR0SMDAwMDEwMDAwMDAwODkwOTIwHgMxNzciFGQ5";
-const TICKET_QR_MAP = {
-    "UQZUV1RWMDFSP2EBMWIBWmMBMWQOMjAyNzA0MjYyMzU5NTllFAEHAQDeFIpMSG9DftKa77IlJ8cfZw4yMDE5MDUwMTE3MzAwMFNPEQg3MDc2NTkwORMBMRUBNR0SMDAwMDEwMDAwMDAwODkwOTIwHgMxNzciFGQ5":
-        "6201203571"
-};
+
 
 let html5QrCode = null;
 
@@ -297,8 +293,7 @@ async function startTicketScanner() {
                 qrbox: 240
             },
             async decodedText => {
-                alert(decodedText);
-                console.log(decodedText);
+
                 await handleScanSuccess(
                     decodedText
                 );
@@ -322,12 +317,16 @@ async function startTicketScanner() {
     }
 }
 
-async function handleScanSuccess(decodedText) {
+async function handleScanSuccess(
+    decodedText
+) {
 
     try {
 
         const orderNo =
-            parseTicketNo(decodedText);
+            await getTicketCodeFromQr(
+                decodedText
+            );
 
         const ticketNumber =
             orderNo.replace(
@@ -339,12 +338,14 @@ async function handleScanSuccess(decodedText) {
             ticketNumber;
 
         showMessage(
-            `已掃描票號：${orderNo}`
+            `已取得票號：${orderNo}`
         );
 
         await stopScanner();
 
-        scannerContainer.classList.add("hidden");
+        scannerContainer.classList.add(
+            "hidden"
+        );
 
         startScanBtn.disabled =
             false;
@@ -352,14 +353,18 @@ async function handleScanSuccess(decodedText) {
         startScanBtn.innerText =
             "重新掃描";
 
-        switchMode("manual");
+        switchMode(
+            "manual"
+        );
 
     }
     catch (error) {
 
         await stopScanner();
 
-        scannerContainer.classList.add("hidden");
+        scannerContainer.classList.add(
+            "hidden"
+        );
 
         startScanBtn.disabled =
             false;
@@ -368,30 +373,43 @@ async function handleScanSuccess(decodedText) {
             "重新掃描";
 
         showMessage(
-            error.message || "車票不存在"
+            error.message ||
+            "車票不存在"
         );
     }
 }
 
-function parseTicketNo(decodedText) {
+async function getTicketCodeFromQr(
+    qrTicketCode
+) {
+    const response =
+        await fetch(
+            `${API_BASE_URL}/api/activity/register/Qr-Ticket-check`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning":
+                        "true"
+                },
+                body: JSON.stringify({
+                    qrTicketCode
+                })
+            }
+        );
 
-    const value =
-        decodedText
-            .trim();
+    const data =
+        await response.json();
 
-    const ticketMap = {
-        "UQZUV1RWMDFSP2EBMWIBWmMBMWQOMjAyNzA0MjYyMzU5NTllFAEHAQDeFIpMSG9DftKa77IlJ8cfZw4yMDE5MDUwMTE3MzAwMFNPEQg3MDc2NTkwORMBMRUBNR0SMDAwMDEwMDAwMDAwODkwOTIwHgMxNzciFGQ5":
-            "6201203571"
-    };
+    if (!response.ok || !data.success) {
 
-    if (tmp_ticket.includes(value)) {
-
-        return `PO-6201203571`;
+        throw new Error(
+            data.message ||
+            "查無票券資料"
+        );
     }
 
-    throw new Error(
-        "車票不存在"
-    );
+    return data.data.redeemCode;
 }
 
 async function stopScanner() {
