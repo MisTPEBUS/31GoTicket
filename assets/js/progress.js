@@ -1043,8 +1043,33 @@ function bindEvents(
 
         checkBtn.innerText =
             isRewardReady
-                ? "前往領獎"
+                ? "完成集章・立即領獎"
                 : "點我打卡";
+
+        if (isRewardReady) {
+
+            checkBtn.classList.remove(
+                "from-[#4FA3D9]",
+                "to-[#2C6E9B]"
+            );
+
+            checkBtn.classList.add(
+                "from-emerald-500",
+                "to-green-600"
+            );
+
+        } else {
+
+            checkBtn.classList.remove(
+                "from-emerald-500",
+                "to-green-600"
+            );
+
+            checkBtn.classList.add(
+                "from-[#4FA3D9]",
+                "to-[#2C6E9B]"
+            );
+        }
 
         checkBtn.onclick =
             async () => {
