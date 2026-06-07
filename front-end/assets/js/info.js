@@ -841,9 +841,12 @@ function bindActionEvents() {
                 const token =
                     result.data.token;
 
+                const expiresIn =
+                    result.data.expiresIn;
+
                 const expiresAt =
                     Date.now() +
-                    result.data.expiresIn * 1000;
+                    expiresIn * 1000;
 
                 new QRCode(
                     qrcodeContainer,
