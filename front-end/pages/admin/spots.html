@@ -17,6 +17,7 @@
             }
         };
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="assets/css/app.css" />
 </head>
 
@@ -77,31 +78,63 @@
 
             <section class="grid gap-6 xl:grid-cols-[420px_1fr]">
                 <form id="spotForm" class="glass-card rounded-card p-5 sm:p-7">
+                    <input type="hidden" name="id" />
+
                     <p class="text-xs font-black tracking-[.3em] text-primary-700">CHECK-IN SPOT</p>
-                    <h3 class="mt-2 text-2xl font-black">新增打卡地點</h3>
+                    <h3 id="spotFormTitle" class="mt-2 text-2xl font-black">新增打卡地點</h3>
+
                     <div class="mt-6 space-y-4">
-                        <label class="block"><span
-                                class="mb-2 block text-sm font-medium text-slate-600">地點名稱</span><input name="name"
-                                required
-                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100"
-                                placeholder="例如：鶯歌陶瓷博物館" /></label>
-                        <label class="block"><span
-                                class="mb-2 block text-sm font-medium text-slate-600">地點代碼</span><input name="code"
-                                required
-                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100"
-                                placeholder="例如：SPOT-001" /></label>
-                        <label class="block"><span class="mb-2 block text-sm font-medium text-slate-600">LIFF
-                                URL</span><input name="url" required
-                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100"
-                                placeholder="https://liff.line.me/xxxx?spot=SPOT-001" /></label>
-                        <label class="block"><span
-                                class="mb-2 block text-sm font-medium text-slate-600">狀態</span><select name="status"
-                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100">
-                                <option value="enabled">啟用</option>
-                                <option value="disabled">停用</option>
-                            </select></label>
-                        <button class="primary-gradient h-14 w-full rounded-soft font-black text-white shadow-lg"
-                            type="submit">新增地點</button>
+                        <label class="block">
+                            <span class="mb-2 block text-sm font-medium text-slate-600">地點名稱</span>
+                            <input name="name" required
+                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100" />
+                        </label>
+
+                        <label class="block">
+                            <span class="mb-2 block text-sm font-medium text-slate-600">描述</span>
+                            <textarea name="description" rows="4"
+                                class="w-full rounded-soft border border-slate-200 bg-slate-50 px-5 py-4 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100"></textarea>
+                        </label>
+
+                        <label class="block">
+                            <span class="mb-2 block text-sm font-medium text-slate-600">地址</span>
+                            <input name="address"
+                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100" />
+                        </label>
+
+                        <label class="block">
+                            <span class="mb-2 block text-sm font-medium text-slate-600">QRCode Token</span>
+                            <input name="qrcodeToken" required
+                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100" />
+                        </label>
+
+                        <label class="block">
+                            <span class="mb-2 block text-sm font-medium text-slate-600">圖片 URL</span>
+                            <input name="imageUrl"
+                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100" />
+                        </label>
+
+                        <label class="block">
+                            <span class="mb-2 block text-sm font-medium text-slate-600">排序</span>
+                            <input name="sortOrder" type="number" min="0" value="0"
+                                class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none transition focus:border-primary-500 focus:ring-4 focus:ring-blue-100" />
+                        </label>
+
+                        <label class="flex items-center gap-3 rounded-soft bg-slate-50 px-5 py-4">
+                            <input name="isEnabled" type="checkbox" checked class="h-5 w-5 rounded border-slate-300" />
+                            <span class="text-sm font-bold text-slate-600">啟用</span>
+                        </label>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="resetSpotFormBtn" type="button"
+                                class="h-14 rounded-soft border border-slate-200 bg-white font-black text-primary-700">
+                                清空
+                            </button>
+                            <button id="submitSpotBtn" type="submit"
+                                class="primary-gradient h-14 rounded-soft font-black text-white shadow-lg">
+                                新增地點
+                            </button>
+                        </div>
                     </div>
                 </form>
                 <div class="glass-card rounded-card p-5 sm:p-7">
@@ -139,6 +172,8 @@
     </div>
 
     <script src="assets/js/common.js"></script>
+    <script src="assets/js/api-client.js"></script>
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/spots.js"></script>
 </body>
 
