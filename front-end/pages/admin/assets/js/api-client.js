@@ -1,6 +1,6 @@
 'use strict';
 
-const API_BASE_URL =
+let API_BASE_URL =
     'https://9f4d-59-124-220-148.ngrok-free.app';
 
 const ApiClient = {
@@ -12,7 +12,7 @@ const ApiClient = {
             },
             ...options
         });
-
+        console.log();
         const result = await response.json().catch(() => null);
 
         if (!response.ok) {
