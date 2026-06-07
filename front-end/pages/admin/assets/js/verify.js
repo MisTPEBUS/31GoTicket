@@ -4,16 +4,18 @@ let html5QrCode = null;
 let isSubmitting = false;
 let lastScannedText = '';
 let lastScannedAt = 0;
+let currentVerifyToken = '';
 
 document.addEventListener('DOMContentLoaded', () => {
-    $('#startScannerBtn').addEventListener('click', startScanner);
-    $('#stopScannerBtn').addEventListener('click', stopScanner);
-    $('#manualVerifyForm').addEventListener('submit', handleManualVerify);
+    $('#startScannerBtn')?.addEventListener('click', startScanner);
+    $('#stopScannerBtn')?.addEventListener('click', stopScanner);
+    $('#otpForm')?.addEventListener('submit', handleOtpSubmit);
+    $('#cancelOtpBtn')?.addEventListener('click', closeOtpModal);
 });
 
 async function startScanner() {
     if (!window.Html5Qrcode) {
-        showModal('error', '套件載入失敗', 'html5-qrcode CDN 未載入，請確認網路或改成本機檔案。');
+        showModal('error', '套件載入失敗', 'html5-qrcode CDN 未載入。');
         return;
     }
 
@@ -26,13 +28,24 @@ async function startScanner() {
     try {
         await html5QrCode.start(
             { facingMode: 'environment' },
-            { fps: 10, qrbox: { width: 260, height: 260 } },
+            {
+                fps: 10,
+                qrbox: {
+                    width: 260,
+                    height: 260
+                }
+            },
             handleScanSuccess,
             () => undefined
         );
+
         showToast('掃描器已開啟');
     } catch (error) {
-        showModal('error', '無法開啟相機', error instanceof Error ? error.message : '請確認瀏覽器相機權限。');
+        showModal(
+            'error',
+            '無法開啟相機',
+            error instanceof Error ? error.message : '請確認瀏覽器相機權限。'
+        );
     }
 }
 
@@ -43,7 +56,7 @@ async function stopScanner() {
         await html5QrCode.stop();
         await html5QrCode.clear();
     } catch {
-        // stop 在部分瀏覽器重複呼叫會丟錯，靜態頁面直接忽略即可。
+        // 部分瀏覽器重複 stop 會丟錯，忽略即可。
     } finally {
         html5QrCode = null;
     }
@@ -51,82 +64,111 @@ async function stopScanner() {
 
 async function handleScanSuccess(decodedText) {
     const now = Date.now();
-    if (decodedText === lastScannedText && now - lastScannedAt < 2500) return;
+
+    if (decodedText === lastScannedText && now - lastScannedAt < 3000) {
+        return;
+    }
 
     lastScannedText = decodedText;
     lastScannedAt = now;
-    await submitVerify(parseQrPayload(decodedText));
+
+    await requestVerify(decodedText);
 }
 
-async function handleManualVerify(event) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    await submitVerify({
-        rawText: 'manual-input',
-        activityCode: String(formData.get('activityCode')).trim(),
-        spotCode: String(formData.get('spotCode')).trim()
-    });
-    event.currentTarget.reset();
-}
-
-function parseQrPayload(rawText) {
-    const payload = { rawText, activityCode: '', spotCode: '' };
-
-    try {
-        const url = new URL(rawText);
-        payload.activityCode = url.searchParams.get('activityCode') ?? url.searchParams.get('code') ?? '';
-        payload.spotCode = url.searchParams.get('spot') ?? url.searchParams.get('spotCode') ?? '';
-        return payload;
-    } catch {
-        const pairs = new URLSearchParams(rawText);
-        payload.activityCode = pairs.get('activityCode') ?? pairs.get('code') ?? rawText;
-        payload.spotCode = pairs.get('spot') ?? pairs.get('spotCode') ?? '';
-        return payload;
-    }
-}
-
-async function submitVerify(parsed) {
+async function requestVerify(rawQrText) {
     if (isSubmitting) return;
+
     isSubmitting = true;
 
     const payload = {
-        activityCode: parsed.activityCode,
-        spotCode: parsed.spotCode,
-        rawText: parsed.rawText,
-        verifierId: 'ADMIN-DEMO',
+        qrCodeText: rawQrText,
+        verifierUserId: localStorage.getItem('user_id') || '',
         scannedAt: new Date().toISOString()
     };
 
-    $('#scanResult').textContent = JSON.stringify(payload, null, 2);
-
     try {
-        // 正式串接時請將 common.js 的 API_BASE_URL 改成後端位置。
-        // 後端建議接收 POST /api/admin/checkin/verify。
-        await postJson('/api/admin/checkin/verify', payload);
-        saveVerifyLog(payload, 'completed_claimed');
-        showModal('success', '核銷完成', 'QR Code 參數已送至後端。');
-    } catch {
-        // 靜態 Demo 沒有後端時，仍保留測試紀錄，方便前端畫面驗收。
-        saveVerifyLog(payload, 'completed_claimed');
-        showModal('success', 'Demo 核銷完成', '目前無後端回應，已使用本機測試模式保存紀錄。');
+        const result = await apiFetch('/api/admin/redeem/request', {
+            method: 'POST',
+            body: payload
+        });
+
+        currentVerifyToken = result?.data?.verifyToken || result?.verifyToken || '';
+
+        if (!currentVerifyToken) {
+            throw new Error('後端未回傳 verifyToken');
+        }
+
+        await stopScanner();
+        openOtpModal();
+    } catch (error) {
+        showModal(
+            'error',
+            '建立核銷驗證失敗',
+            error?.message || '請確認 QR Code 或後端 API 狀態。'
+        );
     } finally {
         isSubmitting = false;
     }
 }
 
-function saveVerifyLog(payload, status) {
-    const state = getState();
-    state.verifyLogs.push({ ...payload, status });
+async function handleOtpSubmit(event) {
+    event.preventDefault();
 
-    const member = state.members.find((item) => item.activityCode === payload.activityCode);
-    if (member) {
-        member.rewardStatus = 'completed_claimed';
+    if (isSubmitting) return;
+
+    const code = $('#verifyCodeInput')?.value.trim() || '';
+
+    if (!/^\d{4}$/.test(code)) {
+        showModal('error', '驗證碼格式錯誤', '請輸入 4 位數字驗證碼。');
+        return;
     }
 
-    const order = state.orders.find((item) => item.activityCode === payload.activityCode);
-    if (order) {
-        order.redeemStatus = 'completed_claimed';
-    }
+    isSubmitting = true;
 
-    saveState(state);
+    try {
+        await apiFetch('/api/admin/redeem/confirm', {
+            method: 'POST',
+            body: {
+                verifyToken: currentVerifyToken,
+                verifyCode: code
+            }
+        });
+
+        closeOtpModal();
+        showModal('success', '核銷完成', '驗證碼正確，獎品已完成核銷。');
+    } catch (error) {
+        showModal(
+            'error',
+            '驗證失敗',
+            error?.message || '驗證碼錯誤或已逾期。'
+        );
+    } finally {
+        isSubmitting = false;
+    }
+}
+
+function openOtpModal() {
+    const modal = $('#otpModal');
+    const input = $('#verifyCodeInput');
+
+    if (!modal || !input) return;
+
+    input.value = '';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    window.setTimeout(() => {
+        input.focus();
+    }, 100);
+}
+
+function closeOtpModal() {
+    const modal = $('#otpModal');
+
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+
+    currentVerifyToken = '';
 }

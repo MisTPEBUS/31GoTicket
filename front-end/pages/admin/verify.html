@@ -75,49 +75,57 @@
             </header>
 
 
-            <section class="grid gap-6 xl:grid-cols-[420px_1fr]">
+            <section class="mx-auto max-w-xl">
                 <div class="glass-card rounded-card p-5 sm:p-7">
                     <p class="text-xs font-black tracking-[.3em] text-primary-700">QRCODE VERIFY</p>
                     <h3 class="mt-2 text-2xl font-black">掃描核銷</h3>
-                    <p class="mt-3 text-sm leading-6 text-slate-500">開啟相機掃描 QR Code 後，系統會解析參數並呼叫後端 API。靜態版會同步寫入
-                        localStorage 作為測試紀錄。</p>
+
+                    <p class="mt-3 text-sm leading-6 text-slate-500">
+                        開啟相機掃描 QR Code，系統會送出核銷請求，並顯示 4 位數驗證碼輸入畫面。
+                    </p>
+
                     <div id="reader"
                         class="qr-reader-box mt-6 overflow-hidden rounded-soft border border-slate-200 bg-slate-50 p-3">
                     </div>
+
                     <div class="mt-5 grid grid-cols-2 gap-3">
                         <button id="startScannerBtn"
-                            class="primary-gradient h-14 rounded-soft font-black text-white shadow-lg">開啟掃描</button>
+                            class="primary-gradient h-14 rounded-soft font-black text-white shadow-lg">
+                            開啟掃描
+                        </button>
+
                         <button id="stopScannerBtn"
-                            class="h-14 rounded-soft border border-slate-200 bg-white font-black text-primary-700">停止掃描</button>
-                    </div>
-                </div>
-                <div class="space-y-6">
-                    <form id="manualVerifyForm" class="glass-card rounded-card p-5 sm:p-7">
-                        <p class="text-xs font-black tracking-[.3em] text-primary-700">MANUAL VERIFY</p>
-                        <h3 class="mt-2 text-2xl font-black">手動輸入核銷</h3>
-                        <div class="mt-6 grid gap-4 sm:grid-cols-2">
-                            <label class="block"><span
-                                    class="mb-2 block text-sm font-medium text-slate-600">活動碼</span><input
-                                    name="activityCode" required
-                                    class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none focus:border-primary-500 focus:ring-4 focus:ring-blue-100"
-                                    placeholder="ACT-2026-0001" /></label>
-                            <label class="block"><span
-                                    class="mb-2 block text-sm font-medium text-slate-600">地點代碼</span><input
-                                    name="spotCode" required
-                                    class="h-14 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 outline-none focus:border-primary-500 focus:ring-4 focus:ring-blue-100"
-                                    placeholder="SPOT-001" /></label>
-                        </div>
-                        <button class="primary-gradient mt-5 h-14 w-full rounded-soft font-black text-white shadow-lg"
-                            type="submit">送出核銷</button>
-                    </form>
-                    <div class="glass-card rounded-card p-5 sm:p-7">
-                        <p class="text-xs font-black tracking-[.3em] text-primary-700">SCAN RESULT</p>
-                        <h3 class="mt-2 text-2xl font-black">最近掃描結果</h3>
-                        <pre id="scanResult"
-                            class="soft-scrollbar mt-5 max-h-72 overflow-auto rounded-soft bg-slate-900 p-4 text-xs leading-6 text-slate-100">尚未掃描</pre>
+                            class="h-14 rounded-soft border border-slate-200 bg-white font-black text-primary-700">
+                            停止掃描
+                        </button>
                     </div>
                 </div>
             </section>
+
+            <div id="otpModal"
+                class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/35 p-4 backdrop-blur-sm">
+                <form id="otpForm" class="glass-card w-full max-w-sm rounded-card p-8 text-center">
+                    <p class="text-xs font-black tracking-[.3em] text-primary-700">VERIFY CODE</p>
+                    <h3 class="mt-3 text-2xl font-black">輸入 4 位數驗證碼</h3>
+                    <p class="mt-3 text-sm leading-6 text-slate-500">
+                        驗證碼已發送至使用者 LINE，請由使用者提供後輸入。
+                    </p>
+
+                    <input id="verifyCodeInput" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" required
+                        class="mt-6 h-16 w-full rounded-soft border border-slate-200 bg-slate-50 px-5 text-center text-3xl font-black tracking-[.5em] outline-none focus:border-primary-500 focus:ring-4 focus:ring-blue-100"
+                        placeholder="0000" />
+
+                    <button type="submit"
+                        class="primary-gradient mt-6 h-14 w-full rounded-soft font-black text-white shadow-lg">
+                        送出驗證
+                    </button>
+
+                    <button type="button" id="cancelOtpBtn"
+                        class="mt-3 h-12 w-full rounded-soft border border-slate-200 bg-white font-black text-slate-600">
+                        取消
+                    </button>
+                </form>
+            </div>
 
         </main>
     </div>
