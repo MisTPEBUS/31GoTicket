@@ -977,7 +977,7 @@ function bindActionEvents() {
         .forEach(btn => {
 
             btn.onclick =
-                () => {
+                async () => {
 
                     const userActivityId =
                         btn.dataset.id;
