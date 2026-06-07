@@ -1041,10 +1041,15 @@ function bindEvents(
         const isRewardReady =
             canClaimReward(activity);
 
+        const isActivityActive =
+            activity.status?.toLowerCase() === "active";
+
         checkBtn.innerText =
             isRewardReady
                 ? "完成集章・立即領獎"
-                : "點我打卡";
+                : isActivityActive
+                    ? "點我打卡"
+                    : "活動尚未開放";
 
         if (isRewardReady) {
 
@@ -1077,6 +1082,16 @@ function bindEvents(
                 if (isRewardReady) {
                     window.location.href =
                         `./info.html?userActivityId=${activity.userActivityId}`;
+
+                    return;
+                }
+
+                if (!isActivityActive) {
+                    showScanError(
+                        "活動尚未開放，無法進行打卡"
+                    );
+
+                    autoCloseScanResult();
 
                     return;
                 }
