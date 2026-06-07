@@ -22,10 +22,28 @@ const UserApi = {
 
 
 const OrdersApi = {
-    importOrders(payload) {
-        return apiFetch('/api/ticket-orders/admin/import', {
+    importExcel(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return fetch(`${API_BASE_URL}/api/ticket-orders/admin/import`, {
             method: 'POST',
-            body: payload
+            headers: {
+                'ngrok-skip-browser-warning': 'true'
+            },
+            body: formData
+        }).then(async (response) => {
+            const result = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                throw {
+                    status: response.status,
+                    data: result,
+                    message: result?.message || `API request failed: ${response.status}`
+                };
+            }
+
+            return result;
         });
     }
 };
