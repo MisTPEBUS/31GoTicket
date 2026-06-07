@@ -751,9 +751,10 @@ function bindAccordionEvents() {
 function bindActionEvents() {
     const qrcodeTimers = {};
 
-    function generateRewardQRCode(
+    async function generateRewardQRCode(
         userActivityId
     ) {
+
         const qrcodeContainer =
             document.getElementById(
                 `qrcode-${userActivityId}`
@@ -768,140 +769,87 @@ function bindActionEvents() {
             return;
         }
 
-        qrcodeContainer.innerHTML =
-            "";
+        qrcodeContainer.innerHTML = "";
 
-        if (qrcodeTimers[userActivityId]) {
+        timerContainer.innerText =
+            "QRCode 產生中...";
 
-            clearInterval(
-                qrcodeTimers[userActivityId]
-            );
-        }
+        try {
 
-        async function generateRewardQRCode(
-            userActivityId
-        ) {
-            const qrcodeContainer =
-                document.getElementById(
-                    `qrcode-${userActivityId}`
-                );
-
-            const timerContainer =
-                document.getElementById(
-                    `qrcode-timer-${userActivityId}`
-                );
-
-            if (!qrcodeContainer || !timerContainer) {
-                return;
-            }
-
-            qrcodeContainer.innerHTML =
-                "";
-
-            timerContainer.innerText =
-                "QRCode 產生中...";
-
-            if (qrcodeTimers[userActivityId]) {
-                clearInterval(
-                    qrcodeTimers[userActivityId]
-                );
-            }
-
-            try {
-                const response =
-                    await fetch(
-                        `${API_BASE_URL}/api/rewards/qrcode-token`,
-                        {
-                            method:
-                                "POST",
-                            headers: {
-                                "Content-Type":
-                                    "application/json",
-                                "ngrok-skip-browser-warning":
-                                    "true"
-                            },
-                            body:
-                                JSON.stringify({
-                                    activityId:
-                                        userActivityId
-                                })
-                        }
-                    );
-
-                const result =
-                    await response.json();
-
-                if (!response.ok) {
-                    timerContainer.innerText =
-                        result.message ?? "QRCode 產生失敗";
-
-                    return;
-                }
-
-                const token =
-                    result.data.token;
-
-                const expiresIn =
-                    result.data.expiresIn;
-
-                const expiresAt =
-                    Date.now() +
-                    expiresIn * 1000;
-
-                new QRCode(
-                    qrcodeContainer,
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/rewards/qrcode-token`,
                     {
-                        text:
-                            token,
-                        width:
-                            180,
-                        height:
-                            180
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+                            "ngrok-skip-browser-warning":
+                                "true"
+                        },
+                        body: JSON.stringify({
+                            activityId:
+                                userActivityId
+                        })
                     }
                 );
 
-                updateQRCodeTimer(
-                    userActivityId,
-                    expiresAt
-                );
+            const result =
+                await response.json();
 
-                qrcodeTimers[userActivityId] =
-                    setInterval(
-                        () => {
-                            updateQRCodeTimer(
-                                userActivityId,
-                                expiresAt
-                            );
-                        },
-                        1000
-                    );
-            }
-            catch (error) {
-                console.error(
-                    error
-                );
+            if (!response.ok) {
 
                 timerContainer.innerText =
-                    "QRCode 產生失敗";
+                    result.message;
+
+                return;
             }
-        }
-        updateQRCodeTimer(
-            userActivityId,
-            expiresAt
-        );
 
-        qrcodeTimers[userActivityId] =
-            setInterval(
-                () => {
+            const token =
+                result.data.token;
 
-                    updateQRCodeTimer(
-                        userActivityId,
-                        expiresAt
-                    );
+            const expiresAt =
+                Date.now() +
+                (
+                    result.data.expiresIn *
+                    1000
+                );
 
-                },
-                1000
+            new QRCode(
+                qrcodeContainer,
+                {
+                    text: token,
+                    width: 180,
+                    height: 180
+                }
             );
+
+            updateQRCodeTimer(
+                userActivityId,
+                expiresAt
+            );
+
+            qrcodeTimers[userActivityId] =
+                setInterval(
+                    () => {
+
+                        updateQRCodeTimer(
+                            userActivityId,
+                            expiresAt
+                        );
+
+                    },
+                    1000
+                );
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            timerContainer.innerText =
+                "QRCode 產生失敗";
+        }
     }
     function updateQRCodeTimer(
         userActivityId,
