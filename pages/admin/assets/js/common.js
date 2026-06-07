@@ -54,13 +54,13 @@ function getState() {
     }
 }
 
-export function getToken() {
+function getToken() {
     return localStorage.getItem(
         "accessToken"
     );
 }
 
-export function requireLogin() {
+function requireLogin() {
     const token =
         localStorage.getItem(
             "accessToken"
