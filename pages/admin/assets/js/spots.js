@@ -63,13 +63,16 @@ async function handleSpotSubmit(event) {
 
 function getSpotPayload(form) {
     const formData = new FormData(form);
+    const id = clean(formData.get('id'));
+    const currentSpot = spots.find((spot) => String(spot.id) === id);
+    const name = clean(formData.get('name'));
 
     return {
-        name: clean(formData.get('name')),
+        name,
         description: clean(formData.get('description')),
         address: clean(formData.get('address')),
-        qrcodeToken: clean(formData.get('qrcodeToken')),
-        imageUrl: clean(formData.get('imageUrl')),
+        qrcodeToken: currentSpot?.qrcodeToken || clean(formData.get('qrcodeToken')) || createQrCodeToken(),
+        imageUrl: currentSpot?.imageUrl || clean(formData.get('imageUrl')),
         sortOrder: Number(formData.get('sortOrder') || 0),
         isEnabled: formData.get('isEnabled') === 'on'
     };
@@ -93,7 +96,7 @@ function renderSpots() {
 
     $('#spotList').innerHTML = filteredSpots.map((spot) => `
         <article class="rounded-card border border-white bg-white/80 p-5 shadow-sm">
-            <div class="flex items-start justify-between gap-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div class="min-w-0">
                     ${enabledBadge(spot.isEnabled)}
                     <h4 class="mt-3 text-lg font-black text-slate-800">${escapeHtml(spot.name)}</h4>
@@ -101,41 +104,31 @@ function renderSpots() {
                     <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">${escapeHtml(spot.description ?? '')}</p>
                 </div>
 
-                ${spot.imageUrl ? `
-                    <img class="h-20 w-20 shrink-0 rounded-soft bg-slate-50 object-cover" src="${escapeAttr(spot.imageUrl)}" alt="${escapeAttr(spot.name)}" />
-                ` : `
-                    <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-soft bg-slate-50 text-xs font-black text-slate-400">NO IMG</div>
-                `}
+                <div class="rounded-soft bg-slate-50 px-4 py-3 text-xs text-slate-500 sm:min-w-[140px]">
+                    <p>
+                        <span class="font-black text-slate-600">排序：</span>
+                        ${escapeHtml(spot.sortOrder ?? 0)}
+                    </p>
+                </div>
             </div>
 
-            <div class="mt-4 rounded-soft bg-slate-50 p-3 text-xs text-slate-500">
-                <p class="mt-1 break-all">
-                    <span class="font-black text-slate-600">Token：</span>
-                    ${escapeHtml(spot.qrcodeToken ?? '')}
-                </p>
-                <p class="mt-1">
-                    <span class="font-black text-slate-600">排序：</span>
-                    ${escapeHtml(spot.sortOrder ?? 0)}
-                </p>
+            <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <button class="edit-spot-btn h-12 rounded-soft border border-slate-200 bg-white text-sm font-black text-primary-700" data-id="${escapeAttr(spot.id)}">
+                    修改
+                </button>
+
+                <button class="toggle-spot-btn h-12 rounded-soft text-sm font-black ${spot.isEnabled ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}" data-id="${escapeAttr(spot.id)}">
+                    ${spot.isEnabled ? '停用' : '啟用'}
+                </button>
+
+                <button class="copy-liff-btn h-12 rounded-soft border border-slate-200 bg-white text-sm font-black text-primary-700" data-id="${escapeAttr(spot.id)}">
+                    複製 LIFF URL
+                </button>
+
+                <button class="generate-qr-btn primary-gradient h-12 rounded-soft text-sm font-black text-white" data-id="${escapeAttr(spot.id)}">
+                    產生 QRCode
+                </button>
             </div>
-
-            <div class="mt-4 grid grid-cols-2 gap-3">
-    <button class="edit-spot-btn h-12 rounded-soft border border-slate-200 bg-white text-sm font-black text-primary-700" data-id="${escapeAttr(spot.id)}">
-        修改
-    </button>
-
-    <button class="toggle-spot-btn h-12 rounded-soft text-sm font-black ${spot.isEnabled ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'}" data-id="${escapeAttr(spot.id)}">
-        ${spot.isEnabled ? '停用' : '啟用'}
-    </button>
-
-    <button class="copy-liff-btn h-12 rounded-soft border border-slate-200 bg-white text-sm font-black text-primary-700" data-id="${escapeAttr(spot.id)}">
-        複製 LIFF URL
-    </button>
-
-    <button class="generate-qr-btn primary-gradient h-12 rounded-soft text-sm font-black text-white" data-id="${escapeAttr(spot.id)}">
-        產生 QRCode
-    </button>
-</div>
         </article>
     `).join('');
 
@@ -230,6 +223,14 @@ function enabledBadge(isEnabled) {
         : '<span class="rounded-full bg-red-50 px-3 py-1 text-xs font-black text-red-600">停用</span>';
 }
 
+function createQrCodeToken() {
+    if (crypto?.randomUUID) {
+        return crypto.randomUUID();
+    }
+
+    return `spot-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 function loadingHtml() {
     return '<div class="rounded-soft bg-slate-50 p-5 text-sm text-slate-500">讀取中...</div>';
 }
@@ -243,64 +244,88 @@ function clean(value) {
 }
 
 function openQrCodeWindow(liffUrl) {
+    const holder = document.createElement('div');
+    holder.className = 'fixed -left-[9999px] -top-[9999px]';
+    document.body.appendChild(holder);
 
-    const qrUrl =
-        `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encodeURIComponent(liffUrl)}`;
+    new QRCode(holder, {
+        text: liffUrl,
+        width: 600,
+        height: 600,
+        correctLevel: QRCode.CorrectLevel.H
+    });
 
-    const popup = window.open(
-        '',
-        '_blank',
-        'width=800,height=900'
-    );
+    setTimeout(() => {
+        const canvas = holder.querySelector('canvas');
+        const image = holder.querySelector('img');
+        const qrDataUrl = canvas ? canvas.toDataURL('image/png') : image?.src;
 
-    popup.document.write(`
-        <!DOCTYPE html>
-        <html lang="zh-Hant">
-        <head>
-            <meta charset="UTF-8">
-            <title>QRCode</title>
-            <style>
-                body{
-                    font-family:sans-serif;
-                    padding:30px;
-                    text-align:center;
-                }
+        holder.remove();
 
-                img{
-                    max-width:100%;
-                }
+        if (!qrDataUrl) {
+            showModal('error', '產生失敗', 'QRCode 圖片產生失敗。');
+            return;
+        }
 
-                button{
-                    margin-top:20px;
-                    padding:12px 24px;
-                    cursor:pointer;
-                }
+        const popup = window.open('', '_blank', 'width=800,height=900');
 
-                textarea{
-                    width:100%;
-                    margin-top:20px;
-                    padding:10px;
-                    height:80px;
-                }
-            </style>
-        </head>
-        <body>
+        if (!popup) {
+            showModal('error', '視窗被阻擋', '請允許瀏覽器開啟彈出視窗後再產生 QRCode。');
+            return;
+        }
 
-            <h2>打卡地點 QRCode</h2>
+        popup.document.write(`
+            <!DOCTYPE html>
+            <html lang="zh-Hant">
+            <head>
+                <meta charset="UTF-8">
+                <title>QRCode</title>
+                <style>
+                    body{
+                        font-family:sans-serif;
+                        padding:30px;
+                        text-align:center;
+                        color:#334155;
+                    }
 
-            <img src="${qrUrl}" />
+                    img{
+                        max-width:100%;
+                        border:1px solid #e2e8f0;
+                        border-radius:24px;
+                    }
 
-            <textarea readonly>${liffUrl}</textarea>
+                    a{
+                        display:inline-block;
+                        margin-top:20px;
+                        padding:14px 28px;
+                        border-radius:18px;
+                        background:#2C6E9B;
+                        color:#fff;
+                        font-weight:800;
+                        text-decoration:none;
+                    }
 
-            <br>
+                    textarea{
+                        box-sizing:border-box;
+                        width:100%;
+                        margin-top:20px;
+                        padding:12px;
+                        height:90px;
+                        border:1px solid #e2e8f0;
+                        border-radius:16px;
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>打卡地點 QRCode</h2>
+                <img src="${qrDataUrl}" alt="打卡地點 QRCode" />
+                <textarea readonly>${escapeHtml(liffUrl)}</textarea>
+                <br>
+                <a href="${qrDataUrl}" download="spot-qrcode.png">下載 QRCode</a>
+            </body>
+            </html>
+        `);
 
-            <a href="${qrUrl}" download="spot-qrcode.png">
-                <button>下載 QRCode</button>
-            </a>
-
-        </body>
-        </html>
-    `);
-
-    popup.document.close();
+        popup.document.close();
+    }, 0);
 }
