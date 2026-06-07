@@ -382,7 +382,7 @@ async function handleScanSuccess(
 async function getTicketCodeFromQr(
     qrTicketCode
 ) {
-    alert(qrTicketCode)
+
     const response =
         await fetch(
             `${API_BASE_URL}/api/activity/register/Qr-Ticket-check`,
@@ -399,18 +399,26 @@ async function getTicketCodeFromQr(
             }
         );
 
-    const data =
+    const result =
         await response.json();
-    alert(data.success);
-    if (!response.ok || !data.success) {
+
+    console.log(
+        "QRCode Check Result",
+        result
+    );
+
+    if (
+        !response.ok ||
+        !result.success
+    ) {
 
         throw new Error(
-            data.message ||
+            result.message ||
             "查無票券資料"
         );
     }
 
-    return data.data.redeemCode;
+    return result.data.redeemCode;
 }
 
 async function stopScanner() {
