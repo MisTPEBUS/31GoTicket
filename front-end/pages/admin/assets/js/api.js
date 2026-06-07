@@ -17,6 +17,14 @@ const UserApi = {
     }
 };
 
+const OrderStatusApi = {
+    getByDate(date) {
+        return ApiClient.get(
+            `/api/admin/order-status?date=${encodeURIComponent(date)}`
+        );
+    }
+};
+
 
 //import-order
 

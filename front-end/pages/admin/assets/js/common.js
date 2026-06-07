@@ -1,6 +1,6 @@
 'use strict';
 
-const API_BASE_URL = 'https://9f4d-59-124-220-148.ngrok-free.app';
+let API_BASE_URL = 'https://9f4d-59-124-220-148.ngrok-free.app';
 const LIFF_BASE_URL = 'https://liff.line.me/YOUR_LIFF_ID';
 
 const STATUS_TEXT_MAP = {
