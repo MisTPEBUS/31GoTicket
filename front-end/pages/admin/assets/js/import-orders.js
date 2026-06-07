@@ -230,6 +230,11 @@ function renderMobilePreview(rows) {
 }
 
 async function uploadImportedOrders() {
+    if (!selectedFile) {
+        showModal('error', '尚未選擇檔案', '請先選擇 Excel 檔案。');
+        return;
+    }
+
     if (!importedOrders.length) {
         showModal('error', '尚無資料', '請先選擇 Excel 並確認預覽資料。');
         return;
@@ -240,16 +245,8 @@ async function uploadImportedOrders() {
     button.textContent = '匯入中...';
 
     try {
-        await OrdersApi.importOrders({
-            source: 'excel',
-            fileName: selectedFile?.name ?? '',
-            orders: importedOrders
-        });
-        const result = await OrdersApi.importOrders({
-            source: 'excel',
-            fileName: selectedFile?.name ?? '',
-            orders: importedOrders
-        });
+        const response = await OrdersApi.importExcel(selectedFile);
+        const result = response.data;
 
         renderImportResult(result);
 
@@ -260,7 +257,18 @@ async function uploadImportedOrders() {
         );
     } catch (error) {
         console.error(error);
-        showModal('error', '匯入失敗', error.message || '後端 API 發生錯誤。');
+
+        const result = error.data?.data;
+
+        if (result) {
+            renderImportResult(result);
+        }
+
+        showModal(
+            'error',
+            '匯入失敗',
+            error.data?.message || error.message || '後端 API 發生錯誤。'
+        );
     } finally {
         button.disabled = false;
         button.textContent = '呼叫匯入 API';
