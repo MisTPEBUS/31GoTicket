@@ -103,7 +103,7 @@ function normalizeOrderRow(row) {
         orderNo: clean(row['訂單編號']),
         verifyCode: clean(row['核銷碼']),
         productName: clean(row['預約商品']),
-        bookingDate: clean(row['預約日期']),
+        bookingDate: formatDate(row['預約日期']),
         bookingTime: clean(row['預約時段']),
         bookingSpec: clean(row['預約規格']),
         productSpec: clean(row['商品規格']),
@@ -120,6 +120,27 @@ function normalizeOrderRow(row) {
         phone: clean(row['訂單聯絡電話']),
         contactName: clean(row['訂單聯絡人'])
     };
+}
+function formatDate(value) {
+    if (!value) return '';
+
+    if (typeof value === 'number') {
+        const excelDate = XLSX.SSF.parse_date_code(value);
+
+        return `${excelDate.y}-${String(excelDate.m).padStart(2, '0')}-${String(excelDate.d).padStart(2, '0')}`;
+    }
+
+    const date = new Date(String(value).replaceAll('/', '-'));
+
+    if (Number.isNaN(date.getTime())) {
+        return String(value);
+    }
+
+    return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, '0'),
+        String(date.getDate()).padStart(2, '0')
+    ].join('-');
 }
 
 function clean(value) {
@@ -224,7 +245,19 @@ async function uploadImportedOrders() {
             fileName: selectedFile?.name ?? '',
             orders: importedOrders
         });
-        showModal('success', '匯入完成', `已送出 ${importedOrders.length} 筆訂單資料。`);
+        const result = await OrdersApi.importOrders({
+            source: 'excel',
+            fileName: selectedFile?.name ?? '',
+            orders: importedOrders
+        });
+
+        renderImportResult(result);
+
+        showModal(
+            result.errors?.length ? 'error' : 'success',
+            result.errors?.length ? '匯入完成但有錯誤' : '匯入完成',
+            `總筆數：${result.totalRows ?? 0}，新增：${result.insertedRows ?? 0}，更新：${result.updatedRows ?? 0}，略過：${result.skippedRows ?? 0}`
+        );
     } catch (error) {
         console.error(error);
         showModal('error', '匯入失敗', error.message || '後端 API 發生錯誤。');
@@ -232,4 +265,40 @@ async function uploadImportedOrders() {
         button.disabled = false;
         button.textContent = '呼叫匯入 API';
     }
+}
+
+function renderImportResult(result) {
+    const errors = result.errors ?? [];
+
+    $('#importSummary').innerHTML = `
+        <div class="grid gap-3 sm:grid-cols-4">
+            <div>
+                <p class="text-xs font-black text-slate-400">總筆數</p>
+                <p class="mt-1 text-xl font-black text-slate-800">${result.totalRows ?? 0}</p>
+            </div>
+            <div>
+                <p class="text-xs font-black text-slate-400">新增</p>
+                <p class="mt-1 text-xl font-black text-emerald-600">${result.insertedRows ?? 0}</p>
+            </div>
+            <div>
+                <p class="text-xs font-black text-slate-400">更新</p>
+                <p class="mt-1 text-xl font-black text-primary-700">${result.updatedRows ?? 0}</p>
+            </div>
+            <div>
+                <p class="text-xs font-black text-slate-400">略過</p>
+                <p class="mt-1 text-xl font-black text-amber-600">${result.skippedRows ?? 0}</p>
+            </div>
+        </div>
+
+        ${errors.length ? `
+            <div class="mt-4 rounded-soft bg-red-50 p-4">
+                <p class="text-sm font-black text-red-600">錯誤明細</p>
+                <ul class="mt-2 space-y-1 text-sm text-red-500">
+                    ${errors.map((error) => `
+                        <li>${escapeHtml(error)}</li>
+                    `).join('')}
+                </ul>
+            </div>
+        ` : ''}
+    `;
 }

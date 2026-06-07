@@ -27,7 +27,7 @@
     <div class="pointer-events-none fixed bottom-[-120px] left-[-120px] h-80 w-80 rounded-full bg-cyan-200/30 blur-3xl">
     </div>
 
-    <div class="relative mx-auto flex min-h-screen w-full max-w-[1440px] flex-col overflow-x-hidden lg:flex-row">
+    <div class="relative mx-auto flex min-h-screen w-full max-w-[1440px] flex-col lg:flex-row">
         <aside id="sidebar"
             class="no-print fixed inset-y-0 left-0 z-40 w-[290px] -translate-x-full border-r border-white/70 bg-white/80 p-5 shadow-card backdrop-blur-xl transition lg:sticky lg:top-0 lg:h-screen lg:translate-x-0">
             <div class="mb-8 flex items-center gap-3">
@@ -65,9 +65,9 @@
         <div id="sidebarBackdrop" class="no-print fixed inset-0 z-30 hidden bg-slate-900/30 backdrop-blur-sm lg:hidden">
         </div>
 
-        <main class="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
+        <main class="min-w-0 flex-1  p-4 sm:p-6 lg:p-8">
             <header
-                class="no-print glass-card sticky top-3 z-20 mb-6 flex items-center justify-between rounded-card px-4 py-4 sm:px-6">
+                class="no-print glass-card sticky top-3 z-30 mb-6 flex items-center justify-between rounded-card px-4 py-4 sm:px-6">
                 <div class="flex items-center gap-3">
                     <button id="openSidebarBtn"
                         class="flex h-12 w-12 items-center justify-center rounded-soft bg-slate-50 text-slate-700 lg:hidden"
@@ -88,7 +88,7 @@
             <section id="uploadSection" class="glass-card mx-auto max-w-2xl rounded-card p-5 sm:p-7">
                 <p class="text-xs font-black tracking-[.3em] text-primary-700">EXCEL IMPORT</p>
                 <h3 class="mt-2 text-2xl font-black">上傳 Excel</h3>
-                <p class="mt-2 text-sm leading-6 text-slate-500">選擇或拖曳 Excel 檔案後，系統會先解析並顯示匯入紀錄。確認資料後再送出 API。</p>
+                <p class="mt-2 text-sm leading-6 text-slate-500">選擇或拖曳 Excel 檔案後，系統會先解析並顯示匯入紀錄。確認資料後再送出。</p>
 
                 <label id="excelDropZone"
                     class="mt-6 flex min-h-56 cursor-pointer flex-col items-center justify-center rounded-card border-2 border-dashed border-sky-200 bg-slate-50 p-6 text-center transition hover:bg-sky-50">
@@ -111,7 +111,7 @@
                         <button id="reImportBtn" type="button"
                             class="h-12 rounded-soft border border-slate-200 bg-white px-5 text-sm font-black text-primary-700">重新匯入</button>
                         <button id="uploadExcelBtn" type="button"
-                            class="primary-gradient h-12 rounded-soft px-6 text-sm font-black text-white shadow-lg">呼叫匯入
+                            class="primary-gradient h-12 rounded-soft px-6 text-sm font-black text-white shadow-lg">匯入送出
                             API</button>
                     </div>
                 </div>
