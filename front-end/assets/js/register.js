@@ -382,6 +382,7 @@ async function handleScanSuccess(
 async function getTicketCodeFromQr(
     qrTicketCode
 ) {
+    alert(qrTicketCode)
     const response =
         await fetch(
             `${API_BASE_URL}/api/activity/register/Qr-Ticket-check`,
