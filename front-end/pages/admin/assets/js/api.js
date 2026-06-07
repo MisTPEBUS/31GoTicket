@@ -21,7 +21,7 @@ const UserApi = {
 
 const OrdersApi = {
     importOrders(payload) {
-        return apiFetch('/api/admin/orders/import', {
+        return apiFetch('/api/ticket-orders/admin/import', {
             method: 'POST',
             body: payload
         });
